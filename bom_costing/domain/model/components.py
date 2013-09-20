@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import copy
+from domain.errors import DuplicateError
 from costs import AssemblyCost
 
 
@@ -38,7 +39,6 @@ class Bom:
 		return copy.deepcopy(self.__components)
 
 
-
 class BomPart():
 	def __init__(self, part, quantity, bom):
 		self.__part=part
@@ -65,12 +65,3 @@ class BomPart():
 	def __data(self):
 		return [self.__quantity, self.__actual_cost(), self.__part]
 
-
-
-class DuplicateError(Exception):
-	def __init__(self, value):
-		self.value=value
-
-	def __str__(self):
-		return str(self.value)
-		
