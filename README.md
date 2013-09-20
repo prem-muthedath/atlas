@@ -1,7 +1,7 @@
-part-coster
+bom_costing
 ===========
 
-Part Coster
+BOM (Bill of Materials) Costing App
 
 This OO application, written in Python, computes the cost of each part in a typical BOM (Bill of Materials, having a tree structure) and returns the following two results:
 
