@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import copy
-from domain.errors import DuplicateError
+from ..errors import DuplicateError
 from costs import AssemblyCost
 
 
