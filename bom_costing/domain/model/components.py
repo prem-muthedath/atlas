@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import copy
-from bom_costing.domain.errors import DuplicateError
+from ..domain.errors import DuplicateError
 from costs import AssemblyCost
 
 
