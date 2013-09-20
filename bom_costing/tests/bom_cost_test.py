@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from bom_costing.domain.configuration import BomBuilder
-from bom_costing.domain.model.costs import AssemblyCost
-from bom_costing.views.text import BomTextView
+from domain.configuration import BomBuilder
+from domain.model.costs import AssemblyCost
+from views.text import BomTextView
 
 
 def configure():
