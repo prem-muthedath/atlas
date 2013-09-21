@@ -22,6 +22,7 @@ Because of the problem structure, Composite and Collecting Parameter patterns ca
 I used Python because it was a good way to learn the language.  Plus, Python was fun.  I loved it!!
 
 
+
 HOW TO RUN THE TESTS:
 
 1. Go to bom_costing directory -- THIS IS THE PARENT DIRECTORY OF THE APPLICATION AND IT CONTAINS THIS README FILE.
