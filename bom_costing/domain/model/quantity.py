@@ -12,5 +12,8 @@ class Quantity:
 		return assembly_cost
 
 	def export(self, part_view):
-		part_view.add_quantity(self.__value)
+		part_view.add_quantity(self.__data())
+
+	def __data(self):
+		return str(self.__value)
 		

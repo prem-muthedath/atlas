@@ -34,7 +34,15 @@ class BomTextView(ComponentView):
 		view._export(items)
 
 	def render(self, level=None): 
-		return self.__component_views.render(self.__level) 
+		return self.__header()+self.__component_views.render(self.__level)
+
+	def __header(self):
+		if(self.__top_level()): 
+			return PartTextView.header()
+		return ''
+
+	def __top_level(self):
+		return self.__level==-1
 
 
 class ComponentViews:
@@ -68,17 +76,26 @@ class PartTextView(ComponentView):
 		self.__data["cost"]=cost
 
 	def render(self, level): 
-		return "%-15s %-s %-s" % (self.__level_string(level), self.__format_part_string(), "\n")
+		return self.__format_level_string(level)+self.__format_part_string()+"\n"
 	
 	def __format_part_string(self):
-		return "%-45s %-6s %-6s %-10s" %(self.__data["name"], self.__data["code"], 
-			self.__data["quantity"], self.__data["cost"])
+		return self.__data["name"].center(65)+ \
+		self.__data["code"].center(15)+ \
+		self.__data["quantity"].center(10)+ \
+		self.__data["cost"].center(10)
 
-	def __level_string(self, level):
-		return self.__indent(level)+str(level)
+	def __format_level_string(self, level):
+		return (self.__indent(level)+str(level)).ljust(15)
 
 	def __indent(self, level):
 		return abs(level)*"    "
+
+	@classmethod
+	def header(cls):
+			return 'Level'.center(15)+'Part'.center(65)+ \
+			'Code'.center(15)+'Quantity'.center(10)+ \
+			'Cost'.center(10)+'\n'
+
 
 
 
