@@ -80,9 +80,9 @@ class PartTextView(ComponentView):
 	
 	def __format_part_string(self):
 		return self.__data["name"].center(65)+ \
-		self.__data["code"].center(15)+ \
-		self.__data["quantity"].center(10)+ \
-		self.__data["cost"].center(10)
+			self.__data["code"].center(15)+ \
+			self.__data["quantity"].center(10)+ \
+			self.__data["cost"].center(10)
 
 	def __format_level_string(self, level):
 		return (self.__indent(level)+str(level)).ljust(15)
