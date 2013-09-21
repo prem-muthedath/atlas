@@ -22,4 +22,14 @@ Because of the problem structure, Composite and Collecting Parameter patterns ca
 I used Python because it was a good way to learn the language.  Plus, Python was fun.  I loved it!!
 
 
+HOW TO RUN THE TESTS:
 
+1. Go to bom_costing directory -- THIS IS THE PARENT DIRECTORY OF THE APPLICATION AND IT CONTAINS THIS README FILE.
+2. Type the following command: 
+
+		python -m bom_costing.tests.bom_cost_test
+
+3. Press enter
+4. You should see TWO things in the output:
+	(a) An indented representation of parts in the BOM tree and their computed costs
+	(b) Total cost of the BOM -- actual and expected values.
