@@ -77,18 +77,18 @@ class PartTextView(ComponentView):
 
 	def render(self, level): 
 		return self.__format_level_string(level)+self.__format_part_string()+"\n"
-	
-	def __format_part_string(self):
-		return self.__data["name"].center(65)+ \
-			self.__data["code"].center(15)+ \
-			self.__data["quantity"].center(10)+ \
-			self.__data["cost"].center(10)
 
 	def __format_level_string(self, level):
 		return (self.__indent(level)+str(level)).ljust(15)
 
 	def __indent(self, level):
 		return abs(level)*"    "
+	
+	def __format_part_string(self):
+		return self.__data["name"].center(65)+ \
+			self.__data["code"].center(15)+ \
+			self.__data["quantity"].center(10)+ \
+			self.__data["cost"].center(10)
 
 	@classmethod
 	def header(cls):
