@@ -23,9 +23,9 @@ I used Python because it was a good way to learn the language.  Plus, Python was
 
 
 
-HOW TO RUN THE TESTS:
+HOW TO RUN THE TESTS FROM A TERMINAL:
 
-1. Go to bom_costing directory -- THE TOP DIRECTORY OF THE APP, AND IT CONTAINS THIS README FILE.
+1. cd to bom_costing directory -- THE TOP DIRECTORY OF THE APP, AND IT CONTAINS THIS README FILE.
 2. Type the following command: 
 
 		python -m bom_costing.tests.bom_cost_test
