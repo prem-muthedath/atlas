@@ -42,7 +42,7 @@ class BomTextView(ComponentView):
 		return ''
 
 	def __top_level(self):
-		return self.__level==-1
+		return self.__level==0
 
 
 class ComponentViews:
