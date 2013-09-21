@@ -25,7 +25,7 @@ I used Python because it was a good way to learn the language.  Plus, Python was
 
 HOW TO RUN THE TESTS:
 
-1. Go to bom_costing directory -- THIS IS THE PARENT DIRECTORY OF THE APPLICATION AND IT CONTAINS THIS README FILE.
+1. Go to bom_costing directory -- THIS IS THE PARENT DIRECTORY OF THE APP, AND IT CONTAINS THIS README FILE.
 2. Type the following command: 
 
 		python -m bom_costing.tests.bom_cost_test
