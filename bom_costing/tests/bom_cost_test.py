@@ -56,5 +56,5 @@ bom_view=BomTextView()
 bom.export(bom_view)
 
 print bom_view.render()
-print "EXPECTED: 8210 ", "ACTUAL: ", bomcost
+print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", bomcost
 
