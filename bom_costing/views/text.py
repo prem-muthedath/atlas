@@ -92,7 +92,7 @@ class PartTextView(ComponentView):
 
 	@classmethod
 	def header(cls):
-			return 'Level'.center(15)+'Part'.center(65)+ \
+		return 'Level'.center(15)+'Part'.center(65)+ \
 			'Code'.center(15)+'Quantity'.center(10)+ \
 			'Cost'.center(10)+'\n'
 
