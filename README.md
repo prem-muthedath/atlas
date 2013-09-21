@@ -30,7 +30,7 @@ HOW TO RUN THE TESTS:
 
 		python -m bom_costing.tests.bom_cost_test
 
-3. Press enter
+3. Press enter.
 4. You should see TWO things in the output:
 	(a) An indented representation of parts in the BOM tree and their computed costs; 
 	(b) Total cost of the BOM -- actual and expected values.
