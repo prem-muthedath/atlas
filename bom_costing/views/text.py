@@ -4,59 +4,65 @@ class ComponentView(object):
 	def _export(self, components):
 		for each in components:
 			each.export(self)
-	
+
 	def render(self):
 		pass
-					
+
+
+class Level:
+	def __init__(self, value=-1):
+		self.__value=value
+		self.__HEADER='Level'
+
+	def child(self):
+		return self.__class__(self.__value+1)
+
+	def parent(self):
+		return self.__class__(self.__value-1)
+	
+	def render(self):
+		return self.__format(self.__indented_string())
+
+	def __indented_string(self):
+		return abs(self.__value)*"    "+str(self.__value)
+
+	def __format(self, value):
+		return value.center(15)
+
+	def header(self):
+		return self.__format(self.__HEADER)
+
 
 class BomTextView(ComponentView):
-	def __init__(self, level=-1):
-		self.__level=level
-		self.__component_views=ComponentViews()
+	def __init__(self):
+		self.__level=Level()
+		self.__output=''
 
 	def export_bom(self, bom_components):
-		self.__export_items(self._child_bom_view(), bom_components)
+		self.__enter_child_bom()
+		self._export(bom_components)
+		self.__exit_child_bom()
 
-	def _child_bom_view(self):
-		return BomTextView(self.__child_level())
+	def __enter_child_bom(self):
+		self.__level=self.__level.child()
 
-	def __child_level(self):
-		return self.__level+1
+	def __exit_child_bom(self):
+		self.__level=self.__level.parent()
 
 	def export_part(self, part_data):
-		self.__export_items(self._part_view(), part_data)
+		self._part_view().export_part(part_data, self)
 
 	def _part_view(self):
 		return PartTextView()
 
-	def __export_items(self, view, items):
-		self.__component_views.add(view)
-		view._export(items)
+	def exported(self, part_view):
+		self.__output+=self.__level.render()+part_view.render()
 
-	def render(self, level=None): 
-		return self.__header()+self.__component_views.render(self.__level)
+	def render(self): 
+		return ''.join([self.__header(), self.__output])		
 
 	def __header(self):
-		if(self.__top_level()): 
-			return PartTextView.header()
-		return ''
-
-	def __top_level(self):
-		return self.__level==0
-
-
-class ComponentViews:
-	def __init__(self):
-		self.__views=[]
-
-	def add(self, component_view):
-		self.__views.append(component_view)
-
-	def render(self, level): 
-		result=[]
-		for each in self.__views:
-			result.append(each.render(level))
-		return "".join(result) 		
+		return ''.join([self.__level.header(), self._part_view().header()])	
 
 
 class PartTextView(ComponentView):
@@ -75,27 +81,23 @@ class PartTextView(ComponentView):
 	def add_cost(self, cost):
 		self.__data["cost"]=cost
 
-	def render(self, level): 
-		return self.__format_level_string(level)+self.__format_part_string()+"\n"
+	def export_part(self, part_data, bom_view):
+		self._export(part_data)
+		bom_view.exported(self)
 
-	def __format_level_string(self, level):
-		return (self.__indent(level)+str(level)).ljust(15)
-
-	def __indent(self, level):
-		return abs(level)*"    "
-	
-	def __format_part_string(self):
+	def render(self): 
 		return self.__data["name"].center(65)+ \
-			self.__data["code"].center(15)+ \
+			self.__data["code"].center(10)+ \
 			self.__data["quantity"].center(10)+ \
-			self.__data["cost"].center(10)
+			self.__data["cost"].center(10)+'\n'
 
-	@classmethod
-	def header(cls):
-		return 'Level'.center(15)+'Part'.center(65)+ \
-			'Code'.center(15)+'Quantity'.center(10)+ \
-			'Cost'.center(10)+'\n'
+	def header(self):
+		return self.__header_view().render()
 
-
-
-
+	def __header_view(self):
+		part_view=self.__class__()
+		part_view.add_name('Part')
+		part_view.add_code('Code')
+		part_view.add_quantity('Quantity')
+		part_view.add_cost('Cost')
+		return part_view				

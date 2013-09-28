@@ -2,7 +2,7 @@
 
 from name import Name
 
-class Part():
+class Part:
 	def __init__(self, source_code, part_cost):
 		self.__source_code=source_code
 		self.__part_cost=part_cost
