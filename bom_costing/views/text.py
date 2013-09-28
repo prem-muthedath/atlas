@@ -55,7 +55,7 @@ class BomTextView(ComponentView):
 	def _part_view(self):
 		return PartTextView()
 
-	def exported(self, part_view):
+	def add_view(self, part_view):
 		self.__output+=self.__level.render()+part_view.render()
 
 	def render(self): 
@@ -83,7 +83,7 @@ class PartTextView(ComponentView):
 
 	def export_part(self, part_data, bom_view):
 		self._export(part_data)
-		bom_view.exported(self)
+		bom_view.add_view(self)
 
 	def render(self): 
 		return self.__data["name"].center(65)+ \
