@@ -39,14 +39,14 @@ class BomTextView(ComponentView):
 		self.__output=''
 
 	def export_bom(self, bom_components):
-		self.__enter_child_bom()
+		self.__enter_bom()
 		self._export(bom_components)
-		self.__exit_child_bom()
+		self.__exit_bom()
 
-	def __enter_child_bom(self):
+	def __enter_bom(self):
 		self.__level=self.__level.child()
 
-	def __exit_child_bom(self):
+	def __exit_bom(self):
 		self.__level=self.__level.parent()
 
 	def export_part(self, part_data):
