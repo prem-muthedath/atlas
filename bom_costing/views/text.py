@@ -9,7 +9,7 @@ class ComponentView(object):
 		pass
 
 
-class Level:
+class LevelTextView:
 	def __init__(self, value=-1):
 		self.__value=value
 		self.__HEADER='Level'
@@ -35,7 +35,7 @@ class Level:
 
 class BomTextView(ComponentView):
 	def __init__(self):
-		self.__level=Level()
+		self.__level_view=LevelTextView()
 		self.__output=''
 
 	def export_bom(self, bom_components):
@@ -44,10 +44,10 @@ class BomTextView(ComponentView):
 		self.__exit_bom()
 
 	def __enter_bom(self):
-		self.__level=self.__level.child()
+		self.__level_view=self.__level_view.child()
 
 	def __exit_bom(self):
-		self.__level=self.__level.parent()
+		self.__level_view=self.__level_view.parent()
 
 	def export_part(self, part_data):
 		self._part_view().export_part(part_data, self)
@@ -56,13 +56,13 @@ class BomTextView(ComponentView):
 		return PartTextView()
 
 	def add_view(self, part_view):
-		self.__output+=self.__level.render()+part_view.render()
+		self.__output+=self.__level_view.render()+part_view.render()
 
 	def render(self): 
 		return ''.join([self.__header(), self.__output])		
 
 	def __header(self):
-		return ''.join([self.__level.header(), self._part_view().header()])	
+		return ''.join([self.__level_view.header(), self._part_view().header()])	
 
 
 class PartTextView(ComponentView):
