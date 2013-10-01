@@ -43,12 +43,17 @@ class BomPartView():
 		bom_view.add_view(self.render())
 
 	def render(self): 
-		return self.__level_view.render()+ \
-			self.__part_view.render() +'\n'
+		return self.__format(
+			self.__level_view.render(),
+			self.__part_view.render())
 
 	def header(self):
-		return self.__level_view.header()+ \
-			self.__part_view.header()+'\n'
+		return self.__format(
+			self.__level_view.header(),
+			self.__part_view.header())
+
+	def __format(self, augend, addend):
+		return augend+addend+'\n'
 
 
 class LevelTextView:
