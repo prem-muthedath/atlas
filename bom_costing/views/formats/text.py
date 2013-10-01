@@ -9,7 +9,7 @@ class ComponentView(object):
 		pass
 
 
-class BomView(ComponentView):
+class BomTextView(ComponentView):
 	def __init__(self, bom_part_view):
 		self.__bom_part_view=bom_part_view
 		self.__output=[]
@@ -33,7 +33,7 @@ class BomView(ComponentView):
 		return ''.join(self.__output)
 
 
-class BomPartView():
+class BomPartTextView():
 	def __init__(self, level_view, part_view):
 		self.__level_view=level_view
 		self.__part_view=part_view

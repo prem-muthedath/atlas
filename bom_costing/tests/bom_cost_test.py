@@ -3,7 +3,6 @@
 from ..domain.configuration import BomBuilder
 from ..domain.model.costs import AssemblyCost
 from ..views.configuration import TextViewConfiguration
-from ..views.formats.text import BomView
 
 
 def configure():
