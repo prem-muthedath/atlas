@@ -12,7 +12,7 @@ class ComponentView(object):
 class BomView(ComponentView):
 	def __init__(self, bom_part_view):
 		self.__bom_part_view=bom_part_view
-		self.__output=[self.__header()]
+		self.__output=[]
 
 	def export_bom(self, bom_components):
 		self.__bom_part_view.export_bom(bom_components, self)
@@ -24,10 +24,13 @@ class BomView(ComponentView):
 		self.__output.append(view)
 
 	def render(self): 
-		return ''.join(self.__output)		
+		return self.__header()+self.__render()	
 
 	def __header(self):
 		return self.__bom_part_view.header()
+
+	def __render(self):
+		return ''.join(self.__output)
 
 
 class BomPartView():
