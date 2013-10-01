@@ -2,7 +2,8 @@
 
 from ..domain.configuration import BomBuilder
 from ..domain.model.costs import AssemblyCost
-from ..views.text import BomTextView
+from ..views.configuration import TextViewConfiguration
+from ..views.formats.text import BomView
 
 
 def configure():
@@ -52,7 +53,8 @@ bom=configure()
 bomcost=AssemblyCost()
 bom.cost(bomcost)
 
-bom_view=BomTextView()
+
+bom_view=TextViewConfiguration().configure()
 bom.export(bom_view)
 
 print bom_view.render()
