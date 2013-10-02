@@ -2,7 +2,7 @@
 
 class TextViewFactory:
 	def view(self):
-		return TextView(TextViewItem(TextViewLevel(), TextViewPart()))
+		return TextView(TextViewRow(TextViewLevel(), TextViewPart()))
 		
 
 class View(object):
@@ -15,15 +15,15 @@ class View(object):
 
 
 class TextView(View):
-	def __init__(self, view_item):
-		self.__view_item=view_item
+	def __init__(self, view_row):
+		self.__view_row=view_row
 		self.__output=[]
 
 	def export_bom(self, bom_components):
-		self.__view_item.export_bom(bom_components, self)
+		self.__view_row.export_bom(bom_components, self)
 
 	def export_part(self, part_data):
-		self.__view_item.export_part(part_data, self)
+		self.__view_row.export_part(part_data, self)
 
 	def add_text(self, text):
 		self.__output.append(text)
@@ -32,13 +32,13 @@ class TextView(View):
 		return self.__header()+self.__render()	
 
 	def __header(self):
-		return self.__view_item.header()
+		return self.__view_row.header()
 
 	def __render(self):
 		return ''.join(self.__output)
 
 
-class TextViewItem():
+class TextViewRow():
 	def __init__(self, view_level, view_part):
 		self.__view_level=view_level
 		self.__view_part=view_part
