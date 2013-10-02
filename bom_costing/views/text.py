@@ -16,26 +16,26 @@ class View(object):
 
 class TextView(View):
 	def __init__(self, view_row):
-		self.__view_row=view_row
-		self.__output=[]
+		self.__current_row=view_row
+		self.__view_rows=[]
 
 	def export_bom(self, bom_components):
-		self.__view_row.export_bom(bom_components, self)
+		self.__current_row.export_bom(bom_components, self)
 
 	def export_part(self, part_data):
-		self.__view_row.export_part(part_data, self)
+		self.__current_row.export_part(part_data, self)
 
 	def add_row(self, row):
-		self.__output.append(row)
+		self.__view_rows.append(row)
 
 	def render(self): 
 		return self.__header()+self.__render()	
 
 	def __header(self):
-		return self.__view_row.header()
+		return self.__current_row.header()
 
 	def __render(self):
-		return ''.join(self.__output)
+		return ''.join(self.__view_rows)
 
 
 class TextViewRow():
