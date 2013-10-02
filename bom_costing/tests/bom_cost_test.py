@@ -53,9 +53,9 @@ bomcost=AssemblyCost()
 bom.cost(bomcost)
 
 
-bom_view=TextViewFactory().view()
-bom.export(bom_view)
+view=TextViewFactory().view()
+bom.export(view)
 
-print bom_view.render()
+print view.render()
 print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", bomcost
 
