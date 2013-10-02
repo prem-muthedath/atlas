@@ -25,8 +25,8 @@ class TextView(View):
 	def export_part(self, part_data):
 		self.__view_row.export_part(part_data, self)
 
-	def add_view(self, view):
-		self.__output.append(view)
+	def add_row(self, row):
+		self.__output.append(row)
 
 	def render(self): 
 		return self.__header()+self.__render()	
@@ -48,7 +48,7 @@ class TextViewRow():
 
 	def export_part(self, part_data, bom_view):
 		self.__view_part._export(part_data)
-		bom_view.add_view(self.render())
+		bom_view.add_row(self.render())
 
 	def render(self): 
 		return self.__format(
