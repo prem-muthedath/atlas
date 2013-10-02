@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+class TextViewFactory:
+	def view(self):
+		return BomTextView(BomPartTextView(LevelTextView(), PartTextView()))
+		
+
 class ComponentView(object):
 	def _export(self, components):
 		for each in components:
@@ -60,9 +65,11 @@ class BomPartTextView():
 
 
 class LevelTextView:
+	__COLUMN_WIDTH=13
+	__HEADER='Level'
+
 	def __init__(self, value=-1):
-		self.__value=value
-		self.__HEADER='Level'
+		self.__value=value		
 
 	def export_bom(self, bom_components, bom_view):
 		self.__enter_bom()
@@ -76,16 +83,14 @@ class LevelTextView:
 		self.__value-=1
 
 	def render(self):
-		return self.__format(self.__indented_string())
+		return self.__output().ljust(self.__COLUMN_WIDTH)
 
-	def __indented_string(self):
-		return abs(self.__value)*"    "+str(self.__value)
-
-	def __format(self, value):
-		return value.center(15)
+	def __output(self):
+		indent=abs(self.__value)*"  "
+		return indent+str(self.__value)
 
 	def header(self):
-		return self.__format(self.__HEADER)
+		return self.__HEADER.center(self.__COLUMN_WIDTH)
 
 
 class PartTextView(ComponentView):
