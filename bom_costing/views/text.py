@@ -29,12 +29,12 @@ class TextView(View):
 		self.__view_rows.append(row)
 
 	def render(self): 
-		return self.__header()+self.__render()	
+		return self.__header()+self.__format()	
 
 	def __header(self):
 		return self.__current_row.header()
 
-	def __render(self):
+	def __format(self):
 		return ''.join(self.__view_rows)
 
 
