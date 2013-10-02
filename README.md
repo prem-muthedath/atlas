@@ -3,7 +3,7 @@ bom_costing
 
 BOM (Bill of Materials) Costing App
 
-This OO application, written in Python, computes the cost of each part in a typical BOM (Bill of Materials, having a tree structure) and returns the following two results:
+This OO application, written in Python, computes the cost of each part in a typical BOM (Bill of Materials -- a recursive tree structure of parts and BOMs) and returns the following two results:
 
 1. Total cost of the BOM, which is nothing but the sum of the costs of parts in the BOM.
 2. An indented representation of parts in the BOM tree and their computed costs.
