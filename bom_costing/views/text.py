@@ -25,8 +25,8 @@ class TextView(View):
 	def export_part(self, part_data):
 		self.__view_row.export_part(part_data, self)
 
-	def add_text(self, text):
-		self.__output.append(text)
+	def add_view(self, view):
+		self.__output.append(view)
 
 	def render(self): 
 		return self.__header()+self.__render()	
@@ -48,7 +48,7 @@ class TextViewRow():
 
 	def export_part(self, part_data, bom_view):
 		self.__view_part._export(part_data)
-		bom_view.add_text(self.render())
+		bom_view.add_view(self.render())
 
 	def render(self): 
 		return self.__format(
@@ -60,8 +60,8 @@ class TextViewRow():
 			self.__view_level.header(),
 			self.__view_part.header())
 
-	def __format(self, augend, addend):
-		return augend+addend+'\n'
+	def __format(self, level_text, part_text):
+		return level_text+part_text+'\n'
 
 
 class TextViewLevel:
@@ -83,9 +83,9 @@ class TextViewLevel:
 		self.__value-=1
 
 	def render(self):
-		return self.__output().ljust(self.__COLUMN_WIDTH)
+		return self.__format().ljust(self.__COLUMN_WIDTH)
 
-	def __output(self):
+	def __format(self):
 		indent=abs(self.__value)*"  "
 		return indent+str(self.__value)
 
