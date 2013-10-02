@@ -2,78 +2,78 @@
 
 class TextViewFactory:
 	def view(self):
-		return BomTextView(BomPartTextView(LevelTextView(), PartTextView()))
+		return TextView(TextViewItem(TextViewLevel(), TextViewPart()))
 		
 
-class ComponentView(object):
-	def _export(self, components):
-		for each in components:
+class View(object):
+	def _export(self, items):
+		for each in items:
 			each.export(self)
 
 	def render(self):
 		pass
 
 
-class BomTextView(ComponentView):
-	def __init__(self, bom_part_view):
-		self.__bom_part_view=bom_part_view
+class TextView(View):
+	def __init__(self, view_item):
+		self.__view_item=view_item
 		self.__output=[]
 
 	def export_bom(self, bom_components):
-		self.__bom_part_view.export_bom(bom_components, self)
+		self.__view_item.export_bom(bom_components, self)
 
 	def export_part(self, part_data):
-		self.__bom_part_view.export_part(part_data, self)
+		self.__view_item.export_part(part_data, self)
 
-	def add_view(self, view):
-		self.__output.append(view)
+	def add_text(self, text):
+		self.__output.append(text)
 
 	def render(self): 
 		return self.__header()+self.__render()	
 
 	def __header(self):
-		return self.__bom_part_view.header()
+		return self.__view_item.header()
 
 	def __render(self):
 		return ''.join(self.__output)
 
 
-class BomPartTextView():
-	def __init__(self, level_view, part_view):
-		self.__level_view=level_view
-		self.__part_view=part_view
+class TextViewItem():
+	def __init__(self, view_level, view_part):
+		self.__view_level=view_level
+		self.__view_part=view_part
 
 	def export_bom(self, bom_components, bom_view):
-		self.__level_view.export_bom(bom_components, bom_view)
+		self.__view_level.export_bom(bom_components, bom_view)
 
 	def export_part(self, part_data, bom_view):
-		self.__part_view._export(part_data)
-		bom_view.add_view(self.render())
+		self.__view_part._export(part_data)
+		bom_view.add_text(self.render())
 
 	def render(self): 
 		return self.__format(
-			self.__level_view.render(),
-			self.__part_view.render())
+			self.__view_level.render(),
+			self.__view_part.render())
 
 	def header(self):
 		return self.__format(
-			self.__level_view.header(),
-			self.__part_view.header())
+			self.__view_level.header(),
+			self.__view_part.header())
 
 	def __format(self, augend, addend):
 		return augend+addend+'\n'
 
 
-class LevelTextView:
+class TextViewLevel:
 	__COLUMN_WIDTH=13
 	__HEADER='Level'
 
 	def __init__(self, value=-1):
 		self.__value=value		
 
-	def export_bom(self, bom_components, bom_view):
+	def export_bom(self, bom_components, view):
 		self.__enter_bom()
-		bom_view._export(bom_components)
+		view._export(bom_components)
 		self.__exit_bom()
 
 	def __enter_bom(self):
@@ -93,7 +93,7 @@ class LevelTextView:
 		return self.__HEADER.center(self.__COLUMN_WIDTH)
 
 
-class PartTextView(ComponentView):
+class TextViewPart(View):
 	def __init__(self):
 		self.__data={'name':'', 'code':'', 'quantity':'', 'cost':''} 
 
@@ -116,12 +116,12 @@ class PartTextView(ComponentView):
 			self.__data["cost"].center(10)
 
 	def header(self):
-		return self.__header_view().render()
+		return self.__header_part().render()
 
-	def __header_view(self):
-		part_view=self.__class__()
-		part_view.add_name('Part')
-		part_view.add_code('Code')
-		part_view.add_quantity('Quantity')
-		part_view.add_cost('Cost')
-		return part_view				
+	def __header_part(self):
+		view_part=self.__class__()
+		view_part.add_name('Part')
+		view_part.add_code('Code')
+		view_part.add_quantity('Quantity')
+		view_part.add_cost('Cost')
+		return view_part				
