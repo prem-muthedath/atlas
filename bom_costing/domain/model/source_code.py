@@ -10,5 +10,5 @@ class SourceCode:
 	def costable(self):
 		return self.__code=='1'
 
-	def export(self, part_view):
-		part_view.add_code(self.__code)	
+	def export(self, view_part):
+		view_part.add_code(self.__code)	

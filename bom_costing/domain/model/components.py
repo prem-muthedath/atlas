@@ -32,8 +32,8 @@ class Bom:
 	def __is_leaf(self, bom_part):
 		return self.__components[len(self.__components)-1]==bom_part
 
-	def export(self, bom_view):
-		bom_view.export_bom(self.__data())
+	def export(self, view):
+		view.export_bom(self.__data())
 
 	def __data(self):
 		return copy.deepcopy(self.__components)
@@ -59,8 +59,8 @@ class BomPart():
 	def costable(self):
 		return self.__part.costable()
 
-	def export(self, bom_view):
-		bom_view.export_part(self.__data())
+	def export(self, view):
+		view.export_part(self.__data())
 
 	def __data(self):
 		return [self.__quantity, self.__actual_cost(), self.__part]
