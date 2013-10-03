@@ -19,8 +19,8 @@ class AssemblyCost:
 	def plus(self, part_cost):
 		return part_cost.plus(self.__amount())
 
-	def export(self, view_part):
-		self.__amount().export(view_part)
+	def export(self, view):
+		self.__amount().export(view)
 
 	def __str__(self):
 		return str(self.__amount())		
@@ -36,8 +36,8 @@ class PartCost:
 	def __add_to(self, value):
 		return PartCost(self.__value+value)
 
-	def export(self, view_part):
-		view_part.add_cost(self.__str__())		
+	def export(self, view):
+		view.add_cost(self.__str__())		
 
 	def __str__(self):
 		return str(self.__value)
