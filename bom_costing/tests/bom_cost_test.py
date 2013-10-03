@@ -2,7 +2,8 @@
 
 from ..domain.configuration import BomBuilder
 from ..domain.model.costs import AssemblyCost
-from ..views.text import TextView
+from ..views.text import View
+from ..views.text import TextViewPart
 
 
 def configure():
@@ -53,9 +54,9 @@ bomcost=AssemblyCost()
 bom.cost(bomcost)
 
 
-view=TextView()
-bom.export(view)
+text_view=View(TextViewPart())
+bom.export(text_view)
 
-print view.render()
+print text_view.render()
 print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", bomcost
 

@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
-class TextView:
-	def __init__(self):
-		self.__current_part=TextViewPart()
-		self.__parts=[]		
+class View:
+	def __init__(self, view_part):
+		self.__current_level=ViewLevel()
+		self.__current_part=view_part
+		self.__contents=[]		
 
 	def export_bom(self, bom_components):
-		self.__current_part.export_bom(bom_components, self)
+		self.__current_level.export_bom(bom_components, self)
 
 	def export_part(self, part_data):
 		self.export(part_data)
-		self.__parts.append(self.__current_part.render())
+		self.__contents.append(self.__current_level.render(self.__current_part))
 
 	def export(self, items):
 		for each in items:
@@ -35,54 +36,10 @@ class TextView:
 		return self.__current_part.header()
 
 	def __format(self):
-		return ''.join(self.__parts)
+		return ''.join(self.__contents)
 
 
-class TextViewPart:
-	def __init__(self):
-		self.__level=TextViewLevel()
-		self.__data={'name':'', 'code':'', 'quantity':'', 'cost':''} 
-
-	def export_bom(self, bom_components, view):
-		self.__level.export_bom(bom_components, view)
-
-	def add_name(self, name):
-		self.__data["name"]=name
-
-	def add_code(self, code):
-		self.__data["code"]=code
-
-	def add_quantity(self, quantity):
-		self.__data["quantity"]=quantity
-
-	def add_cost(self, cost):
-		self.__data["cost"]=cost
-
-	def render(self): 
-		return self.__level.render()+self.__format()
-
-	def __format(self):
-			return self.__data["name"].center(65)+ \
-			self.__data["code"].center(10)+ \
-			self.__data["quantity"].center(10)+ \
-			self.__data["cost"].center(10)+'\n'
-
-	def header(self):
-		return self.__level.header()+self.__header_part().__format()
-
-	def __header_part(self):
-		view_part=self.__class__()
-		view_part.add_name('Part')
-		view_part.add_code('Code')
-		view_part.add_quantity('Quantity')
-		view_part.add_cost('Cost')
-		return view_part	
-
-
-class TextViewLevel:
-	__COLUMN_WIDTH=13
-	__HEADER='Level'
-
+class ViewLevel:
 	def __init__(self, value=-1):
 		self.__value=value		
 
@@ -97,12 +54,49 @@ class TextViewLevel:
 	def __exit_bom(self):
 		self.__value-=1
 
-	def render(self):
-		return self.__format().ljust(self.__COLUMN_WIDTH)
+	def render(self, view_part):
+		return view_part.render(self.__value)
+
+
+class TextViewPart:
+	def __init__(self):
+		self.__data={'name':'', 'code':'', 'quantity':'', 'cost':''} 
+
+	def add_name(self, name):
+		self.__data["name"]=name
+
+	def add_code(self, code):
+		self.__data["code"]=code
+
+	def add_quantity(self, quantity):
+		self.__data["quantity"]=quantity
+
+	def add_cost(self, cost):
+		self.__data["cost"]=cost
+
+	def render(self, level): 
+		return self.__format_level(level)+self.__format()
+
+	def __format_level(self, level):
+		indented_level=abs(level)*"  "+str(level)
+		return indented_level.ljust(13)
 
 	def __format(self):
-		indent=abs(self.__value)*"  "
-		return indent+str(self.__value)
+			return self.__data["name"].center(65)+ \
+			self.__data["code"].center(10)+ \
+			self.__data["quantity"].center(10)+ \
+			self.__data["cost"].center(10)+'\n'
 
 	def header(self):
-		return self.__HEADER.center(self.__COLUMN_WIDTH)
+		return self.__level_header()+self.__header()
+
+	def __level_header(self):
+		return 'Level'.center(13)		
+
+	def __header(self):
+		view_part=self.__class__()
+		view_part.add_name('Part')
+		view_part.add_code('Code')
+		view_part.add_quantity('Quantity')
+		view_part.add_cost('Cost')
+		return view_part.__format()	
