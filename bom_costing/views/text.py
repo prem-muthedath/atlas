@@ -9,10 +9,10 @@ class TextView:
 		self.__current_part.export_bom(bom_components, self)
 
 	def export_part(self, part_data):
-		self._export(part_data)
+		self.export(part_data)
 		self.__parts.append(self.__current_part.render())
 
-	def _export(self, items):
+	def export(self, items):
 		for each in items:
 			each.export(self)
 
@@ -88,7 +88,7 @@ class TextViewLevel:
 
 	def export_bom(self, bom_components, view):
 		self.__enter_bom()
-		view._export(bom_components)
+		view.export(bom_components)
 		self.__exit_bom()
 
 	def __enter_bom(self):
