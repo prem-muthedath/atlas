@@ -10,7 +10,7 @@ class ViewFactory:
 class View:
 	def __init__(self, layout):
 		self.__contents=[]	
-		self.__level=ViewLevel()
+		self.__level=LayoutLevel()
 		self.__layout=layout	
 
 	def render(self, bom):
@@ -22,19 +22,16 @@ class View:
 
 	def export_part(self, part_data):
 		self.__layout.export(part_data)
-		self.__update()
+		self.__contents.append(self.__level.render_part(self.__layout))
 
 	def export(self, items):
 		self.__layout.export(items, self)
-
-	def __update(self):
-		self.__contents.append(self.__level.render_part(self.__layout))
 
 	def __str__(self):
 		return ''.join(self.__contents)
 
 
-class ViewLevel:
+class LayoutLevel:
 	def __init__(self, value=-1):
 		self.__value=value		
 
