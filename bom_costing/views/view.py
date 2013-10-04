@@ -22,7 +22,10 @@ class View:
 
 	def export_part(self, part_data):
 		self.__layout.export(part_data)
-		self.__contents.append(self.__level.render_part(self.__layout))
+		self.__contents.append(self.__part_layout())
+
+	def __part_layout(self):
+		return self.__level.render_part(self.__layout)
 
 	def export(self, items):
 		self.__layout.export(items, self)
