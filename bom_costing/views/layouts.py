@@ -1,8 +1,41 @@
 #!/usr/bin/python
 
-from generic import View
+class Layout:
+	def __init__(self):
+		self._current_part={'name':'', 'code':'', 'quantity':'', 'cost':''} 
 
-class TextView(View):
+	def export(self, items, destination=None):
+		if destination is None: 
+			destination=self
+		for each in items:
+			each.export(destination)
+
+	def add_name(self, name):
+		self._current_part["name"]=name
+
+	def add_code(self, code):
+		self._current_part["code"]=code
+
+	def add_quantity(self, quantity):
+		self._current_part["quantity"]=quantity
+
+	def add_cost(self, cost):
+		self._current_part["cost"]=cost
+
+	def render_part(self, level): 
+		pass
+
+	def render_view(self, view):
+		return self._header()+view.__str__()+self._footer()
+
+	def _header(self):
+		pass
+
+	def _footer(self):
+		pass
+
+
+class TextLayout(Layout):
 	def render_part(self, level): 
 		return self.__format_level(level)+self.__format_part()
 

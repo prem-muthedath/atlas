@@ -16,8 +16,8 @@ class Part:
 	def cost(self, quantity):
 		return quantity.cost(self.__part_cost)
 
-	def export(self, view):
-		view.export(self.__data())
+	def export(self, layout):
+		layout.export(self.__data())
 
 	def __data(self):
 		return [Name(str(self)), self.__source_code]		
