@@ -56,12 +56,12 @@ class TextLayout(Layout):
 		return 'Level'.center(13)		
 
 	def __part_header(self):
-		view=self.__class__()
-		view.add_name('Part')
-		view.add_code('Code')
-		view.add_quantity('Quantity')
-		view.add_cost('Cost')
-		return view.__format_part()	
+		layout=self.__class__()
+		layout.add_name('Part')
+		layout.add_code('Code')
+		layout.add_quantity('Quantity')
+		layout.add_cost('Cost')
+		return layout.__format_part()	
 
 	def _footer(self):
 		return ''
