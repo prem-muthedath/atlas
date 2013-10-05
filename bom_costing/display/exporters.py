@@ -70,7 +70,7 @@ class TextExporter(Exporter):
 			self._current_part["cost"].center(10)+'\n'
 
 	def build(self):
-		return self.__header()+super(TextExporter, self).build()
+		return self.__header()+super(type(self), self).build()
 
 	def __header(self):
 		return self.__level_header()+self.__part_header()
