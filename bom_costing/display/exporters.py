@@ -1,14 +1,21 @@
 #!/usr/bin/python
 
-class Layout:
+class Exporter(object):
 	def __init__(self):
+		self.__level=ExportLevel()	
 		self._current_part={'name':'', 'code':'', 'quantity':'', 'cost':''} 
+		self.__exports=[]	
 
-	def export(self, items, destination=None):
-		if destination is None: 
-			destination=self
+	def export_bom(self, bom_components):
+		self.__level.export_bom(bom_components, self)
+
+	def export_items(self, items):
 		for each in items:
-			each.export(destination)
+			each.export(self)
+
+	def export_part(self, part_data):
+		self.export_items(part_data)
+		self.__exports.append(self.__level.part_export(self))
 
 	def add_name(self, name):
 		self._current_part["name"]=name
@@ -22,15 +29,34 @@ class Layout:
 	def add_cost(self, cost):
 		self._current_part["cost"]=cost
 
-	def render_part(self, level): 
+	def part_export(self, level): 
 		pass
 
-	def render_view(self, view):
-		pass
+	def build(self):
+		return ''.join(self.__exports)
 
 
-class TextLayout(Layout):
-	def render_part(self, level): 
+class ExportLevel:
+	def __init__(self, value=-1):
+		self.__value=value		
+
+	def export_bom(self, bom_components, exporter):
+		self.__enter_bom()
+		exporter.export_items(bom_components)
+		self.__exit_bom()
+
+	def __enter_bom(self):
+		self.__value+=1
+
+	def __exit_bom(self):
+		self.__value-=1
+
+	def part_export(self, exporter):
+		return exporter.part_export(self.__value)
+
+
+class TextExporter(Exporter):
+	def part_export(self, level): 
 		return self.__format_level(level)+self.__format_part()
 
 	def __format_level(self, level):
@@ -43,8 +69,8 @@ class TextLayout(Layout):
 			self._current_part["quantity"].center(10)+ \
 			self._current_part["cost"].center(10)+'\n'
 
-	def render_view(self, view):
-		return self.__header()+view.__str__()
+	def build(self):
+		return self.__header()+super(TextExporter,self).build()
 
 	def __header(self):
 		return self.__level_header()+self.__part_header()

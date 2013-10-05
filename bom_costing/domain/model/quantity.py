@@ -11,8 +11,8 @@ class Quantity:
 		assembly_cost.add_costs(self.__value*[part_cost])
 		return assembly_cost
 
-	def export(self, layout):
-		layout.add_quantity(self.__data())
+	def export(self, exporter):
+		exporter.add_quantity(self.__data())
 
 	def __data(self):
 		return str(self.__value)
