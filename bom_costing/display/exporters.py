@@ -70,7 +70,7 @@ class TextExporter(Exporter):
 			self._current_part["cost"].center(10)+'\n'
 
 	def build(self):
-		return self.__header()+super(TextExporter,self).build()
+		return self.__header()+super(TextExporter, self).build()
 
 	def __header(self):
 		return self.__level_header()+self.__part_header()
@@ -79,9 +79,9 @@ class TextExporter(Exporter):
 		return 'Level'.center(13)		
 
 	def __part_header(self):
-		layout=self.__class__()
-		layout.add_name('Part')
-		layout.add_code('Code')
-		layout.add_quantity('Quantity')
-		layout.add_cost('Cost')
-		return layout.__format_part()	
+		exporter=self.__class__()
+		exporter.add_name('Part')
+		exporter.add_code('Code')
+		exporter.add_quantity('Quantity')
+		exporter.add_cost('Cost')
+		return exporter.__format_part()	
