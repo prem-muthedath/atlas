@@ -2,20 +2,19 @@
 
 class Exporter(object):
 	def __init__(self):
-		self.__level=ExportLevel()	
+		self.__export=Export()	
 		self._current_part={'name':'', 'code':'', 'quantity':'', 'cost':''} 
-		self.__exports=[]	
 
 	def export_bom(self, bom_components):
-		self.__level.export_bom(bom_components, self)
+		self.__export.export_bom(bom_components, self)
+
+	def export_part(self, part_data):
+		self.export_items(part_data)
+		self.__export.update(self)
 
 	def export_items(self, items):
 		for each in items:
 			each.export(self)
-
-	def export_part(self, part_data):
-		self.export_items(part_data)
-		self.__exports.append(self.__level.part_export(self))
 
 	def add_name(self, name):
 		self._current_part["name"]=name
@@ -33,7 +32,22 @@ class Exporter(object):
 		pass
 
 	def build(self):
-		return ''.join(self.__exports)
+		return str(self.__export)
+
+
+class Export:
+	def __init__(self):
+		self.__contents=[]	
+		self.__level=ExportLevel()	
+
+	def export_bom(self, bom_components, exporter):
+		self.__level.export_bom(bom_components, exporter)
+
+	def update(self, exporter):
+		self.__contents.append(self.__level.part_export(exporter))
+
+	def __str__(self):
+		return ''.join(self.__contents)
 
 
 class ExportLevel:
