@@ -26,12 +26,6 @@ class Layout:
 		pass
 
 	def render_view(self, view):
-		return self._header()+view.__str__()+self._footer()
-
-	def _header(self):
-		pass
-
-	def _footer(self):
 		pass
 
 
@@ -49,7 +43,10 @@ class TextLayout(Layout):
 			self._current_part["quantity"].center(10)+ \
 			self._current_part["cost"].center(10)+'\n'
 
-	def _header(self):
+	def render_view(self, view):
+		return self.__header()+view.__str__()
+
+	def __header(self):
 		return self.__level_header()+self.__part_header()
 
 	def __level_header(self):
@@ -62,6 +59,3 @@ class TextLayout(Layout):
 		layout.add_quantity('Quantity')
 		layout.add_cost('Cost')
 		return layout.__format_part()	
-
-	def _footer(self):
-		return ''
