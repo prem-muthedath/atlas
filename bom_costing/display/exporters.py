@@ -31,8 +31,11 @@ class Exporter(object):
 	def part_export(self, level): 
 		pass
 
-	def build(self):
-		return str(self.__export)
+	def render(self):
+		return self.__export.render(self._layout())
+
+	def _layout(self):
+		return Layout()
 
 
 class Export:
@@ -46,8 +49,8 @@ class Export:
 	def update(self, exporter):
 		self.__contents.append(self.__level.part_export(exporter))
 
-	def __str__(self):
-		return ''.join(self.__contents)
+	def render(self, layout):
+		return layout.render(''.join(self.__contents))
 
 
 class ExportLevel:
@@ -69,6 +72,15 @@ class ExportLevel:
 		return exporter.part_export(self.__value)
 
 
+class Layout:
+	def __init__(self, header='', footer=''):
+		self.__header=header
+		self.__footer=footer
+
+	def render(self, contents):
+		return self.__header+contents+self.__footer
+
+
 class TextExporter(Exporter):
 	def part_export(self, level): 
 		return self.__format_level(level)+self.__format_part()
@@ -83,8 +95,8 @@ class TextExporter(Exporter):
 			self._current_part["quantity"].center(10)+ \
 			self._current_part["cost"].center(10)+'\n'
 
-	def build(self):
-		return self.__header()+super(type(self), self).build()
+	def _layout(self):
+		return Layout(header=self.__header())
 
 	def __header(self):
 		return self.__level_header()+self.__part_header()

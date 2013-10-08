@@ -55,7 +55,7 @@ bom.cost(bomcost)
 
 exporter=TextExporter()
 bom.export(exporter)
-print exporter.build()
+print exporter.render()
 
 print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", bomcost
 
