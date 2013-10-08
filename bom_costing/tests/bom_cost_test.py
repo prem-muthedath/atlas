@@ -2,7 +2,7 @@
 
 from ..domain.configuration import BomBuilder
 from ..domain.model.costs import AssemblyCost
-from ..display.exporters import TextExporter
+from ..exporters.text import TextExporter
 
 
 def configure():
