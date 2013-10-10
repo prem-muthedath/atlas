@@ -1,20 +1,26 @@
 #!/usr/bin/python
 
+from collections import OrderedDict
+
 class Exporter(object):
 	def __init__(self):
-		self.__export=Export()	
 		self._current_part={'name':'', 'code':'', 'quantity':'', 'cost':''} 
+		self.__export=Export()
 
-	def export_bom(self, bom_components):
-		self.__export.export_bom(bom_components, self)
+	def render(self, bom):
+		bom.export(ExportLevel(), self)		
+		return self.__export.render(self._layout())
 
 	def export_part(self, part_data):
 		self.export_items(part_data)
-		self.__export.update(self)
+		self.__export.add(self._part_export())
 
-	def export_items(self, items):
-		for each in items:
+	def export_items(self, items):		
+		for each in items:			
 			each.export(self)
+
+	def add_level(self, level):
+		self._current_part['level']=level
 
 	def add_name(self, name):
 		self._current_part["name"]=name
@@ -28,29 +34,11 @@ class Exporter(object):
 	def add_cost(self, cost):
 		self._current_part["cost"]=cost
 
-	def part_export(self, level): 
-		pass
-
-	def render(self):
-		return self.__export.render(self._layout())
+	def _part_export(self):
+		pass		
 
 	def _layout(self):
 		return Layout()
-
-
-class Export:
-	def __init__(self):
-		self.__contents=[]	
-		self.__level=ExportLevel()	
-
-	def export_bom(self, bom_components, exporter):
-		self.__level.export_bom(bom_components, exporter)
-
-	def update(self, exporter):
-		self.__contents.append(self.__level.part_export(exporter))
-
-	def render(self, layout):
-		return layout.render(''.join(self.__contents))
 
 
 class ExportLevel:
@@ -58,18 +46,25 @@ class ExportLevel:
 		self.__value=value		
 
 	def export_bom(self, bom_components, exporter):
-		self.__enter_bom()
-		exporter.export_items(bom_components)
-		self.__exit_bom()
+		for each in bom_components:
+			each.export(self.__child(), exporter)
 
-	def __enter_bom(self):
-		self.__value+=1
+	def __child(self):
+		return self.__class__(self.__value+1)
 
-	def __exit_bom(self):
-		self.__value-=1
+	def export(self, exporter):
+		exporter.add_level(str(self.__value))
 
-	def part_export(self, exporter):
-		return exporter.part_export(self.__value)
+
+class Export:
+	def __init__(self):
+		self.__contents=[]	
+
+	def add(self, part_export):
+		self.__contents.append(part_export)
+
+	def render(self, layout):
+		return layout.render(''.join(self.__contents))
 
 
 class Layout:
@@ -79,3 +74,4 @@ class Layout:
 
 	def render(self, contents):
 		return self.__header+contents+self.__footer
+

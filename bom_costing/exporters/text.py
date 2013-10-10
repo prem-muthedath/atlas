@@ -4,10 +4,11 @@ from base import Exporter
 from base import Layout
 
 class TextExporter(Exporter):
-	def part_export(self, level): 
-		return self.__format_level(level)+self.__format_part()
+	def _part_export(self): 
+		return self.__format_level()+self.__format_part()
 
-	def __format_level(self, level):
+	def __format_level(self):
+		level=int(self._current_part['level'])
 		indented_level=abs(level)*"  "+str(level)
 		return indented_level.ljust(13)
 

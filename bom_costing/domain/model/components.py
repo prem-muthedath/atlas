@@ -4,7 +4,6 @@ import copy
 from ..errors import DuplicateError
 from costs import AssemblyCost
 
-
 class Bom:
 	def __init__(self):
 		self.__components=[]
@@ -32,8 +31,8 @@ class Bom:
 	def __is_leaf(self, bom_part):
 		return self.__components[len(self.__components)-1]==bom_part
 
-	def export(self, exporter):
-		exporter.export_bom(self.__data())
+	def export(self, level, exporter):
+		level.export_bom(self.__data(), exporter)
 
 	def __data(self):
 		return copy.deepcopy(self.__components)
@@ -59,9 +58,8 @@ class BomPart():
 	def costable(self):
 		return self.__part.costable()
 
-	def export(self, exporter):
-		exporter.export_part(self.__data())
+	def export(self, level, exporter):
+		exporter.export_part(self.__data(level))
 
-	def __data(self):
-		return [self.__quantity, self.__actual_cost(), self.__part]
-
+	def __data(self, level):
+		return [level, self.__quantity, self.__actual_cost(), self.__part]

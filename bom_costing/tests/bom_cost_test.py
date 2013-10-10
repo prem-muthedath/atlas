@@ -53,9 +53,7 @@ bomcost=AssemblyCost()
 bom.cost(bomcost)
 
 
-exporter=TextExporter()
-bom.export(exporter)
-print exporter.render()
+print TextExporter().render(bom)
 
 print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", bomcost
 
