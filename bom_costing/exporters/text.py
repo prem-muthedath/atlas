@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-from base import Exporter
+from base import PartExporter
 from base import Layout
 
-class TextExporter(Exporter):
-	def _part_export(self): 
+class TextPartExporter(PartExporter):
+	def render(self): 
 		return self.__format_level()+self.__format_part()
 
 	def __format_level(self):
@@ -18,8 +18,8 @@ class TextExporter(Exporter):
 			self._current_part["quantity"].center(10)+ \
 			self._current_part["cost"].center(10)+'\n'
 
-	def _layout(self):
-		return Layout(header=self.__header())
+	def layout(self, contents):
+		return Layout(header=self.__header()).render(contents)
 
 	def __header(self):
 		return self.__level_header()+self.__part_header()

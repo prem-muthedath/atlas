@@ -1,21 +1,30 @@
 #!/usr/bin/python
 
-from collections import OrderedDict
-
 class Exporter(object):
-	def __init__(self):
-		self._current_part={'name':'', 'code':'', 'quantity':'', 'cost':''} 
-		self.__export=Export()
+	def __init__(self, part_exporter_type):
+		self.__part_exporter_type=part_exporter_type	
+		self.__part_exporters=[]
 
 	def render(self, bom):
 		bom.export(ExportLevel(), self)		
-		return self.__export.render(self._layout())
+		return self.__part_exporter_type().layout(self.__content())
 
 	def export_part(self, part_data):
-		self.export_items(part_data)
-		self.__export.add(self._part_export())
+		self.__part_exporters.append(self.__part_exporter_type())
+		self.__part_exporters[-1].export_items(part_data)
 
-	def export_items(self, items):		
+	def __content(self):
+		rendered_contents=[]
+		for each in self.__part_exporters:
+			rendered_contents.append(each.render())
+		return ''.join(rendered_contents)							
+
+
+class PartExporter(object):
+	def __init__(self):
+		self._current_part={'level:'', name':'', 'code':'', 'quantity':'', 'cost':''} 
+
+	def export_items(self, items):	
 		for each in items:			
 			each.export(self)
 
@@ -34,11 +43,11 @@ class Exporter(object):
 	def add_cost(self, cost):
 		self._current_part["cost"]=cost
 
-	def _part_export(self):
-		pass		
+	def _render(self):
+		pass	
 
-	def _layout(self):
-		return Layout()
+	def layout(self, contents):
+		return Layout().render(contents)				
 
 
 class ExportLevel:
@@ -56,22 +65,10 @@ class ExportLevel:
 		exporter.add_level(str(self.__value))
 
 
-class Export:
-	def __init__(self):
-		self.__contents=[]	
-
-	def add(self, part_export):
-		self.__contents.append(part_export)
-
-	def render(self, layout):
-		return layout.render(''.join(self.__contents))
-
-
 class Layout:
 	def __init__(self, header='', footer=''):
 		self.__header=header
 		self.__footer=footer
 
-	def render(self, contents):
-		return self.__header+contents+self.__footer
-
+	def render(self, content):
+		return self.__header+content+self.__footer
