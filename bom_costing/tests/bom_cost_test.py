@@ -54,7 +54,7 @@ bomcost=AssemblyCost()
 bom.cost(bomcost)
 
 
-print Exporter(TextPartExporter).render(bom)
+print Exporter(TextPartExporter).export(bom)
 
 print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", bomcost
 
