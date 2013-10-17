@@ -3,8 +3,8 @@
 from collections import OrderedDict
 
 class Exporter(object):
-	def __init__(self, part_exporter_type):
-		self.__part_exporter_type=part_exporter_type	
+	def __init__(self, format):
+		self.__format=format	
 		self.__exports=[]
 
 	def export(self, bom):
@@ -15,7 +15,7 @@ class Exporter(object):
 		self.__exports.append(self.__part_exporter().export(part_data))
 
 	def __part_exporter(self):
-		return self.__part_exporter_type()	
+		return PartExporter(self.__format)
 
 	def __layout(self):
 		total=self.__header()
@@ -24,44 +24,36 @@ class Exporter(object):
 		return total
 
 	def __header(self):
-		return self.__part_exporter().header()
+		return Export(self.__format.header())
 
 
 class PartExporter(object):
-	def __init__(self):
+	def __init__(self, format):
 		self.__part=OrderedDict([('level', ''), ('name', ''), ('code', ''), ('quantity', ''), ('cost', '')]) 
+		self.__format=format
 
 	def export(self, part_data):
 		self.export_items(part_data)
-		return self.__layout()
+		return Export(''.join(self.__part.values()))				
 
 	def export_items(self, items):	
 		for each in items:			
 			each.export(self)
-
-	def __layout(self):
-		return Export(''.join(self.__part.values()))
-
+	
 	def add_level(self, level):
-		self.__part['level']=level
+		self.__part['level']=self.__format.level(level)
 
 	def add_name(self, name):
-		self.__part['name']=name
+		self.__part['name']=self.__format.name(name)
 
 	def add_code(self, code):
-		self.__part['code']=code
+		self.__part['code']=self.__format.code(code)
 
 	def add_quantity(self, quantity):
-		self.__part['quantity']=quantity
+		self.__part['quantity']=self.__format.quantity(quantity)
 
 	def add_cost(self, cost):
-		self.__part['cost']=cost
-
-	def _super(self):
-		return super(type(self), self)
-
-	def header(self):
-		return self.__layout()		
+		self.__part['cost']=self.__format.cost(cost)
 
 
 class Export:
