@@ -2,72 +2,77 @@
 
 from collections import OrderedDict
 
-class Exporter(object):
-	def __init__(self, format):
-		self.__format=format	
-		self.__exports=[]
+class Exporter:
+	def __init__(self):
+		self.__part_exporters=[]
 
 	def export(self, bom):
 		bom.export(ExportLevel(), self)		
-		return self.__layout()
 
 	def export_part(self, part_data):
-		self.__exports.append(self.__part_exporter().export(part_data))
+		self.__part_exporters.append(PartExporter(self))
+		self.__part_exporters[-1].export_items(part_data)
 
-	def __part_exporter(self):
-		return PartExporter(self.__format)
+	def level(self, level): 
+		pass	
 
-	def __layout(self):
-		total=self.__header()
-		for each in self.__exports:
-			total=total.add(each)
-		return total
+	def name(self, name): 
+		pass
 
-	def __header(self):
-		return Export(self.__format.header())
+	def code(self, code): 
+		pass
+
+	def quantity(self, quantity): 
+		pass
+
+	def cost(self, cost): 
+		pass
+
+	def render_part(self, content_string): 
+		pass
+
+	def render(self):
+		return self._header()+self._contents()+self._footer()
+
+	def _header(self):
+		return ''
+
+	def _contents(self):
+		return ''.join(each.render() for each in self.__part_exporters)
+
+	def _footer(self):
+		return ''
 
 
 class PartExporter(object):
-	def __init__(self, format):
+	def __init__(self, bom_exporter):
 		self.__part=OrderedDict([('level', ''), ('name', ''), ('code', ''), ('quantity', ''), ('cost', '')]) 
-		self.__format=format
-
-	def export(self, part_data):
-		self.export_items(part_data)
-		return Export(''.join(self.__part.values()))				
+		self.__bom_exporter=bom_exporter
 
 	def export_items(self, items):	
 		for each in items:			
 			each.export(self)
 	
 	def add_level(self, level):
-		self.__part['level']=self.__format.level(level)
+		self.__part['level']=self.__bom_exporter.level(level)
 
 	def add_name(self, name):
-		self.__part['name']=self.__format.name(name)
+		self.__part['name']=self.__bom_exporter.name(name)
 
 	def add_code(self, code):
-		self.__part['code']=self.__format.code(code)
+		self.__part['code']=self.__bom_exporter.code(code)
 
 	def add_quantity(self, quantity):
-		self.__part['quantity']=self.__format.quantity(quantity)
+		self.__part['quantity']=self.__bom_exporter.quantity(quantity)
 
 	def add_cost(self, cost):
-		self.__part['cost']=self.__format.cost(cost)
+		self.__part['cost']=self.__bom_exporter.cost(cost)
 
+	def render(self):
+		return self.__bom_exporter.render_part(self.__contents())
 
-class Export:
-	def __init__(self, data=''):
-		self.__data=data
-
-	def add(self, export):
-		return export.add_to(self.__data)	
-
-	def add_to(self, data):
-		return Export(data+self.__data)
-
-	def __str__(self):
-		return str(self.__data)
+	def __contents(self):
+		return ''.join(self.__part.values())
 
 
 class ExportLevel:

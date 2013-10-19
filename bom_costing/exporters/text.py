@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
-class TextFormat:
+from base import Exporter
+
+class TextExporter(Exporter):
 	def level(self, level):
 		indent=abs(int(level))*"  "
 		return (indent+level).ljust(13)
@@ -15,9 +17,12 @@ class TextFormat:
 		return quantity.center(10)
 
 	def cost(self, cost):
-		return cost.center(10)+'\n'
+		return cost.center(10)
 
-	def header(self):
+	def render_part(self, content_string):
+		return content_string+'\n'
+
+	def _header(self):
 		return 'Level'.center(13)+ \
 			self.name('Part')+ \
 			self.code('Code')+ \
