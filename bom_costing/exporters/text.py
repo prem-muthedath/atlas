@@ -1,30 +1,30 @@
 #!/usr/bin/python
 
-from base import Exporter
+from base import Format
 
-class TextExporter(Exporter):
-	def level(self, level):
+class TextFormat(Format):
+	def _level(self, level):
 		indent=abs(int(level))*"  "
 		return (indent+level).ljust(13)
 
-	def name(self, name):
+	def _name(self, name):
 		return name.center(65)
 
-	def code(self, code):
+	def _code(self, code):
 		return code.center(10)
 
-	def quantity(self, quantity):
+	def _quantity(self, quantity):
 		return quantity.center(10)
 
-	def cost(self, cost):
+	def _cost(self, cost):
 		return cost.center(10)
 
-	def render_part(self, content_string):
-		return content_string+'\n'
+	def part_string(self, level, name, code, quantity, cost):	
+		return super(type(self), self).part_string(level, name, code, quantity, cost)+'\n'
 
 	def _header(self):
 		return 'Level'.center(13)+ \
-			self.name('Part')+ \
-			self.code('Code')+ \
-			self.quantity('Quantity')+ \
-			self.cost('Cost')+'\n'
+			self._name('Part')+ \
+			self._code('Code')+ \
+			self._quantity('Quantity')+ \
+			self._cost('Cost')+'\n'
