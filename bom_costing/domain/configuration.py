@@ -1,28 +1,29 @@
 #!/usr/bin/python
 
 from model.components import Bom
-from model.components import BomPart
+from model.components import Node
 from model.part import Part
+from model.number import Number
 from model.quantity import Quantity
 from model.source_code import SourceCode
-from model.costs import PartCost
+from model.cost import Cost
 
 class BomBuilder():
 	def __init__(self):
 		self.__parents=[Bom()]
 		self.__parent_level=0
 
-	def add_item(self, level, code, cost, quantity):
+	def add_item(self, level, number, code, cost, quantity):
 		self.__new_level(level)
-		self.__add(code, cost, quantity, self.__parent())
+		self.__add(number, code, cost, quantity, self.__parent())
 		self.__new_parents()
 
 	def __new_level(self, level):
 		self.__parent_level=level
 
-	def __add(self, code, cost, quantity, bom):
-		part=Part(SourceCode(code), PartCost(cost))
-		bom.add(BomPart(part, Quantity(quantity), bom))
+	def __add(self, number, code, cost, quantity, bom):
+		part=Part(Number(number), SourceCode(code), Cost(cost))
+		bom.add(Node(part, Quantity(quantity), bom))
 
 	def __parent(self):
 		if(self.__new_bom()): self.__create()

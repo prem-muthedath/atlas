@@ -3,28 +3,28 @@
 from base import Format
 
 class TextFormat(Format):
-	def _level(self, level):
+	def level(self, level):
 		indent=abs(int(level))*"  "
 		return (indent+level).ljust(13)
 
-	def _name(self, name):
-		return name.center(65)
+	def number(self, number):
+		return number.center(10)
 
-	def _code(self, code):
+	def code(self, code):
 		return code.center(10)
 
-	def _quantity(self, quantity):
+	def quantity(self, quantity):
 		return quantity.center(10)
 
-	def _cost(self, cost):
+	def cost(self, cost):
 		return cost.center(10)
 
-	def part_string(self, level, name, code, quantity, cost):	
-		return super(type(self), self).part_string(level, name, code, quantity, cost)+'\n'
+	def render_part(self, part_data):		
+		return super(type(self), self).render_part(part_data)+'\n'
 
 	def _header(self):
 		return 'Level'.center(13)+ \
-			self._name('Part')+ \
-			self._code('Code')+ \
-			self._quantity('Quantity')+ \
-			self._cost('Cost')+'\n'
+			self.number('Part')+ \
+			self.code('Code')+ \
+			self.quantity('Quantity')+ \
+			self.cost('Cost')+'\n'

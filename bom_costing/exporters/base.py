@@ -1,85 +1,91 @@
 #!/usr/bin/python
 
 from collections import OrderedDict
+from StringIO import StringIO
 
 class Exporter:
 	def __init__(self, format):
-		self.__exporters=[]
+		self.__exports=[]
 		self.__format=format
 
 	def export(self, bom):
 		bom.export(ExportLevel(), self)
-		return self.render()
+		return self.__package(self.__render())
 
 	def export_part(self, part_data):
-		self.__exporters.append(PartExporter())
-		self.__exporters[-1].export_items(part_data)
+		part_export=self.__format.render_part(part_data)
+		self.__exports.append(part_export)
 
-	def render(self):
-		return self.__format.render(self.__contents())
+	def __render(self):
+		return self.__format.render(self)
 
-	def __contents(self):
-		return ''.join(each.render(self.__format) for each in self.__exporters)
+	def	content(self):
+		return ''.join(self.__exports)
+
+	def __package(self, output):
+		stream=StringIO()
+		stream.writelines(output)
+		stream.seek(0)
+		return stream	
 
 
 class Format(object):
-	def part_string(self, level, name, code, quantity, cost):
-		return self._level(level)+ \
-			self._name(name)+ \
-			self._code(code)+ \
-			self._quantity(quantity)+ \
-			self._cost(cost)		
+	def render_part(self, part_data):
+		return PartBuilder().build(part_data, self)
 
-	def _level(self, level):
+	def level(self, level):
 		pass		
 
-	def _name(self, name):
+	def number(self, number):
 		pass		
 
-	def _code(self, code):
+	def code(self, code):
 		pass		
 
-	def _quantity(self, quantity):
+	def quantity(self, quantity):
 		pass		
 
-	def _cost(self, cost):
+	def cost(self, cost):
 		pass		
 
-	def render(self, exports):
-		return self._header()+exports+self._footer()
+	def render(self, exporter):
+		return self._header()+exporter.content()+self._footer()
 
-	def _header(self):
+	def header(self):
 		return ''
 
 	def _footer(self):
 		return ''
 
 
-class PartExporter:
+class PartBuilder:
+	__FIELDS=('LEVEL', 'NUMBER', 'CODE', 'QUANTITY', 'COST')
+	
 	def __init__(self):
-		self.__part=OrderedDict([('level', ''), ('name', ''), ('code', ''), ('quantity', ''), ('cost', '')]) 		
+		self.__part=OrderedDict((each, '') for each in self.__FIELDS)
 
-	def export_items(self, items):	
-		for each in items:			
-			each.export(self)
+	def build(self, part_data, format):	
+		self.add(part_data)
+		return ''.join(each.render(format) for each in self.__part.values())
+
+	def add(self, part_data):
+		for each in part_data:			
+			each.add_to(self)		
 
 	def add_level(self, level):
-		self.__part['level']=level
+		self.__part['LEVEL']=level
 
-	def add_name(self, name):
-		self.__part['name']=name
+	def add_number(self, number):
+		self.__part['NUMBER']=number
 
 	def add_code(self, code):
-		self.__part['code']=code
+		self.__part['CODE']=code
 
 	def add_quantity(self, quantity):
-		self.__part['quantity']=quantity
+		self.__part['QUANTITY']=quantity
 
 	def add_cost(self, cost):
-		self.__part['cost']=cost
-
-	def render(self, format):
-		return format.part_string(*self.__part.values())
+		self.__part['COST']=cost
 
 
 class ExportLevel:
@@ -93,5 +99,8 @@ class ExportLevel:
 	def __child(self):
 		return self.__class__(self.__value+1)
 
-	def export(self, part_exporter):
-		return part_exporter.add_level(str(self.__value))
+	def add_to(self, part_builder):
+		part_builder.add_level(self)		
+
+	def render(self, format):
+		return format.level(str(self.__value))

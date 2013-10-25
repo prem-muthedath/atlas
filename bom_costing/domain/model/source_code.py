@@ -10,5 +10,8 @@ class SourceCode:
 	def costable(self):
 		return self.__code=='1'
 
-	def export(self, part_exporter):
-		part_exporter.add_code(self.__code)	
+	def add_to(self, part_builder):
+		part_builder.add_code(self)
+
+	def render(self, format):
+		return format.code(self.__code)	
