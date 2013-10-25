@@ -36,7 +36,7 @@ class Bom:
 		return copy.deepcopy(self.__components)
 
 
-class Node:
+class BomPart:
 	def __init__(self, part, quantity, bom):
 		self.__part=part
 		self.__quantity=quantity
