@@ -23,7 +23,7 @@ class Bom:
 		return self.__first_costable(bom_part) and (self.__is_leaf(bom_part) or bom_part.costable())
 
 	def __first_costable(self, bom_part):
-		return 0==sum(each.is_costed() for index, each in enumerate(self.__components) if index < self.__components.index(bom_part))
+		return 0==sum(each.is_costed() for index, each in enumerate(self.__components)	if index < self.__components.index(bom_part))
 
 	def __is_leaf(self, bom_part):
 		return self.__components[-1]==bom_part
