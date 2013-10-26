@@ -57,4 +57,4 @@ class BomPart:
 		exporter.export_part(self.__data(level))
 
 	def __data(self, level):
-		return [level, self.__quantity, self.cost(), self.__part]
+		return [level, self.__part, self.__quantity, self.cost()]
