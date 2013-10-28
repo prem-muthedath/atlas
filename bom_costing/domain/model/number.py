@@ -4,8 +4,8 @@ class Number:
 	def __init__(self, number):
 		self.__number=number
 
-	def add_to(self, part_builder):
-		part_builder.add_number(self)
+	def add_to(self, part_schema):
+		part_schema.add_number(self)
 
-	def render(self, format):
-		return format.number(self.__number)
+	def build(self, builder):
+		return builder.number(self.__number)

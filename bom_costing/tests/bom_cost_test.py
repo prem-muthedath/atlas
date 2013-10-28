@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 from ..domain.configuration import BomBuilder
+from ..domain.model.costs import Cost
 from ..exporters.base import Exporter
-from ..exporters.text import TextFormat
+from ..exporters.text import TextBuilder
 
 
 def configure():
@@ -49,8 +50,9 @@ def configure():
 
 
 bom=configure()
+cost=Cost()
+bom.cost(cost)
 
-exporter=Exporter(TextFormat())
-print exporter.export(bom).getvalue()
+print Exporter(TextBuilder()).export(bom)
 
-print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", bom.cost()
+print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", cost

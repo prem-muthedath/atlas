@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 class Part:
-	def __init__(self, number, source_code, cost):
+	def __init__(self, number, source_code, unit_cost):
 		self.__number=number
 		self.__source_code=source_code
-		self.__cost=cost
+		self.__unit_cost=unit_cost
 
 	def is_costed(self):  
 		return self.__source_code.is_costed()
@@ -13,10 +13,10 @@ class Part:
 		return self.__source_code.costable()
 
 	def cost(self, quantity):
-		return quantity.cost(self.__cost)
+		return self.__unit_cost.cost(quantity)
 
-	def add_to(self, part_builder):
-		part_builder.add(self.__data())
+	def add_to(self, part_schema):
+		part_schema.add(self.__data())
 
 	def __data(self):
-		return [self.__number, self.__source_code]		
+		return [self.__number, self.__source_code, self.__unit_cost]		
