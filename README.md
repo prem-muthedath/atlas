@@ -33,7 +33,7 @@ HOW TO RUN THE TESTS FROM A TERMINAL:
 3. Press enter.
 4. You should see THREE things in the output:
 	(a) Total cost of the BOM -- actual and expected values.
-	(b) An indented Text representation of parts in the BOM tree and their computed costs;
-	(c) An XML representation of parts in the BOM tree and their computed costs; 
+	(b) An indented Textual representation of parts in the BOM tree and their computed costs;
+	(c) An XML representation of parts in the BOM tree and their computed costs.
  
 
