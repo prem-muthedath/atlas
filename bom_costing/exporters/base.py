@@ -13,8 +13,8 @@ class Exporter(object):
 	def add_part(self, part_data):
 		self.__exports.append(PartSchema().part(part_data, self))
 
-	def part(self, mapped_data):
-		return ''.join(each.export(self) for each in mapped_data)
+	def part(self, ordered_data):
+		return ''.join(each.export(self) for each in ordered_data)
 
 	def level(self, level):
 		pass		
