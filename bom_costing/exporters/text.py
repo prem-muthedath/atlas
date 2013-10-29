@@ -3,31 +3,37 @@
 from base import Exporter
 
 class TextExporter(Exporter):
+	__FIELD_WIDTH=15
+
 	def level(self, level):
-		indent=abs(int(level))*"  "
-		return (indent+level).ljust(13)
+		TWO_SPACES="  "
+		indent=abs(int(level))*TWO_SPACES
+		return (indent+level).ljust(self.__FIELD_WIDTH)
 
 	def number(self, number):
-		return number.center(10)
+		return self.__centered_field(number)
 
 	def code(self, code):
-		return code.center(10)
+		return self.__centered_field(code)
 
 	def quantity(self, quantity):
-		return quantity.center(10)
+		return self.__centered_field(quantity)
 
 	def unit_cost(self, unit_cost):
-		return unit_cost.center(10)
+		return self.__centered_field(unit_cost)
 
 	def cost(self, cost):
-		return cost.center(10)
+		return self.__centered_field(cost)
+
+	def __centered_field(self, value):
+		return value.center(self.__FIELD_WIDTH)
 
 	def part(self, mapped_data):
 		part=super(type(self), self).part(mapped_data)
 		return self._format('', part, '\n')
 
 	def _build(self):
-		header='Level'.center(13)+ \
+		header=self.__centered_field('Level')+ \
 			self.number('Part')+ \
 			self.code('Code')+ \
 			self.unit_cost('Unit Cost')+ \
