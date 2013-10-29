@@ -94,3 +94,6 @@ class PartSchema:
 
 	def add_cost(self, cost):
 		self.__fields['COST']=cost
+
+	def headers(self):
+		return self.__fields.keys()

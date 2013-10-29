@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from base import Exporter
+from base import PartSchema
 
 class TextExporter(Exporter):
 	__FIELD_WIDTH=15
@@ -33,11 +34,6 @@ class TextExporter(Exporter):
 		return self._format('', part, '\n')
 
 	def _build(self):
-		header=self.__centered_field('Level')+ \
-			self.number('Part')+ \
-			self.code('Code')+ \
-			self.unit_cost('Unit Cost')+ \
-			self.quantity('Quantity')+ \
-			self.cost('Cost')+'\n'
+		header=''.join(self.__centered_field(each) for each in PartSchema().headers())+'\n'
 		content=super(type(self), self)._build()
 		return self._format(header, content, '')
