@@ -36,7 +36,6 @@ class XmlExporter(Exporter):
 
 	def _build(self):
 		content=super(type(self), self)._build()		
-		header='<?xml version="1.0" encoding="ISO-8859-1"?>'+ \
-				  '\n'+'<parts>'+'\n'
+		header='<?xml version="1.0" encoding="ISO-8859-1"?>'+'\n'+'<parts>'+'\n'
 		footer='</parts>'
 		return self._format(header, content, footer)
