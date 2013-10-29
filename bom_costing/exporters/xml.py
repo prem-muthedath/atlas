@@ -30,9 +30,9 @@ class XmlExporter(Exporter):
 		suffix=self.__indent(1)+'</part>'+'\n'
 		return self._format(prefix, part, suffix)
 
-	def __indent(self, multiplier):
+	def __indent(self, tabs):
 		TAB='  '
-		return multiplier*TAB
+		return tabs*TAB
 
 	def _build(self):
 		content=super(type(self), self)._build()		
