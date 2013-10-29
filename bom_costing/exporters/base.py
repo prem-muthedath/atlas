@@ -2,30 +2,19 @@
 
 from collections import OrderedDict
 
-class Exporter:
-	def __init__(self, builder):
-		self.__builder=builder
+class Exporter(object):
+	def __init__(self):	
+		self.__exports=[]
 
 	def export(self, bom):
 		bom.export(ExportLevel(), self)
-		return self.__builder.build()
-
-	def export_part(self, part_data):
-		self.__builder.add_part(part_data)
-
-
-class Builder(object):
-	def __init__(self):	
-		self.__exports=[]
+		return self._build()
 
 	def add_part(self, part_data):
 		self.__exports.append(PartSchema().part(part_data, self))
 
 	def part(self, mapped_data):
-		pass
-
-	def _part(self, prefix, mapped_data, suffix):
-		return ''.join([prefix, ''.join(each.build(self) for each in mapped_data), suffix])
+		return ''.join(each.export(self) for each in mapped_data)
 
 	def level(self, level):
 		pass		
@@ -45,11 +34,11 @@ class Builder(object):
 	def unit_cost(self, cost):
 		pass		
 
-	def build(self):
-		pass
-			
-	def _build(self, header, footer):
-		return ''.join([header, ''.join(self.__exports), footer])
+	def _build(self):
+		return ''.join(self.__exports)
+
+	def _format(self, prefix, content, suffix):
+		return ''.join([prefix, content, suffix])
 
 
 class ExportLevel:
@@ -63,11 +52,15 @@ class ExportLevel:
 	def __child(self):
 		return self.__class__(self.__value+1)
 
+	def export_part(self, part_data, exporter):
+		part_data.append(self)
+		exporter.add_part(part_data)
+
 	def add_to(self, part_schema):
 		part_schema.add_level(self)		
 
-	def build(self, builder):
-		return builder.level(str(self.__value))
+	def export(self, exporter):
+		return exporter.level(str(self.__value))
 
 
 class PartSchema:
@@ -76,9 +69,9 @@ class PartSchema:
 	def __init__(self):
 		self.__fields=OrderedDict((each, None) for each in self.__FIELDS)
 
-	def part(self, part_data, builder):	
+	def part(self, part_data, exporter):	
 		self.add(part_data)
-		return builder.part(self.__fields.values())
+		return exporter.part(self.__fields.values())
 
 	def add(self, part_data):
 		for each in part_data:			

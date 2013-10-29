@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from base import Builder
+from base import Exporter
 
-class TextBuilder(Builder):
+class TextExporter(Exporter):
 	def level(self, level):
 		indent=abs(int(level))*"  "
 		return (indent+level).ljust(13)
@@ -23,13 +23,15 @@ class TextBuilder(Builder):
 		return cost.center(10)
 
 	def part(self, mapped_data):
-		return self._part('', mapped_data, '\n')
+		part=super(type(self), self).part(mapped_data)
+		return self._format('', part, '\n')
 
-	def build(self):
+	def _build(self):
 		header='Level'.center(13)+ \
 			self.number('Part')+ \
 			self.code('Code')+ \
 			self.unit_cost('Unit Cost')+ \
 			self.quantity('Quantity')+ \
 			self.cost('Cost')+'\n'
-		return self._build(header, '') 
+		content=super(type(self), self)._build()
+		return self._format(header, content, '')

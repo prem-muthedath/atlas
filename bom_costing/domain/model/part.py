@@ -16,7 +16,4 @@ class Part:
 		return self.__unit_cost.cost(quantity)
 
 	def add_to(self, part_schema):
-		part_schema.add(self.__data())
-
-	def __data(self):
-		return [self.__number, self.__source_code, self.__unit_cost]		
+		part_schema.add(self.__dict__.values())

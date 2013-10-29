@@ -10,8 +10,8 @@ class Cost:
 	def add_to(self, part_schema):
 		part_schema.add_cost(self.__class__(self.__value))
 
-	def build(self, builder):
-		return builder.cost(self.__str__())		
+	def export(self, exporter):
+		return exporter.cost(self.__str__())		
 
 	def __str__(self):
 		return str(self.__value)
@@ -27,8 +27,8 @@ class UnitCost:
 	def add_to(self, part_schema):
 		part_schema.add_unit_cost(self)
 
-	def build(self, builder):
-		return builder.unit_cost(self.__str__())		
+	def export(self, exporter):
+		return exporter.unit_cost(self.__str__())		
 
 	def __str__(self):
 		return str(self.__value)

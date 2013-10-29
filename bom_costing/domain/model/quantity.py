@@ -10,8 +10,8 @@ class Quantity:
 	def add_to(self, part_schema):
 		part_schema.add_quantity(self)
 
-	def build(self, builder):
-		return builder.quantity(self.__data())
+	def export(self, exporter):
+		return exporter.quantity(self.__data())
 
 	def __data(self):
 		return str(self.__value)

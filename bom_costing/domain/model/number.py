@@ -7,5 +7,5 @@ class Number:
 	def add_to(self, part_schema):
 		part_schema.add_number(self)
 
-	def build(self, builder):
-		return builder.number(self.__number)
+	def export(self, exporter):
+		return exporter.number(self.__number)
