@@ -6,8 +6,8 @@ class TextExporter(Exporter):
 	__FIELD_WIDTH=15
 
 	def level(self, level):
-		TWO_SPACES="  "
-		indent=abs(int(level))*TWO_SPACES
+		TAB="  "
+		indent=abs(int(level))*TAB
 		return (indent+level).ljust(self.__FIELD_WIDTH)
 
 	def number(self, number):

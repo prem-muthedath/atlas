@@ -3,8 +3,6 @@
 from base import Exporter
 
 class XmlExporter(Exporter):
-	__TWO_SPACES='  '
-
 	def level(self, level):
 		return self.__field('level', level)
 
@@ -24,13 +22,17 @@ class XmlExporter(Exporter):
 		return self.__field('cost', cost)
 
 	def __field(self, name, value):
-		return 2*self.__TWO_SPACES+'<'+name+'>'+value+'</'+name+'>'+'\n'
+		return self.__indent(2)+'<'+name+'>'+value+'</'+name+'>'+'\n'
 
 	def part(self, mapped_data):
 		part=super(type(self), self).part(mapped_data)
-		prefix=self.__TWO_SPACES+'<part>'+'\n'
-		suffix=self.__TWO_SPACES+'</part>'+'\n'
+		prefix=self.__indent(1)+'<part>'+'\n'
+		suffix=self.__indent(1)+'</part>'+'\n'
 		return self._format(prefix, part, suffix)
+
+	def __indent(self, multiplier):
+		TAB='  '
+		return multiplier*TAB
 
 	def _build(self):
 		header='<?xml version="1.0" encoding="ISO-8859-1"?>'+ \
