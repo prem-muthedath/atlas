@@ -6,7 +6,7 @@ BOM (Bill of Materials) Costing App
 This OO application, written in Python, computes the cost of each part in a typical BOM (Bill of Materials -- a recursive tree structure of parts and BOMs) and returns the following two results:
 
 1. Total cost of the BOM, which is nothing but the sum of the costs of parts in the BOM.
-2. An indented representation of parts in the BOM tree and their computed costs.
+2. Text and XML representations of parts in the BOM tree and their computed costs.
 
 The problem is complicated because the cost of a part depends on its location in the BOM: its predecessors and successors determine if the part can be costed. This is the business logic side.
 
@@ -31,6 +31,9 @@ HOW TO RUN THE TESTS FROM A TERMINAL:
 		python -m bom_costing.tests.bom_cost_test
 
 3. Press enter.
-4. You should see TWO things in the output:
-	(a) An indented representation of parts in the BOM tree and their computed costs; 
-	(b) Total cost of the BOM -- actual and expected values.
+4. You should see THREE things in the output:
+	(a) Total cost of the BOM -- actual and expected values.
+	(b) An indented Text representation of parts in the BOM tree and their computed costs;
+	(c) An XML representation of parts in the BOM tree and their computed costs; 
+ 
+
