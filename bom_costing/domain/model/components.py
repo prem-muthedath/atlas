@@ -20,7 +20,7 @@ class Bom:
 	def is_costed(self):
 		return 0
 	
-	def is_costed_part(self, bom_part): 
+	def costable(self, bom_part): 
 		return self.__first_costable(bom_part) and (self.__is_leaf(bom_part) or bom_part.costable())
 
 	def __first_costable(self, bom_part):
@@ -31,10 +31,11 @@ class Bom:
 		return self.__components[-1]==bom_part
 
 	def export(self, level, exporter):
-		level.export_bom(self.__data(), exporter)
+		data=copy.deepcopy(self.__components)
+		level.export_bom(data, exporter)
 
-	def __data(self):
-		return copy.deepcopy(self.__components)
+	def add_to(self, part_schema):
+		pass		
 
 
 class BomPart:
@@ -48,15 +49,15 @@ class BomPart:
 			cost.add(self.__part.cost(self.__quantity))
 
 	def is_costed(self): 
-		return self.__part.is_costed()  or self.__bom.is_costed_part(self)
+		return self.__part.is_costed()  or self.__bom.costable(self)
 
 	def costable(self):
 		return self.__part.costable()
 
 	def export(self, level, exporter):
-		exporter.export_part(self.__data(level))
+		level.export_part(self.__data(), exporter)
 
-	def __data(self, level):
+	def __data(self):
 		cost=Cost()
-		self.cost(cost)
-		return [level, self.__part, self.__quantity, cost]
+		self.cost(cost)	
+		return [cost]+self.__dict__.values()
