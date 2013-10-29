@@ -2,7 +2,7 @@
 <parts>
 <part>
 <level>2</level>
-<name>P-0001</name>
+<number>P-0001</number>
 <code>12</code>
 <unit_cost>1000</unit_cost>
 <quantity>2</quantity>

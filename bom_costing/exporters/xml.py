@@ -9,7 +9,7 @@ class XmlExporter(Exporter):
 		return self.__field('level', level)
 
 	def number(self, number):
-		return self.__field('name', number)
+		return self.__field('number', number)
 
 	def code(self, code):
 		return self.__field('code', code)
