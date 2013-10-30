@@ -64,10 +64,12 @@ class ExportLevel:
 
 
 class PartSchema:
-	__FIELDS=('LEVEL', 'NUMBER', 'CODE', 'UNIT_COST', 'QUANTITY', 'COST')
+	@classmethod
+	def fields(cls):
+		return ('level', 'number', 'code', 'unit_cost', 'quantity', 'cost')
 	
 	def __init__(self):
-		self.__fields=OrderedDict((each, None) for each in self.__FIELDS)
+		self.__fields=OrderedDict((each, None) for each in self.fields())
 
 	def part(self, part_data, exporter):	
 		self.add(part_data)
@@ -78,22 +80,19 @@ class PartSchema:
 			each.add_to(self)		
 
 	def add_level(self, level):
-		self.__fields['LEVEL']=level
+		self.__fields['level']=level
 
 	def add_number(self, number):
-		self.__fields['NUMBER']=number
+		self.__fields['number']=number
 
 	def add_code(self, code):
-		self.__fields['CODE']=code
+		self.__fields['code']=code
 
 	def add_quantity(self, quantity):
-		self.__fields['QUANTITY']=quantity
+		self.__fields['quantity']=quantity
 
 	def add_unit_cost(self, unit_cost):
-		self.__fields['UNIT_COST']=unit_cost
+		self.__fields['unit_cost']=unit_cost
 
 	def add_cost(self, cost):
-		self.__fields['COST']=cost
-
-	def headers(self):
-		return self.__fields.keys()
+		self.__fields['cost']=cost

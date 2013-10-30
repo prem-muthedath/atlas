@@ -16,7 +16,7 @@ class XmlExporter(Exporter):
 		return self.__field('quantity', quantity)
 
 	def unit_cost(self, unit_cost):
-		return self.__field('unit_cost', unit_cost)
+		return self.__field('unit cost', unit_cost)
 
 	def cost(self, cost):
 		return self.__field('cost', cost)
@@ -26,13 +26,15 @@ class XmlExporter(Exporter):
 
 	def part(self, mapped_data):
 		part=super(type(self), self).part(mapped_data)
-		prefix=self.__indent(1)+'<part>'+'\n'
-		suffix=self.__indent(1)+'</part>'+'\n'
+		prefix=self.__part_add_on('<part>')
+		suffix=self.__part_add_on('</part>')
 		return self._format(prefix, part, suffix)
 
+	def __part_add_on(self, add_on):
+		return self.__indent(1)+add_on+'\n'
+
 	def __indent(self, tabs):
-		TAB='  '
-		return tabs*TAB
+		return tabs*'  '
 
 	def _build(self):
 		content=super(type(self), self)._build()		
