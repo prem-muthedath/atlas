@@ -116,7 +116,7 @@ class PartSchema:
 	LEVEL=Attribute('level', 0)
 	NUMBER=Attribute('number', 1) 
 	CODE=Attribute('code', 2)
-	UNIT_COST=Attribute('unit_cost', 3)
+	UNIT_COST=Attribute('unit cost', 3)
 	QUANTITY=Attribute('quantity', 4)
 	COST=Attribute('cost', 5)
 
