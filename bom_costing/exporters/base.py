@@ -27,7 +27,7 @@ class Exporter(object):
 		pass
 
 	def __content(self):
-		return	''.join(self._titled_part(each) for each in self.__parts)
+		return ''.join(self._titled_part(each) for each in self.__parts)
 
 	def _titled_part(self, part):
 		pass
