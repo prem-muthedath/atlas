@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <parts>
-<part>
-<level>2</level>
-<number>P-0001</number>
-<code>12</code>
-<unit_cost>1000</unit_cost>
-<quantity>2</quantity>
-<cost>2000</cost>
-</part>
+<part><level>2</level><number>P-0001</number><code>12</code><unit_cost>1000</unit_cost><quantity>2</quantity><cost>2000</cost></part>
 </parts>

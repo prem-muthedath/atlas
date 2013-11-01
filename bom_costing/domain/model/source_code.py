@@ -10,8 +10,8 @@ class SourceCode:
 	def costable(self):
 		return self.__code=='1'
 
-	def add_to(self, part_schema):
-		part_schema.add_code(self)
+	def add_to(self, part_builder):
+		part_builder.add_code(self)
 
-	def export(self, exporter):
-		return exporter.code(self.__code)	
+	def export(self, name, exporter):
+		return exporter.build_field(name, self.__code)	

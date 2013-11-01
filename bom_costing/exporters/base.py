@@ -1,44 +1,36 @@
 #!/usr/bin/python
 
 from collections import OrderedDict
+import string
 
 class Exporter(object):
 	def __init__(self):	
-		self.__exports=[]
+		self.__parts=[]
 
 	def export(self, bom):
 		bom.export(ExportLevel(), self)
-		return self._build()
+		return self.__build()
 
 	def add_part(self, part_data):
-		self.__exports.append(PartSchema().part(part_data, self))
+		self.__parts.append(PartBuilder().part(part_data, self))
 
-	def part(self, ordered_data):
-		return ''.join(each.export(self) for each in ordered_data)
-
-	def level(self, level):
+	def build_field(self, name, value):
 		pass		
 
-	def number(self, number):
+	def build_level(self, name, value):
 		pass		
 
-	def code(self, code):
-		pass		
+	def __build(self):
+		return self._titled_content(self.__content())
 
-	def quantity(self, quantity):
-		pass		
+	def _titled_content(self, content):
+		pass
 
-	def cost(self, cost):
-		pass		
+	def __content(self):
+		return 	''.join(self._titled_part(each) for each in self.__parts)
 
-	def unit_cost(self, cost):
-		pass		
-
-	def _build(self):
-		return ''.join(self.__exports)
-
-	def _format(self, prefix, content, suffix):
-		return ''.join([prefix, content, suffix])
+	def _titled_part(self, part):
+		pass
 
 
 class ExportLevel:
@@ -56,43 +48,83 @@ class ExportLevel:
 		part_data.append(self)
 		exporter.add_part(part_data)
 
-	def add_to(self, part_schema):
-		part_schema.add_level(self)		
+	def add_to(self, part_builder):
+		part_builder.add_level(self)		
 
-	def export(self, exporter):
-		return exporter.level(str(self.__value))
+	def export(self, name, exporter):
+		return exporter.build_level(name, str(self.__value))
 
 
-class PartSchema:
-	@classmethod
-	def fields(cls):
-		return ('level', 'number', 'code', 'unit_cost', 'quantity', 'cost')
-	
+class PartBuilder:
 	def __init__(self):
-		self.__fields=OrderedDict((each, None) for each in self.fields())
+		self.__part=OrderedDict((attribute, None) for attribute in PartSchema.attributes())
 
 	def part(self, part_data, exporter):	
 		self.add(part_data)
-		return exporter.part(self.__fields.values())
+		return ''.join(attribute.export(self.__part[attribute], exporter) for attribute in self.__attributes())
 
 	def add(self, part_data):
 		for each in part_data:			
 			each.add_to(self)		
 
 	def add_level(self, level):
-		self.__fields['level']=level
+		self.__part[PartSchema.LEVEL]=level
 
 	def add_number(self, number):
-		self.__fields['number']=number
+		self.__part[PartSchema.NUMBER]=number
 
 	def add_code(self, code):
-		self.__fields['code']=code
+		self.__part[PartSchema.CODE]=code
 
 	def add_quantity(self, quantity):
-		self.__fields['quantity']=quantity
+		self.__part[PartSchema.QUANTITY]=quantity
 
 	def add_unit_cost(self, unit_cost):
-		self.__fields['unit_cost']=unit_cost
+		self.__part[PartSchema.UNIT_COST]=unit_cost
 
 	def add_cost(self, cost):
-		self.__fields['cost']=cost
+		self.__part[PartSchema.COST]=cost
+
+	def __attributes(self):
+		return self.__part.keys()
+
+
+class Attribute:
+	def __init__(self, name, order):
+		self.__name=name
+		self.__order=order
+
+	def __eq__(self, another):
+		return (type(another) is type(self) and self.__dict__==another.__dict__)
+
+	def __cmp__(self, another):
+		if type(another) is type(self): 
+			return cmp(self.__order, another.__order)
+		raise ValueError('Can not compare -- Type mismatch!')
+
+	def __hash__(self):
+		return hash(self.__name)
+
+	def export(self, value, exporter):
+		return value.export(self.__good_name(), exporter)
+
+	def __good_name(self):
+		return ''.join(each if each not in string.punctuation else ' ' for each in list(self.__name))
+
+
+class PartSchema:
+	LEVEL=Attribute('level', 0)
+	NUMBER=Attribute('number', 1) 
+	CODE=Attribute('code', 2)
+	UNIT_COST=Attribute('unit_cost', 3)
+	QUANTITY=Attribute('quantity', 4)
+	COST=Attribute('cost', 5)
+
+	@classmethod
+	def attributes(cls):
+		return sorted([getattr(cls, each) for each in cls.__dict__.keys() 
+				if each[:1]!='_' and not callable(getattr(cls, each))])
+
+	@classmethod
+	def count(cls):
+		return len(cls.attributes())
