@@ -10,7 +10,7 @@ This OO application, written in Python, computes the cost of each part in a typi
 
 The problem is complicated because the cost of a part depends on its location in the BOM: its predecessors and successors determine if the part can be costed. This is the business logic side.
 
-The other complexity is to collect and present the results (i.e., computed part costs, levels, and other part details) by traversing the BOM's tree structure.  This is the display side.
+The other complexity is to collect and present the results (i.e., computed part costs, levels, and other part details) in multiple formats by traversing the BOM's tree structure.  This is the display side.  A big challenge here was to avoid parallel class heirarchies.
 
 Finally, how to build the BOM tree? By that I mean the sequential addition of parts and sub-BOMs.  The algorithm is a bit tricky, and designing a clean object to do this was a challenge.
 
@@ -32,7 +32,7 @@ HOW TO RUN THE TESTS FROM A TERMINAL:
 
 3. Press enter.
 4. You should see THREE things in the output:
-	(a) Total cost of the BOM -- actual and expected values.
+	(a) Total cost of the BOM -- actual and expected values;
 	(b) An indented Textual representation of parts in the BOM tree and their computed costs;
 	(c) An XML representation of parts in the BOM tree and their computed costs.
  
