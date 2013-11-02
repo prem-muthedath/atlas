@@ -58,7 +58,7 @@ class PartBuilder:
 
 	def part(self, part_data, exporter):	
 		self.add(part_data)
-		return ''.join(attribute.export(self.__part[attribute], exporter) for attribute in self.__attributes())
+		return ''.join(attribute.export(self.__part[attribute], exporter) for attribute in self.__part_attributes())
 
 	def add(self, part_data):
 		for each in part_data:			
@@ -82,7 +82,7 @@ class PartBuilder:
 	def add_cost(self, cost):
 		self.__part[PartSchema.COST]=cost
 
-	def __attributes(self):
+	def __part_attributes(self):
 		return self.__part.keys()
 
 
