@@ -8,4 +8,4 @@ class Number:
 		part_builder.add_number(self)
 
 	def export(self, name, exporter):
-		return exporter.build_field(name, self.__number)
+		return exporter.property(name, self.__number)

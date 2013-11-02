@@ -10,11 +10,11 @@ class TextExporter(Exporter):
 		super(type(self), self).__init__()
 		self.__headers=[]
 
-	def build_field(self, name, value):
+	def property(self, name, value):
 		self.__add_header(name)
 		return self.__centered(value)
 
-	def build_level(self, name, value):	
+	def level(self, name, value):	
 		self.__add_header(name)		
 		indent=abs(int(value))*"  "
 		return (indent+value).ljust(self.__FIELD_WIDTH)
@@ -29,8 +29,8 @@ class TextExporter(Exporter):
 	def _titled_part(self, part):
 		return part+'\n'
 
-	def _titled_content(self, content):
-		return self.__title()+content
+	def _titled_bom(self, bom):
+		return self.__title()+bom
 	
 	def __title(self):
 		return ''.join(self.__format(each) for each in self.__headers)+'\n'

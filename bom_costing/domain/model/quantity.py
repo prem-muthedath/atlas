@@ -11,7 +11,7 @@ class Quantity:
 		part_builder.add_quantity(self)
 
 	def export(self, name, exporter):
-		return exporter.build_field(name, self.__data())
+		return exporter.property(name, self.__data())
 
 	def __data(self):
 		return str(self.__value)

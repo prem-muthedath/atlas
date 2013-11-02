@@ -9,25 +9,22 @@ class Exporter(object):
 
 	def export(self, bom):
 		bom.export(ExportLevel(), self)
-		return self.__build()
+		return self._titled_bom(self.__bom())
 
 	def add_part(self, part_data):
 		self.__parts.append(PartBuilder().part(part_data, self))
 
-	def build_field(self, name, value):
+	def property(self, name, value):
 		pass		
 
-	def build_level(self, name, value):
+	def level(self, name, value):
 		pass		
 
-	def __build(self):
-		return self._titled_content(self.__content())
-
-	def _titled_content(self, content):
-		pass
-
-	def __content(self):
+	def __bom(self):
 		return ''.join(self._titled_part(each) for each in self.__parts)
+
+	def _titled_bom(self, bom):
+		pass
 
 	def _titled_part(self, part):
 		pass
@@ -52,7 +49,7 @@ class ExportLevel:
 		part_builder.add_level(self)		
 
 	def export(self, name, exporter):
-		return exporter.build_level(name, str(self.__value))
+		return exporter.level(name, str(self.__value))
 
 
 class PartBuilder:

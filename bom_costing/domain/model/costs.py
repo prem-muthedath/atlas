@@ -11,7 +11,7 @@ class Cost:
 		part_builder.add_cost(self.__class__(self.__value))
 
 	def export(self, name, exporter):
-		return exporter.build_field(name, self.__str__())		
+		return exporter.property(name, self.__str__())		
 
 	def __str__(self):
 		return str(self.__value)
@@ -28,7 +28,7 @@ class UnitCost:
 		part_builder.add_unit_cost(self)
 
 	def export(self, name, exporter):
-		return exporter.build_field(name, self.__str__())		
+		return exporter.property(name, self.__str__())		
 
 	def __str__(self):
 		return str(self.__value)

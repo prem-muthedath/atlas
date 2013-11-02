@@ -14,4 +14,4 @@ class SourceCode:
 		part_builder.add_code(self)
 
 	def export(self, name, exporter):
-		return exporter.build_field(name, self.__code)	
+		return exporter.property(name, self.__code)	
