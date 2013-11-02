@@ -58,7 +58,7 @@ class PartBuilder:
 
 	def part(self, part_data, exporter):	
 		self.add(part_data)
-		return ''.join(attribute.export(self.__part[attribute], exporter) for attribute in self.__part_attributes())
+		return ''.join(self.__export(attribute, exporter) for attribute in self.__part_attributes())
 
 	def add(self, part_data):
 		for each in part_data:			
@@ -84,6 +84,9 @@ class PartBuilder:
 
 	def __part_attributes(self):
 		return self.__part.keys()
+
+	def __export(self, attribute, exporter):
+		return attribute.export(self.__part[attribute], exporter)
 
 
 class Attribute:
