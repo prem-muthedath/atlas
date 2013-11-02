@@ -34,7 +34,7 @@ class Bom:
 		data=copy.deepcopy(self.__components)
 		level.export_bom(data, exporter)
 
-	def add_to(self, part_schema):
+	def add_to(self, part_builder):
 		pass		
 
 
