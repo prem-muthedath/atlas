@@ -23,10 +23,10 @@ class Exporter(object):
 	def __bom(self):
 		return ''.join(self._titled_part(each) for each in self.__parts)
 
-	def _titled_bom(self, bom):
+	def _titled_part(self, part):
 		pass
 
-	def _titled_part(self, part):
+	def _titled_bom(self, bom):
 		pass
 
 
