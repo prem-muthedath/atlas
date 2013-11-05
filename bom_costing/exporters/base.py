@@ -114,8 +114,8 @@ class Attribute:
 
 class PartSchema:
 	LEVEL=Attribute('level', 0)
-	NUMBER=Attribute('part_number', 1) 
-	CODE=Attribute('source_code', 2)
+	NUMBER=Attribute('part number', 1) 
+	CODE=Attribute('source code', 2)
 	UNIT_COST=Attribute('unit cost', 3)
 	QUANTITY=Attribute('quantity', 4)
 	COST=Attribute('cost', 5)
