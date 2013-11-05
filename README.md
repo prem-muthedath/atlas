@@ -12,7 +12,7 @@ The problem is complicated because the cost of a part depends on its location in
 
 The other complexity is to collect and present the results (i.e., computed part costs, levels, and other part details) in multiple formats by traversing the BOM's tree structure.  This is the display side.  
 
-A big design challenge for the display side was avoiding parallel class hierarchies.
+The big design challenge for multi-format displays was avoiding parallel class hierarchies.
 
 Finally, how to build the BOM tree? By that I mean the sequential addition of parts and sub-BOMs.  The algorithm is a bit tricky, and designing a clean object to do this was a challenge.
 
