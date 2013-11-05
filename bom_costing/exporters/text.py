@@ -21,7 +21,10 @@ class TextExporter(Exporter):
 
 	def __add_header(self, header):
 		if len(self.__headers) < PartSchema.count():
-			self.__headers.append(header)
+			self.__headers.append(self.__centered(self.__capitalize(header)))
+
+	def __capitalize(self, header):
+		return ' '.join(each[:1].upper()+each[1:].lower() for each in header.split())
 
 	def __centered(self, value):
 		return value.center(self.__FIELD_WIDTH)
@@ -30,13 +33,5 @@ class TextExporter(Exporter):
 		return part+'\n'
 
 	def _titled_bom(self, bom):
-		return self.__title()+bom
-	
-	def __title(self):
-		return ''.join(self.__format(each) for each in self.__headers)+'\n'
-
-	def __format(self, header):
-		return self.__centered(self.__capitalize(header))
-
-	def __capitalize(self, header):
-		return ' '.join(each[:1].upper()+each[1:].lower() for each in header.split())
+		title=''.join(self.__headers)+'\n'
+		return title+bom
