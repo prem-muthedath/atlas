@@ -4,8 +4,8 @@ class Cost:
 	def __init__(self, value=0):
 		self.__value=value
 
-	def add(self, cost):
-		self.__value+=cost
+	def add(self, value):
+		self.__value+=value
 
 	def add_to(self, part_builder):
 		part_builder.add_cost(self.__str__())
