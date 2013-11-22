@@ -13,7 +13,8 @@ class XmlExporter(Exporter):
 		return self.property(name, value)
 		
 	def _titled_part(self, part):
-		return '  '+'<part>'+part+'</part>'+'\n'
+		indent='  '
+		return indent+'<part>'+part+'</part>'+'\n'
 
 	def _titled_bom(self, bom):
 		return '<?xml version="1.0" encoding="ISO-8859-1"?>'+'\n'+ \
