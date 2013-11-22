@@ -46,7 +46,7 @@ class BomPart:
 
 	def cost(self, cost):
 		if(self.is_costed()): 
-			cost.add(self.__part.cost(self.__quantity))
+			self.__part.cost(cost, self.__quantity)
 
 	def is_costed(self): 
 		return self.__part.is_costed()  or self.__bom.costable(self)

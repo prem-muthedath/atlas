@@ -5,7 +5,7 @@ class Quantity:
 		self.__value=value
 
 	def cost(self, unit_cost):
-		return self.__value*unit_cost
+		return unit_cost.cost(self.__value)
 
 	def add_to(self, part_builder):
 		part_builder.add_quantity(self.__data())

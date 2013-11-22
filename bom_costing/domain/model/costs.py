@@ -4,8 +4,8 @@ class Cost:
 	def __init__(self, value=0):
 		self.__value=value
 
-	def add(self, cost):
-		self.__value+=cost
+	def add(self, unit_cost, quantity):
+		self.__value+=quantity.cost(unit_cost)
 
 	def add_to(self, part_builder):
 		part_builder.add_cost(self.__str__())
@@ -18,8 +18,8 @@ class UnitCost:
 	def __init__(self, value):
 		self.__value=value
 
-	def cost(self, quantity):
-		return quantity.cost(self.__value)
+	def cost(self, units):
+		return units*self.__value
 
 	def add_to(self, part_builder):
 		part_builder.add_unit_cost(self.__data())

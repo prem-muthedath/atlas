@@ -12,8 +12,8 @@ class Part:
 	def costable(self):
 		return self.__source_code.costable()
 
-	def cost(self, quantity):
-		return self.__unit_cost.cost(quantity)
+	def cost(self, cost, quantity):
+		cost.add(self.__unit_cost, quantity)
 
 	def add_to(self, part_builder):
 		part_builder.add(self.__dict__.values())
