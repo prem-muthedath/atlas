@@ -13,7 +13,7 @@ class Part:
 		return self.__source_code.costable()
 
 	def cost(self, cost, quantity):
-		cost.add(self.__unit_cost, quantity)
+		quantity.cost(cost, self.__unit_cost)
 
 	def add_to(self, part_builder):
 		part_builder.add(self.__dict__.values())
