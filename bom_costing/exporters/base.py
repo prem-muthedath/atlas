@@ -46,10 +46,10 @@ class ExportLevel:
 		exporter.add_part(part_data)
 
 	def add_to(self, part_builder):
-		part_builder.add_level(self)		
+		part_builder.add_level(self.__data())		
 
-	def export(self, name, exporter):
-		return exporter.level(name, str(self.__value))
+	def __data(self):
+		return str(self.__value)
 
 
 class PartBuilder:
@@ -106,7 +106,9 @@ class Attribute:
 		return hash(self.__name)
 
 	def export(self, value, exporter):
-		return value.export(self.__good_name(), exporter)
+		if self==PartSchema.LEVEL:
+			return exporter.level(self.__good_name(), value)
+		return exporter.property(self.__good_name(), value)
 
 	def __good_name(self):
 		return ''.join(each if each not in string.punctuation else ' ' for each in list(self.__name))
@@ -126,5 +128,5 @@ class PartSchema:
 				if each[:1]!='_' and not callable(getattr(cls, each))])
 
 	@classmethod
-	def count(cls):
+	def size(cls):
 		return len(cls.attributes())

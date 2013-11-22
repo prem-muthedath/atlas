@@ -8,10 +8,7 @@ class Quantity:
 		return self.__value*unit_cost
 
 	def add_to(self, part_builder):
-		part_builder.add_quantity(self)
-
-	def export(self, name, exporter):
-		return exporter.property(name, self.__data())
+		part_builder.add_quantity(self.__data())
 
 	def __data(self):
 		return str(self.__value)

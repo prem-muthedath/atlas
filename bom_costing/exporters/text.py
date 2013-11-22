@@ -20,7 +20,7 @@ class TextExporter(Exporter):
 		return (indent+value).ljust(self.__FIELD_WIDTH)
 
 	def __add_header(self, header):
-		if len(self.__headers) < PartSchema.count():
+		if len(self.__headers) < PartSchema.size():
 			self.__headers.append(self.__centered(self.__capitalize(header)))
 
 	def __capitalize(self, header):

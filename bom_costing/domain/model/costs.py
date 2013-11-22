@@ -8,10 +8,7 @@ class Cost:
 		self.__value+=cost
 
 	def add_to(self, part_builder):
-		part_builder.add_cost(self.__class__(self.__value))
-
-	def export(self, name, exporter):
-		return exporter.property(name, self.__str__())		
+		part_builder.add_cost(self.__str__())
 
 	def __str__(self):
 		return str(self.__value)
@@ -25,10 +22,7 @@ class UnitCost:
 		return quantity.cost(self.__value)
 
 	def add_to(self, part_builder):
-		part_builder.add_unit_cost(self)
+		part_builder.add_unit_cost(self.__data())
 
-	def export(self, name, exporter):
-		return exporter.property(name, self.__str__())		
-
-	def __str__(self):
+	def __data(self):
 		return str(self.__value)
