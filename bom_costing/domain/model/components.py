@@ -30,9 +30,12 @@ class Bom:
 	def __is_leaf(self, bom_part):
 		return self.__components[-1]==bom_part
 
-	def export(self, level, exporter):
-		data=copy.deepcopy(self.__components)
-		level.export_bom(data, exporter)
+	def export(self, exporter):
+		exporter.export_bom(self)
+
+	def export_children(self, exporter):
+		for each in self.__components:
+			each.export(exporter)	
 
 	def add_to(self, part_builder):
 		pass		
@@ -54,8 +57,8 @@ class BomPart:
 	def costable(self):
 		return self.__part.costable()
 
-	def export(self, level, exporter):
-		level.export_part(self.__data(), exporter)
+	def export(self, exporter):
+		exporter.add_part(self.__data())
 
 	def __data(self):
 		cost=Cost()

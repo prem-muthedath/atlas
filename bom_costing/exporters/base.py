@@ -6,12 +6,17 @@ import string
 class Exporter(object):
 	def __init__(self):	
 		self.__parts=[]
+		self.__level=ExportLevel()
 
 	def export(self, bom):
-		bom.export(ExportLevel(), self)
+		bom.export(self)
 		return self._titled_bom(self.__bom())
 
+	def export_bom(self, bom):
+		self.__level.export_bom(bom, self)
+
 	def add_part(self, part_data):
+		part_data.append(self.__level)
 		self.__parts.append(PartBuilder().part(part_data, self))
 
 	def property(self, name, value):
@@ -34,16 +39,16 @@ class ExportLevel:
 	def __init__(self, value=-1):
 		self.__value=value		
 
-	def export_bom(self, bom_components, exporter):
-		for each in bom_components:
-			each.export(self.__child(), exporter)
+	def export_bom(self, bom, exporter):
+		self.__enter_bom()
+		bom.export_children(exporter)
+		self.__exit_bom()
 
-	def __child(self):
-		return self.__class__(self.__value+1)
+	def __enter_bom(self):
+		self.__value+=1
 
-	def export_part(self, part_data, exporter):
-		part_data.append(self)
-		exporter.add_part(part_data)
+	def __exit_bom(self):
+		self.__value-=1
 
 	def add_to(self, part_builder):
 		part_builder.add_level(self.__data())		
