@@ -30,7 +30,7 @@ class Bom:
 		return self.__components[-1]==part
 
 	def export(self, exporter):
-		exporter.export_bom(self)
+		exporter.add_bom(self)
 
 	def export_children(self, exporter):
 		for each in self.__components:

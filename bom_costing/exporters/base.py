@@ -8,11 +8,11 @@ class Exporter(object):
 		self.__parts=[]
 		self.__level=ExportLevel()
 
-	def export(self, bom):
-		bom.export(self)
+	def export(self, component):
+		component.export(self)
 		return self._titled_bom(self.__bom())
 
-	def export_bom(self, bom):
+	def add_bom(self, bom):
 		self.__level.export_bom(bom, self)
 
 	def add_part(self, part_data):
