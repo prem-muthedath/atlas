@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import copy
 from ..errors import DuplicateError
 from costs import Cost
 
@@ -20,15 +19,15 @@ class Bom:
 	def is_costed(self):
 		return 0
 	
-	def costable(self, bom_part): 
-		return self.__first_costable(bom_part) and (self.__is_leaf(bom_part) or bom_part.costable())
+	def costable(self, part, source_code): 
+		return self.__first_costable(part) and (self.__is_leaf(part) or source_code.costable())
 
-	def __first_costable(self, bom_part):
-		position=self.__components.index(bom_part)
+	def __first_costable(self, part):
+		position=self.__components.index(part)
 		return 0==len([each for each in self.__components[:position] if each.is_costed()])
 
-	def __is_leaf(self, bom_part):
-		return self.__components[-1]==bom_part
+	def __is_leaf(self, part):
+		return self.__components[-1]==part
 
 	def export(self, exporter):
 		exporter.export_bom(self)
@@ -41,21 +40,16 @@ class Bom:
 		pass		
 
 
-class BomPart:
-	def __init__(self, part, quantity, bom):
-		self.__part=part
-		self.__quantity=quantity
-		self.__bom=bom
+class Part:
+	def __init__(self, number, sites, units):
+		self.__attributes=dict(__number=number, __sites=sites, __units=units)
 
 	def cost(self, cost):
-		if(self.is_costed()): 
-			self.__part.cost(cost, self.__quantity)
+		if not self.is_costed(): return
+		self.__attributes['__units'].cost(cost)
 
 	def is_costed(self): 
-		return self.__part.is_costed()  or self.__bom.costable(self)
-
-	def costable(self):
-		return self.__part.costable()
+		return self.__attributes['__sites'].is_costed(self)
 
 	def export(self, exporter):
 		exporter.add_part(self.__data())
@@ -63,4 +57,4 @@ class BomPart:
 	def __data(self):
 		cost=Cost()
 		self.cost(cost)	
-		return [cost]+self.__dict__.values()
+		return [cost]+self.__attributes.values()

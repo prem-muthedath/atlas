@@ -1,12 +1,13 @@
 #!/usr/bin/python
 
 from model.components import Bom
-from model.components import BomPart
-from model.part import Part
+from model.components import Part
 from model.number import Number
-from model.quantity import Quantity
 from model.source_code import SourceCode
+from model.sites import Sites
+from model.quantity import Quantity
 from model.costs import UnitCost
+from model.units import Units
 
 class BomBuilder():
 	def __init__(self):
@@ -22,8 +23,10 @@ class BomBuilder():
 		self.__parent_level=level
 
 	def __add(self, number, code, cost, quantity, bom):
-		part=Part(Number(number), SourceCode(code), UnitCost(cost))
-		bom.add(BomPart(part, Quantity(quantity), bom))
+		sites=Sites(SourceCode(code), bom)
+		units=Units(Quantity(quantity), UnitCost(cost))
+		part=Part(Number(number), sites, units)
+		bom.add(part)
 
 	def __parent(self):
 		if(self.__new_bom()): self.__create()
