@@ -42,14 +42,14 @@ class Bom:
 
 class Part:
 	def __init__(self, number, sites, units):
-		self.__attributes=dict(__number=number, __sites=sites, __units=units)
+		self.__attributes=dict(number=number, sites=sites, units=units)
 
 	def cost(self, cost):
 		if not self.is_costed(): return
-		self.__attributes['__units'].cost(cost)
+		self.__attributes['units'].cost(cost)
 
 	def is_costed(self): 
-		return self.__attributes['__sites'].is_costed(self)
+		return self.__attributes['sites'].is_costed(self)
 
 	def export(self, exporter):
 		exporter.add_part(self.__data())
