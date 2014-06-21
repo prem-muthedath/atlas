@@ -17,7 +17,7 @@ class Bom:
 			each.cost(cost)	
 
 	def is_costed(self):
-		return 0
+		return False
 	
 	def costable(self, part, source_code): 
 		return self.__first_costable(part) and (self.__is_leaf(part) or source_code.costable())

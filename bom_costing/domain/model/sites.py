@@ -7,7 +7,7 @@ class Sites:
 
 	def is_costed(self, part): 
 		if self.__source_code.is_costed():
-			return 1
+			return True
 		return self.__bom.costable(part, self.__source_code)
 
 	def add_to(self, part_builder):
