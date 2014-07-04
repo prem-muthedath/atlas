@@ -76,7 +76,7 @@ print XmlExporter(part_builder()).export(bom)
 #### CUSTOMISED DISPLAYS -- PART ATTRIBUTES AND THEIR ORDER CHOSEN BY USER
 #########################################################################################
 attributes=[PartSchema.NUMBER, PartSchema.LEVEL, PartSchema.COST]
-print('\n\n'+'CUSTOMISED TEXT OUTPUT -- USER-DEFINED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
+print('\n\n'+'CUSTOMISED TEXT OUTPUT -- USER-SELECTED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
 print TextExporter(part_builder(attributes)).export(bom)
-print('\n\n'+'CUSTOMISED XML OUTPUT -- USER-DEFINED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
+print('\n\n'+'CUSTOMISED XML OUTPUT -- USER-SELECTED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
 print XmlExporter(part_builder(attributes)).export(bom)
