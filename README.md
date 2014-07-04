@@ -41,6 +41,6 @@ HOW TO RUN THE TESTS FROM A TERMINAL:
 	(b) An indented Textual representation of parts in the BOM tree and their computed costs;
 	(c) An XML representation of parts in the BOM tree and their computed costs.
   
-  For items (b) and (c), you should see both default representation as well as a customised one.
+  For items (b) and (c), you should see a default representation as well as a customised one.
  
 
