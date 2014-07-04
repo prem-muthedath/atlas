@@ -12,7 +12,7 @@ The problem is complicated because the cost of a part depends on its location in
 
 The other complexity is to collect and present the results (i.e., computed part costs, levels, and other part details) in multiple formats by traversing the BOM's tree structure.  This is the display side.  
 
-The display is complex because it allows customisation -- users can select the fields as well as their order in the display.  The big design challenge for multi-format displays was avoiding parallel class hierarchies.
+The display is complex because it allows users to dynamically select the fields as well as their order in the display.
 
 NOTE: See bom_costing/bom_costing/tests/bom_cost_test.py for default & customised display creations. 
 
