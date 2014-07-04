@@ -1,7 +1,12 @@
 #!/usr/bin/python
 
 from ..domain.configuration import BomBuilder
+
 from ..domain.model.costs import Cost
+
+from ..exporters.base import PartSchema
+from ..exporters.base import PartBuilder
+
 from ..exporters.text import TextExporter
 from ..exporters.xml import XmlExporter
 
@@ -49,13 +54,29 @@ def configure():
 	return builder.build()
 
 
+def part_builder(attributes=None):
+	return PartBuilder(PartSchema.part(attributes))
+
+
 bom=configure()
 cost=Cost()
 bom.cost(cost)
 print('\n')
 print "BOM TOTAL COST --> EXPECTED: 8210 ", "ACTUAL: ", cost
-print('\n'+'TEXT EXPORT:')
-print TextExporter().export(bom)
-print('\n'+'XML EXPORT:')
-print XmlExporter().export(bom)
 
+#########################################################################################
+#### DEFAULT DISPLAYS -- INCLUDES ALL PART ATTRIBUTES, IN THE ORDER DEFINED IN PartSchema
+#########################################################################################
+print('\n\n'+'DEFAULT TEXT OUTPUT -- INCLUDES ALL PART ATTRIBUTES IN THE DEFAULT ORDER:\n')
+print TextExporter(part_builder()).export(bom)
+print('\n\n'+'DEFAULT XML OUTPUT -- INCLUDES ALL PART ATTRIBUTES IN THE DEFAULT ORDER:\n')
+print XmlExporter(part_builder()).export(bom)
+
+#########################################################################################
+#### CUSTOMISED DISPLAYS -- PART ATTRIBUTES AND THEIR ORDER CHOSEN BY USER
+#########################################################################################
+attributes=[PartSchema.NUMBER, PartSchema.LEVEL, PartSchema.COST]
+print('\n\n'+'CUSTOMISED TEXT OUTPUT -- USER-DEFINED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
+print TextExporter(part_builder(attributes)).export(bom)
+print('\n\n'+'CUSTOMISED XML OUTPUT -- USER-DEFINED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
+print XmlExporter(part_builder(attributes)).export(bom)

@@ -1,13 +1,12 @@
 #!/usr/bin/python
 
 from base import Exporter
-from base import PartSchema
 
 class TextExporter(Exporter):
 	__FIELD_WIDTH=15
 
-	def __init__(self):
-		super(type(self), self).__init__()
+	def __init__(self, part_builder):
+		super(type(self), self).__init__(part_builder)
 		self.__headers=[]
 
 	def property(self, name, value):
@@ -20,8 +19,9 @@ class TextExporter(Exporter):
 		return (indent+value).ljust(self.__FIELD_WIDTH)
 
 	def __add_header(self, header):
-		if len(self.__headers) < PartSchema.size():
-			self.__headers.append(self.__centered(self.__capitalize(header)))
+		header=self.__centered(self.__capitalize(header))
+		if header not in self.__headers:
+			self.__headers.append(header)
 
 	def __capitalize(self, header):
 		return ' '.join(each[:1].upper()+each[1:].lower() for each in header.split())

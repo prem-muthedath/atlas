@@ -4,9 +4,10 @@ from collections import OrderedDict
 import string
 
 class Exporter(object):
-	def __init__(self):	
+	def __init__(self, part_builder):	
 		self.__parts=[]
 		self.__level=ExportLevel()
+		self.__part_builder=part_builder
 
 	def export(self, component):
 		component.export(self)
@@ -17,7 +18,7 @@ class Exporter(object):
 
 	def add_part(self, part_data):
 		part_data.append(self.__level)
-		self.__parts.append(PartBuilder().part(part_data, self))
+		self.__parts.append(self.__part_builder.part(part_data, self))
 
 	def property(self, name, value):
 		pass		
@@ -33,7 +34,7 @@ class Exporter(object):
 
 	def _titled_bom(self, bom):
 		pass
-
+		
 
 class ExportLevel:
 	def __init__(self, value=-1):
@@ -58,37 +59,49 @@ class ExportLevel:
 
 
 class PartBuilder:
-	def __init__(self):
-		self.__part=OrderedDict((attribute, None) for attribute in PartSchema.attributes())
+	def __init__(self, part):
+		self.__part=part
 
 	def part(self, part_data, exporter):	
 		self.add(part_data)
-		return ''.join(self.__export(attribute, exporter) for attribute in self.__part_attributes())
+		return self.__part.format(exporter)
 
 	def add(self, part_data):
 		for each in part_data:			
 			each.add_to(self)		
 
 	def add_level(self, level):
-		self.__part[PartSchema.LEVEL]=level
+		self.__part.add(PartSchema.LEVEL, level)
 
 	def add_number(self, number):
-		self.__part[PartSchema.NUMBER]=number
+		self.__part.add(PartSchema.NUMBER, number)
 
 	def add_code(self, code):
-		self.__part[PartSchema.CODE]=code
+		self.__part.add(PartSchema.CODE, code)
 
 	def add_quantity(self, quantity):
-		self.__part[PartSchema.QUANTITY]=quantity
+		self.__part.add(PartSchema.QUANTITY, quantity)
 
 	def add_unit_cost(self, unit_cost):
-		self.__part[PartSchema.UNIT_COST]=unit_cost
+		self.__part.add(PartSchema.UNIT_COST, unit_cost)
 
 	def add_cost(self, cost):
-		self.__part[PartSchema.COST]=cost
+		self.__part.add(PartSchema.COST, cost)
+
+
+class Part:
+	def __init__(self, attributes):
+		self.__part=OrderedDict((attribute, None) for attribute in attributes)
+
+	def add(self, attribute, value):
+		if attribute in self.__part_attributes():
+			self.__part[attribute]=value
 
 	def __part_attributes(self):
 		return self.__part.keys()
+
+	def format(self, exporter):
+		return ''.join(self.__export(attribute, exporter) for attribute in self.__part_attributes())
 
 	def __export(self, attribute, exporter):
 		return attribute.export(self.__part[attribute], exporter)
@@ -135,3 +148,11 @@ class PartSchema:
 	@classmethod
 	def size(cls):
 		return len(cls.attributes())
+
+	@classmethod
+	def part(cls, attributes=None):
+		if attributes is None:
+			return Part(cls.attributes())
+		if set(attributes)<=set(cls.attributes()):	
+			return Part(attributes)
+		raise ValueError("Invalid Part Attribute(s) Found.")

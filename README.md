@@ -12,14 +12,17 @@ The problem is complicated because the cost of a part depends on its location in
 
 The other complexity is to collect and present the results (i.e., computed part costs, levels, and other part details) in multiple formats by traversing the BOM's tree structure.  This is the display side.  
 
-The big design challenge for multi-format displays was avoiding parallel class hierarchies.
+The display is complex because it allows customisation -- users can define the fields as well as their order in the display.  The big design challenge for multi-format displays was avoiding parallel class hierarchies.
+
+NOTE: To learn how to generate default and customised displays, see bom_costing/bom_costing/tests/bom_cost_test.py for examples. 
+
 
 Finally, how to build the BOM tree? By that I mean the sequential addition of parts and sub-BOMs.  The algorithm is a bit tricky, and designing a clean object to do this was a challenge.
 
 
 I designed small objects to model all this complexity, and it came out pretty neat, after many iterations.  
 
-Because of the problem structure, Composite and Collecting Parameter patterns came in handy (actually, instead of jumping to the patterns, I refactored to them).  
+Because of the problem structure, Composite, Collecting Parameter, and Visitor patterns came in handy (actually, instead of jumping to the patterns, I refactored to them).  
 
 I used Python because it was a good way to learn the language.  Plus, Python was fun.  I loved it!!
 
@@ -37,5 +40,7 @@ HOW TO RUN THE TESTS FROM A TERMINAL:
 	(a) Total cost of the BOM -- actual and expected values;
 	(b) An indented Textual representation of parts in the BOM tree and their computed costs;
 	(c) An XML representation of parts in the BOM tree and their computed costs.
+  
+  For items (b) and (c), you should see both default representation as well as a customised one.
  
 

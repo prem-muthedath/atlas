@@ -3,6 +3,9 @@
 from base import Exporter
 
 class XmlExporter(Exporter):
+	def __init__(self, part_builder):
+		super(type(self), self).__init__(part_builder)
+	
 	def property(self, name, value):
 		return '<'+self.__format(name)+'>'+value+'</'+self.__format(name)+'>'
 
