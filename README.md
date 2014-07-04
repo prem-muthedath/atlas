@@ -14,7 +14,7 @@ The other complexity is to collect and present the results (i.e., computed part 
 
 The display is complex because it allows customisation -- users can select the fields as well as their order in the display.  The big design challenge for multi-format displays was avoiding parallel class hierarchies.
 
-NOTE: To learn how to generate default and customised displays, see bom_costing/bom_costing/tests/bom_cost_test.py for examples. 
+NOTE: See bom_costing/bom_costing/tests/bom_cost_test.py for examples of default & customised display creations. 
 
 
 Finally, how to build the BOM tree? By that I mean the sequential addition of parts and sub-BOMs.  The algorithm is a bit tricky, and designing a clean object to do this was a challenge.
