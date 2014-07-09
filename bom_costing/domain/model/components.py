@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-from ..errors import DuplicateError
-from costs import Cost
+from .. import errors
+from . import costs
 
 class Bom:
 	def __init__(self):
@@ -9,7 +9,7 @@ class Bom:
 
 	def add(self, component):
 		if component in self.__components: 
-			raise DuplicateError(component)
+			raise errors.DuplicateError(component)
 		self.__components.append(component)
 
 	def cost(self, cost):
@@ -55,6 +55,6 @@ class Part:
 		exporter.add_part(self.__data())
 
 	def __data(self):
-		cost=Cost()
+		cost=costs.Cost()
 		self.cost(cost)	
 		return [cost]+self.__attributes.values()

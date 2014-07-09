@@ -1,40 +1,24 @@
 #!/usr/bin/python
 
-from collections import OrderedDict
+import collections
 import string
 
-class Exporter(object):
-	def __init__(self, part_builder):	
-		self.__parts=[]
+class Exporter:
+	def __init__(self, format):	
 		self.__level=ExportLevel()
-		self.__part_builder=part_builder
+		self.__format=format
 
 	def export(self, component):
 		component.export(self)
-		return self._titled_bom(self.__bom())
+		return self.__format.__str__()
 
 	def add_bom(self, bom):
 		self.__level.export_bom(bom, self)
 
 	def add_part(self, part_data):
 		part_data.append(self.__level)
-		self.__parts.append(self.__part_builder.part(part_data, self))
+		self.__format.export_part(part_data)
 
-	def property(self, name, value):
-		pass		
-
-	def level(self, name, value):
-		pass		
-
-	def __bom(self):
-		return ''.join(self._titled_part(each) for each in self.__parts)
-
-	def _titled_part(self, part):
-		pass
-
-	def _titled_bom(self, bom):
-		pass
-		
 
 class ExportLevel:
 	def __init__(self, value=-1):
@@ -58,13 +42,43 @@ class ExportLevel:
 		return str(self.__value)
 
 
+class Format(object):
+	def __init__(self, part_builder):	
+		self.__parts=[]
+		self.__part_builder=part_builder
+
+	def __str__(self):
+		return self._titled_bom(self.__bom())
+
+	def export_part(self, part_data):
+		self.__add_part(self.__part_builder.part(part_data, self))
+
+	def __add_part(self, part_export):
+		self.__parts.append(''.join(part_export))
+
+	def property(self, name, value):
+		pass		
+
+	def level(self, name, value):
+		pass		
+
+	def __bom(self):
+		return ''.join(self._titled_part(each) for each in self.__parts)
+
+	def _titled_part(self, part):
+		pass
+
+	def _titled_bom(self, bom):
+		pass
+		
+
 class PartBuilder:
 	def __init__(self, part):
 		self.__part=part
 
-	def part(self, part_data, exporter):	
+	def part(self, part_data, format):	
 		self.add(part_data)
-		return self.__part.format(exporter)
+		return self.__part.export(format)
 
 	def add(self, part_data):
 		for each in part_data:			
@@ -89,9 +103,9 @@ class PartBuilder:
 		self.__part.add(PartSchema.COST, cost)
 
 
-class Part:
+class OrderedPart:
 	def __init__(self, attributes):
-		self.__part=OrderedDict((attribute, None) for attribute in attributes)
+		self.__part=collections.OrderedDict((attribute, None) for attribute in attributes)
 
 	def add(self, attribute, value):
 		if attribute in self.__part_attributes():
@@ -100,11 +114,11 @@ class Part:
 	def __part_attributes(self):
 		return self.__part.keys()
 
-	def format(self, exporter):
-		return ''.join(self.__export(attribute, exporter) for attribute in self.__part_attributes())
+	def export(self, format):
+		return [self.__export(attribute, format) for attribute in self.__part_attributes()]
 
-	def __export(self, attribute, exporter):
-		return attribute.export(self.__part[attribute], exporter)
+	def __export(self, attribute, format):
+		return attribute.export(self.__part[attribute], format)
 
 
 class Attribute:
@@ -146,13 +160,9 @@ class PartSchema:
 				if each[:1]!='_' and not callable(getattr(cls, each))])
 
 	@classmethod
-	def size(cls):
-		return len(cls.attributes())
-
-	@classmethod
 	def part(cls, attributes=None):
 		if attributes is None:
-			return Part(cls.attributes())
+			return OrderedPart(cls.attributes())
 		if set(attributes)<=set(cls.attributes()):	
-			return Part(attributes)
+			return OrderedPart(attributes)
 		raise ValueError("Invalid Part Attribute(s) Found.")
