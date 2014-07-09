@@ -9,7 +9,7 @@ class TextFormat(base.Format):
 		super(type(self), self).__init__(part_builder)
 		self.__headers=[]
 
-	def property(self, name, value):
+	def attribute(self, name, value):
 		self.__add_header(name)
 		return self.__centered(value)
 
@@ -41,14 +41,14 @@ class XmlFormat(base.Format):
 	def __init__(self, part_builder):
 		super(type(self), self).__init__(part_builder)
 	
-	def property(self, name, value):
+	def attribute(self, name, value):
 		return '<'+self.__format(name)+'>'+value+'</'+self.__format(name)+'>'
 
 	def __format(self, name):
 		return '_'.join(name.split())
 
 	def level(self, name, value):
-		return self.property(name, value)
+		return self.attribute(name, value)
 		
 	def _titled_part(self, part):
 		indent='  '

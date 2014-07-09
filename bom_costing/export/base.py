@@ -58,7 +58,7 @@ class Format(object):
 	def add_part(self, part_export):
 		self.__parts.append(''.join(part_export))
 
-	def property(self, name, value):
+	def attribute(self, name, value):
 		pass		
 
 	def level(self, name, value):
@@ -106,24 +106,24 @@ class PartBuilder:
 
 
 class OrderedPart:
-	def __init__(self, attributes):
-		self.__part=collections.OrderedDict((attribute, None) for attribute in attributes)
+	def __init__(self, fields):
+		self.__attributes=collections.OrderedDict((field, None) for field in fields)
 
-	def add(self, attribute, value):
-		if attribute in self.__part_attributes():
-			self.__part[attribute]=value
+	def add(self, field, value):
+		if field in self.__fields():
+			self.__attributes[field]=value
 
-	def __part_attributes(self):
-		return self.__part.keys()
+	def __fields(self):
+		return self.__attributes.keys()
 
 	def export(self, format):
-		format.add_part([self.__export(attribute, format) for attribute in self.__part_attributes()])
+		format.add_part([self.__export(field, format) for field in self.__fields()])
 
-	def __export(self, attribute, format):
-		return attribute.export(self.__part[attribute], format)
+	def __export(self, field, format):
+		return field.export(self.__attributes[field], format)
 
 
-class Attribute:
+class Field:
 	def __init__(self, name, order):
 		self.__name=name
 		self.__order=order
@@ -139,32 +139,32 @@ class Attribute:
 	def __hash__(self):
 		return hash(self.__name)
 
-	def export(self, value, exporter):
+	def export(self, value, format):
 		if self==PartSchema.LEVEL:
-			return exporter.level(self.__good_name(), value)
-		return exporter.property(self.__good_name(), value)
+			return format.level(self.__good_name(), value)
+		return format.attribute(self.__good_name(), value)
 
 	def __good_name(self):
 		return ''.join(each if each not in string.punctuation else ' ' for each in list(self.__name))
 
 
 class PartSchema:
-	LEVEL=Attribute('level', 0)
-	NUMBER=Attribute('part number', 1) 
-	CODE=Attribute('source code', 2)
-	UNIT_COST=Attribute('unit cost', 3)
-	QUANTITY=Attribute('quantity', 4)
-	COST=Attribute('cost', 5)
+	LEVEL=Field('level', 0)
+	NUMBER=Field('part number', 1) 
+	CODE=Field('source code', 2)
+	UNIT_COST=Field('unit cost', 3)
+	QUANTITY=Field('quantity', 4)
+	COST=Field('cost', 5)
 
 	@classmethod
-	def attributes(cls):
+	def fields(cls):
 		return sorted([getattr(cls, each) for each in cls.__dict__.keys() 
 				if each[:1]!='_' and not callable(getattr(cls, each))])
 
 	@classmethod
-	def part(cls, attributes=None):
-		if attributes is None:
-			return OrderedPart(cls.attributes())
-		if set(attributes)<=set(cls.attributes()):	
-			return OrderedPart(attributes)
-		raise ValueError("Invalid Part Attribute(s) Found.")
+	def part(cls, fields=None):
+		if fields is None:
+			return OrderedPart(cls.fields())
+		if set(fields)<=set(cls.fields()):	
+			return OrderedPart(fields)
+		raise ValueError("Invalid Part Field(s) Found.")

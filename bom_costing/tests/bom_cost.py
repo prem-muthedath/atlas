@@ -63,8 +63,8 @@ def run():
 	#########################################################################################
 	#### CUSTOMISED DISPLAYS -- PART ATTRIBUTES AND THEIR ORDER CHOSEN BY USER
 	#########################################################################################
-	part_attributes=[export.base.PartSchema.NUMBER, export.base.PartSchema.LEVEL, export.base.PartSchema.COST]
+	part_fields=[export.base.PartSchema.NUMBER, export.base.PartSchema.LEVEL, export.base.PartSchema.COST]
 	print('\n\n'+'CUSTOMISED TEXT OUTPUT -- USER-SELECTED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
-	print export.exports.text_export(bom, part_attributes)
+	print export.exports.text_export(bom, part_fields)
 	print('\n\n'+'CUSTOMISED XML OUTPUT -- USER-SELECTED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
-	print export.exports.xml_export(bom, part_attributes)
+	print export.exports.xml_export(bom, part_fields)
