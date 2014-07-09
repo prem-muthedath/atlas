@@ -2,6 +2,7 @@
 
 import collections
 import string
+import copy
 
 class Exporter:
 	def __init__(self, format):	
@@ -51,9 +52,10 @@ class Format(object):
 		return self._titled_bom(self.__bom())
 
 	def export_part(self, part_data):
-		self.__add_part(self.__part_builder.part(part_data, self))
+		ordered_part=self.__part_builder.part(part_data)
+		ordered_part.export(self)
 
-	def __add_part(self, part_export):
+	def add_part(self, part_export):
 		self.__parts.append(''.join(part_export))
 
 	def property(self, name, value):
@@ -76,9 +78,9 @@ class PartBuilder:
 	def __init__(self, part):
 		self.__part=part
 
-	def part(self, part_data, format):	
+	def part(self, part_data):	
 		self.add(part_data)
-		return self.__part.export(format)
+		return copy.deepcopy(self.__part)
 
 	def add(self, part_data):
 		for each in part_data:			
@@ -115,7 +117,7 @@ class OrderedPart:
 		return self.__part.keys()
 
 	def export(self, format):
-		return [self.__export(attribute, format) for attribute in self.__part_attributes()]
+		format.add_part([self.__export(attribute, format) for attribute in self.__part_attributes()])
 
 	def __export(self, attribute, format):
 		return attribute.export(self.__part[attribute], format)

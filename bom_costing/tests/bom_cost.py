@@ -3,7 +3,7 @@
 from .. import domain
 from .. import export
 
-def configure():
+def __configure():
 	# Set up -- configuration
 	# addItem(level, number, code, cost, quantity)
 	builder=domain.configuration.BomBuilder()
@@ -46,7 +46,7 @@ def configure():
 	return builder.build()
 
 def run():
-	bom=configure()
+	bom=__configure()
 	cost=domain.model.costs.Cost()
 	bom.cost(cost)
 	print('\n')
