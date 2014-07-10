@@ -13,4 +13,4 @@ def __exporter(format, part_schema):
 	return base.Exporter(format(__part_builder(part_schema)))
 
 def __part_builder(part_schema):
-		return base.PartBuilder(base.PartSchema.part(part_schema))
+		return base.PartBuilder(base.OrderedPart(part_schema))

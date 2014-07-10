@@ -52,7 +52,7 @@ class Format(object):
 		return self._titled_bom(self.__bom())
 
 	def export_part(self, part_data):
-		ordered_part=self.__part_builder.part(part_data)
+		ordered_part=self.__part_builder.ordered_part(part_data)
 		ordered_part.export(self)
 
 	def add_part(self, part_export):
@@ -75,10 +75,10 @@ class Format(object):
 		
 
 class PartBuilder:
-	def __init__(self, part):
-		self.__part=part
+	def __init__(self, ordered_part):
+		self.__part=ordered_part
 
-	def part(self, part_data):	
+	def ordered_part(self, part_data):	
 		self.add(part_data)
 		return copy.deepcopy(self.__part)
 
@@ -106,8 +106,8 @@ class PartBuilder:
 
 
 class OrderedPart:
-	def __init__(self, fields):
-		self.__attributes=collections.OrderedDict((field, None) for field in fields)
+	def __init__(self, fields=None):
+		self.__attributes=collections.OrderedDict.fromkeys(PartSchema.order(fields))
 
 	def add(self, field, value):
 		if field in self.__fields():
@@ -162,9 +162,9 @@ class PartSchema:
 				if each[:1]!='_' and not callable(getattr(cls, each))])
 
 	@classmethod
-	def part(cls, fields=None):
+	def order(cls, fields):
 		if fields is None:
-			return OrderedPart(cls.fields())
+			return cls.fields()
 		if set(fields)<=set(cls.fields()):	
-			return OrderedPart(fields)
+			return fields
 		raise ValueError("Invalid Part Field(s) Found.")
