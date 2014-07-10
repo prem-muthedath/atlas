@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-from . import test
+from . import base
 
 from .. import domain
 
-class Cost(test.Test):
+class Cost(base.Test):
 	def test(self):
 		cost=domain.model.costs.Cost()
 		self.bom.cost(cost)		

@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-from . import test
+from . import base
 
 from .. import export
 
-class Custom(test.Test):
+class Custom(base.Test):
 	#########################################################################################
 	#### CUSTOMISED DISPLAYS -- PART ATTRIBUTES AND THEIR ORDER CHOSEN BY USER
 	#########################################################################################

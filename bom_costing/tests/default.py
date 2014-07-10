@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-from . import test
+from . import base
 
 from .. import export
 
-class Default(test.Test):
+class Default(base.Test):
 	#####################################################################################################
 	#### DEFAULT DISPLAYS -- INCLUDES ALL PART ATTRIBUTES, IN THE ORDER DEFINED IN export.base.PartSchema
 	#####################################################################################################
