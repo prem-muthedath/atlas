@@ -14,7 +14,6 @@ The other problem is to collect and present the results (i.e., computed part cos
 
 The display is complex because it allows users to dynamically select the fields as well as their order.
 
-NOTE:
 For default & custom diplay creations, see default.py & customy.py in bom_costing/bom_costing/tests.
 
 
