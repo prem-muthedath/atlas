@@ -14,7 +14,7 @@ The other problem is to collect and present the results (i.e., computed part cos
 
 The display is complex because it allows users to dynamically select the fields as well as their order.
 
-NOTE: For default & customised display creations, see default.py and customy.py in bom_costing/bom_costing/tests. 
+NOTE: See default.py & customy.py in bom_costing/bom_costing/tests for default & custom diplay creations.
 
 
 Finally, how to build the BOM tree? By that I mean the sequential addition of parts and sub-BOMs.  The algorithm is a bit tricky, and designing a clean object to do this was a challenge.
