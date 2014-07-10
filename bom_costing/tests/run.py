@@ -18,7 +18,3 @@ def run_all():
 	suite.addTest(tests(default.Default))
 	suite.addTest(tests(custom.Custom))
 	_RUNNER.run(suite)
-
-
-
-
