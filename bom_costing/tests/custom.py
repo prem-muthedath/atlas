@@ -11,21 +11,21 @@ class Custom(base.Test):
 
 	def setUp(self):
 		super(type(self), self).setUp()
-		self.custom_part_fields=[export.base.PartSchema.NUMBER, export.base.PartSchema.LEVEL, export.base.PartSchema.COST]
+		self.custom_part_schema=[export.base.PartSchema.NUMBER, export.base.PartSchema.LEVEL, export.base.PartSchema.COST]
 
 	def test_text_output(self):
 		print('\n')
-		self.assertEquals(self.__expected_text_output(), export.exports.text_export(self.bom, self.custom_part_fields))
+		self.assertEquals(self.__expected_text_output(), export.exports.text_export(self.bom, self.custom_part_schema))
 		
 		print('\n\n'+'CUSTOMISED TEXT OUTPUT -- USER-SELECTED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
-		print export.exports.text_export(self.bom, self.custom_part_fields)
+		print export.exports.text_export(self.bom, self.custom_part_schema)
 
 	def test_xml_output(self):
 		print('\n')
-		self.assertEquals(self.__expected_xml_output(), export.exports.xml_export(self.bom, self.custom_part_fields))
+		self.assertEquals(self.__expected_xml_output(), export.exports.xml_export(self.bom, self.custom_part_schema))
 		
 		print('\n\n'+'CUSTOMISED XML OUTPUT -- USER-SELECTED PART ATTRIBUTES AND PART-ATTRIBUTE ORDERING:\n')
-		print export.exports.xml_export(self.bom, self.custom_part_fields), '\n'
+		print export.exports.xml_export(self.bom, self.custom_part_schema), '\n'
 
 
 	def __expected_text_output(self):

@@ -45,8 +45,12 @@ class Part:
 		self.__attributes=dict(number=number, sites=sites, units=units)
 
 	def cost(self, cost):
-		if not self.is_costed(): return
-		self.__attributes['units'].cost(cost)
+		cost.cost(self)
+
+	def assembly_cost(self):
+		if not self.is_costed(): 
+			return costs.Cost()
+		return self.__attributes['units'].cost()
 
 	def is_costed(self): 
 		return self.__attributes['sites'].is_costed(self)
@@ -55,6 +59,4 @@ class Part:
 		exporter.add_part(self.__data())
 
 	def __data(self):
-		cost=costs.Cost()
-		self.cost(cost)	
-		return [cost]+self.__attributes.values()
+		return [self.assembly_cost()]+self.__attributes.values()

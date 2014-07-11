@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from .. import clean
+
 from . import run
 
 def main():
@@ -7,3 +9,4 @@ def main():
 
 if __name__=='__main__':
 	main()
+	clean.run()

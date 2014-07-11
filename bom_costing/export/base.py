@@ -2,7 +2,6 @@
 
 import collections
 import string
-import copy
 
 class Exporter:
 	def __init__(self, format):	
@@ -75,52 +74,38 @@ class Format(object):
 		
 
 class PartBuilder:
-	def __init__(self, ordered_part):
-		self.__part=ordered_part
+	def __init__(self, schema=None):
+		self.__attributes=collections.OrderedDict.fromkeys(PartSchema.order(schema))
 
 	def ordered_part(self, part_data):	
 		self.add(part_data)
-		return copy.deepcopy(self.__part)
+		return OrderedPart([Attribute(field, value) for field, value in self.__attributes.items()])
 
 	def add(self, part_data):
 		for each in part_data:			
 			each.add_to(self)		
 
 	def add_level(self, level):
-		self.__part.add(PartSchema.LEVEL, level)
+		self.__add(PartSchema.LEVEL, level)
 
 	def add_number(self, number):
-		self.__part.add(PartSchema.NUMBER, number)
+		self.__add(PartSchema.NUMBER, number)
 
 	def add_code(self, code):
-		self.__part.add(PartSchema.CODE, code)
+		self.__add(PartSchema.CODE, code)
 
 	def add_quantity(self, quantity):
-		self.__part.add(PartSchema.QUANTITY, quantity)
+		self.__add(PartSchema.QUANTITY, quantity)
 
 	def add_unit_cost(self, unit_cost):
-		self.__part.add(PartSchema.UNIT_COST, unit_cost)
+		self.__add(PartSchema.UNIT_COST, unit_cost)
 
 	def add_cost(self, cost):
-		self.__part.add(PartSchema.COST, cost)
+		self.__add(PartSchema.COST, cost)
 
-
-class OrderedPart:
-	def __init__(self, fields=None):
-		self.__attributes=collections.OrderedDict.fromkeys(PartSchema.order(fields))
-
-	def add(self, field, value):
-		if field in self.__fields():
+	def __add(self, field, value):
+		if field in self.__attributes.keys():
 			self.__attributes[field]=value
-
-	def __fields(self):
-		return self.__attributes.keys()
-
-	def export(self, format):
-		format.add_part([self.__export(field, format) for field in self.__fields()])
-
-	def __export(self, field, format):
-		return field.export(self.__attributes[field], format)
 
 
 class Field:
@@ -157,14 +142,31 @@ class PartSchema:
 	COST=Field('cost', 5)
 
 	@classmethod
-	def fields(cls):
+	def schema(cls):
 		return sorted([getattr(cls, each) for each in cls.__dict__.keys() 
 				if each[:1]!='_' and not callable(getattr(cls, each))])
 
 	@classmethod
-	def order(cls, fields):
-		if fields is None:
-			return cls.fields()
-		if set(fields)<=set(cls.fields()):	
-			return fields
-		raise ValueError("Invalid Part Field(s) Found.")
+	def order(cls, schema):
+		if schema is None:
+			return cls.schema()
+		if set(schema)<=set(cls.schema()):	
+			return schema
+		raise ValueError("Invalid Part Schema Found.")
+
+
+class OrderedPart:
+	def __init__(self, attributes):
+		self.__attributes=attributes
+
+	def export(self, format):
+		format.add_part([attribute.export(format) for attribute in self.__attributes])
+
+
+class Attribute:
+	def __init__(self, field, value):
+		self.__field=field
+		self.__value=value
+
+	def export(self, format):
+		return self.__field.export(self.__value, format)
