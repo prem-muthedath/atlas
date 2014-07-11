@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from .. import clean
+from .. import clean_pyc
 
 from . import run
 
@@ -9,4 +9,4 @@ def main():
 
 if __name__=='__main__':
 	main()
-	clean.run()
+	clean_pyc.run()
