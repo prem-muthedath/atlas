@@ -75,11 +75,11 @@ class Format(object):
 
 class PartBuilder:
 	def __init__(self, schema=None):
-		self.__attributes=collections.OrderedDict.fromkeys(PartSchema.order(schema))
+		self.__part_attributes=collections.OrderedDict.fromkeys(PartSchema.order(schema))
 
 	def ordered_part(self, part_data):	
 		self.add(part_data)
-		return OrderedPart([Attribute(field, value) for field, value in self.__attributes.items()])
+		return OrderedPart([Attribute(field, value) for field, value in self.__part_attributes.items()])
 
 	def add(self, part_data):
 		for each in part_data:			
@@ -104,8 +104,8 @@ class PartBuilder:
 		self.__add(PartSchema.COST, cost)
 
 	def __add(self, field, value):
-		if field in self.__attributes.keys():
-			self.__attributes[field]=value
+		if field in self.__part_attributes.keys():
+			self.__part_attributes[field]=value
 
 
 class Field:
