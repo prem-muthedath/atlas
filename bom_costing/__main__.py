@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from . import tests
-
 from . import clean
 
 def main():
