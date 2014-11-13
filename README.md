@@ -12,7 +12,7 @@ The problem is complicated because the cost of a part depends on its location in
 
 The other problem is to collect and present the results (i.e., computed part costs, levels, and other part details) in multiple formats by traversing the BOM's tree structure.  This is the display side.
 
-The display is complex because it allows users to dynamically select the fields as well as their order.
+The display is complex because it allows users to dynamically select and order the fields.
 
 For default & custom diplay creations, see default.py & custom.py in bom_costing/bom_costing/tests.
 
