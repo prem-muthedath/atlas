@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from .components import (Bom, Part,)
+from .components import (Bom, _Part,)
 
 class _BomBuilder():
     def __init__(self):
@@ -16,7 +16,7 @@ class _BomBuilder():
         self.__parent_level=level
 
     def __add(self, number, code, cost, quantity, bom):
-        part=Part(number, code, cost, quantity)
+        part=_Part(number, code, cost, quantity)
         bom.add(part)
 
     def __parent(self):
