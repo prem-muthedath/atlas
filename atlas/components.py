@@ -11,6 +11,9 @@ class Bom:
         self.__components.append(component)
         self.__cpos._new(self.__leaf())
 
+    def __leaf(self):
+        return len(self.__components) - 1
+
     def _new_costed(self):
         return self.__components[-1]._is_costed()
 
@@ -29,11 +32,8 @@ class Bom:
             return self.__cpos._costable(pos)
         return False
 
-    def __leaf(self):
-        return len(self.__components)-1
-
     def _positions(self):
-        return range(0, self.__leaf()+1)
+        return range(0, self.__leaf() + 1)
 
     def __str__(self):
         return "BOM: "
@@ -47,8 +47,24 @@ class _CostPositions:
     def _new(self, leaf):
         if self.__update_costed():
             self.__pos['costed']=leaf
-        if self.__update_costable():
+        if self.__update_costable(leaf-1):
             self.__pos['costable']=-1
+
+    def __update_costed(self):
+        return self.__not_costed() and self.__bom._new_costed()
+
+    def __not_costed(self):
+        return not self.__has_costed()
+
+    def __has_costed(self):
+        return self.__pos['costed'] >= 0
+
+    def __update_costable(self, old_leaf):
+        return self.__has_costable() and \
+                self.__pos['costable'] == old_leaf
+
+    def __has_costable(self):
+        return self.__pos['costable'] >= 0
 
     def _costable(self, pos):
         if pos in self.__costables():
@@ -56,18 +72,11 @@ class _CostPositions:
         return self.__pos['costable'] == pos
 
     def __costables(self):
-        if self.__pos['costable'] >= 0:
+        if self.__has_costable():
             return [self.__pos['costable']]
-        if self.__pos['costed'] >= 0:
+        if self.__has_costed():
             return range(0, self.__pos['costed'])
         return self.__bom._positions()
-
-    def __update_costed(self):
-        return self.__pos['costed'] < 0 and self.__bom._new_costed()
-
-    def __update_costable(self):
-        return self.__pos['costable'] >= 0 and \
-                (self.__pos['costable'] == self.__bom._positions()[-2])
 
 
 class _Part:
@@ -84,14 +93,14 @@ class _Part:
             return self.__cost()
         return 0
 
-    def __cost(self):
-        return self.__attr['units']*self.__attr['cost']
-
     def _is_costed(self):
         return self.__attr['site'] == '12'
 
     def _costable(self):
         return self.__attr['site'] == '1'
+
+    def __cost(self):
+        return self.__attr['units']*self.__attr['cost']
 
     def __str__(self):
         return ", ".join([str((x, y)) for (x, y) in self.__attr.items()])
