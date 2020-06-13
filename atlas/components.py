@@ -4,6 +4,8 @@ from collections import OrderedDict
 
 from .schema import _Schema
 
+################################################################################
+
 class Bom:
     def __init__(self):
         self.__components=[]
@@ -52,6 +54,7 @@ class Bom:
     def __str__(self):
         return "BOM: "
 
+################################################################################
 
 class _CostPositions:
     def __init__(self, bom):
@@ -92,6 +95,7 @@ class _CostPositions:
             return range(0, self.__pos['costed'])
         return self.__bom._positions()
 
+################################################################################
 
 class _Part:
     def __init__(self, bom, number, site, cost, units):
@@ -140,5 +144,7 @@ class _Part:
 
     def __str__(self):
         return ", ".join([str((x, y)) for (x, y) in self.__attr.items()])
+
+################################################################################
 
 
