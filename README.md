@@ -26,7 +26,7 @@ HOW TO RUN THE TESTS FROM A TERMINAL:
 1. cd to `atlas` directory -- the top directory containing this `README` file.
 2. Type the following command:
 
-                - `python -m atlas`
+                python -m atlas
 
 3. Press enter.
 4. You should see THREE things in the output:
