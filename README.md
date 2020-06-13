@@ -23,13 +23,14 @@ I designed small objects to model all this complexity, and it came out pretty ne
 
 HOW TO RUN THE TESTS FROM A TERMINAL:
 
-1. cd to `atlas` directory -- the top directory containing this `README` file.
-2. Type the following command:
+1. python `aenum` package required; install using `pip` if you don't have it.
+2. cd to `atlas` directory -- the top directory containing this `README` file.
+3. Type the following command:
 
                 python -m atlas
 
-3. Press enter.
-4. You should see THREE things in the output:
+4. Press enter.
+5. You should see THREE things in the output:
         (a) Total cost of the BOM (for 1 run as well as for 2 consecutive runs);
 	(b) An indented Textual representation of parts in the BOM tree and their computed costs;
 	(c) An XML representation of parts in the BOM tree and their computed costs.
