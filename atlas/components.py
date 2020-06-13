@@ -9,7 +9,7 @@ from .schema import _Schema
 class Bom:
     def __init__(self):
         self.__components=[]
-        self.__cpos=_CostPositions(self)
+        self.__cpos=_BomCostPositions(self)
 
     def add(self, component):
         if component in self.__components:
@@ -56,7 +56,7 @@ class Bom:
 
 ################################################################################
 
-class _CostPositions:
+class _BomCostPositions:
     def __init__(self, bom):
         self.__bom=bom
         self.__pos={'costed' : -1, 'costable' : -1}
