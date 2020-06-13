@@ -1,9 +1,9 @@
 import unittest
 
-from .configuration import _BomBuilder
-from .schema import _Schema
-from .report import (TextReport, XmlReport,)
-from . import repo
+from ..configuration import _BomBuilder
+from ..report.schema import _Schema
+from ..report.report import (TextReport, XmlReport,)
+from . import report
 
 # test module -- contains all unit tests for atlas application.
 ################################################################################
@@ -92,29 +92,29 @@ class TestRerunTotalCost(Test):
 
 class TestDefaultTextReport(Test):
     def _assert(self):
-        report=TextReport()
-        self.assertEqual(report.render(self.bom), repo.default_text_report())
-        print "default TEXT report =>", "\n", repo.default_text_report()
+        _report=TextReport()
+        self.assertEqual(_report.render(self.bom), report.default_text())
+        print "default TEXT report =>", "\n", report.default_text()
 
 class TestCustomTextReport(Test):
     def _assert(self):
-        report=TextReport([_Schema.level, _Schema.part_number, _Schema.cost])
-        self.assertEqual(report.render(self.bom), repo.custom_text_report())
-        print "custom TEXT report =>", "\n", repo.custom_text_report()
+        _report=TextReport([_Schema.level, _Schema.part_number, _Schema.cost])
+        self.assertEqual(_report.render(self.bom), report.custom_text())
+        print "custom TEXT report =>", "\n", report.custom_text()
 
 ################################################################################
 
 class TestDefaultXmlReport(Test):
     def _assert(self):
-        report=XmlReport()
-        self.assertEqual(report.render(self.bom), repo.default_xml_report())
-        print "default XML report =>", "\n", repo.default_xml_report()
+        _report=XmlReport()
+        self.assertEqual(_report.render(self.bom), report.default_xml())
+        print "default XML report =>", "\n", report.default_xml()
 
 class TestCustomXmlReport(Test):
     def _assert(self):
-        report=XmlReport([_Schema.level, _Schema.part_number, _Schema.cost])
-        self.assertEqual(report.render(self.bom), repo.custom_xml_report())
-        print "custom XML report =>", "\n", repo.custom_xml_report()
+        _report=XmlReport([_Schema.level, _Schema.part_number, _Schema.cost])
+        self.assertEqual(_report.render(self.bom), report.custom_xml())
+        print "custom XML report =>", "\n", report.custom_xml()
 
 ################################################################################
 
@@ -128,6 +128,6 @@ def main():
     #   1. call this method in atlas.__main__.py
     #   2. then run `python -m atlas` to execute runTest()
     #   3. ref: https://docs.python.org/2/library/unittest.html#unittest.main
-    unittest.main(module='atlas.test')
+    unittest.main(module='atlas.test.test')
 
 ################################################################################

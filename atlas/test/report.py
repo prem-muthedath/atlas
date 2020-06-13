@@ -2,7 +2,7 @@
 
 ################################################################################
 
-def default_text_report():
+def default_text():
     return '\n'.join([
         "     Level        Part Number     Source Code      Unit Cost        Quantity         Costed           Cost     ",
         "       1             P-0001            1              1000             2               Y              2000     ",
@@ -36,7 +36,7 @@ def default_text_report():
 
 ################################################################################
 
-def custom_text_report():
+def custom_text():
     return '\n'.join([
         "     Level        Part Number         Cost     ",
         "       1             P-0001           2000     ",
@@ -70,7 +70,7 @@ def custom_text_report():
 
 ################################################################################
 
-def default_xml_report():
+def default_xml():
     return '\n'.join([
         "<xml>",
         "<part><level>1</level><part_number>P-0001</part_number><source_code>1</source_code><unit_cost>1000</unit_cost><quantity>2</quantity><costed>Y</costed><cost>2000</cost></part>",
@@ -105,7 +105,7 @@ def default_xml_report():
 
 ################################################################################
 
-def custom_xml_report():
+def custom_xml():
     return '\n'.join([
         "<xml>",
         "<part><level>1</level><part_number>P-0001</part_number><cost>2000</cost></part>",

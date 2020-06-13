@@ -2,7 +2,7 @@
 
 from collections import OrderedDict
 
-from .schema import _Schema
+from .report.schema import _Schema
 
 ################################################################################
 
