@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
-from . configuration import _BomBuilder
+from .configuration import _BomBuilder
+from .schema import _Schema
+from .report import (TextReport, XmlReport,)
 
 def setUp():
     # Set up -- configuration
@@ -46,7 +48,35 @@ def setUp():
 
 if __name__ == '__main__':
     bom = setUp()
-    print bom.cost(), bom.cost()
+    print bom.cost()
+    print bom.cost()
+    report=TextReport([_Schema.level, _Schema.part_number, _Schema.cost])
+    print report.render(bom)
+    report=TextReport()
+    print report.render(bom)
+    report=XmlReport()
+    print report.render(bom)
+    report=XmlReport([_Schema.level, _Schema.part_number, _Schema.cost])
+    print report.render(bom)
+
+    # headers=[]
+    # body=[]
+    # for part in bom.export():
+    #     line=[]
+    #     for item in [_Schema.level, _Schema.part_number, _Schema.cost]:
+    #         val = part[item]
+    #         if item.name not in headers:
+    #             headers.append(item.name)
+    #         line.append(str(val))
+    #     body.append(" ".join(line))
+    # print " ".join(headers)
+    # print "\n".join(body)
+
+
+
+
+
+
 
 
 

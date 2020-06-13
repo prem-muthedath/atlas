@@ -16,7 +16,7 @@ class _BomBuilder():
         self.__parent_level=level
 
     def __add(self, number, code, cost, quantity, bom):
-        part=_Part(number, code, cost, quantity)
+        part=_Part(bom, number, code, cost, quantity)
         bom.add(part)
 
     def __parent(self):

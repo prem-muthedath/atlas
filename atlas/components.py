@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+from collections import OrderedDict
+
+from .schema import _Schema
+
 class Bom:
     def __init__(self):
         self.__components=[]
@@ -20,10 +24,10 @@ class Bom:
     def _is_costed(self):
         return False
 
-    def cost(self, bom=None):
+    def cost(self):
         cost=0
         for each in self.__components:
-            cost+=each.cost(self)
+            cost+=each.cost()
         return cost
 
     def _costable(self, part):
@@ -34,6 +38,16 @@ class Bom:
 
     def _positions(self):
         return range(0, self.__leaf() + 1)
+
+    def export(self, level=-1):
+        parts=[]
+        for each in self.__components:
+            part=each.export(level+1)
+            if isinstance(part, list):
+                parts=parts+part
+            else:
+                parts.append(part)
+        return parts
 
     def __str__(self):
         return "BOM: "
@@ -80,16 +94,17 @@ class _CostPositions:
 
 
 class _Part:
-    def __init__(self, number, site, cost, units):
+    def __init__(self, bom, number, site, cost, units):
         self.__attr=dict(
+                bom=bom,
                 number=number,
                 site=site,
                 cost=cost,
                 units=units
             )
 
-    def cost(self, bom):
-        if self._is_costed() or bom._costable(self):
+    def cost(self):
+        if self._is_costed() or self.__attr['bom']._costable(self):
             return self.__cost()
         return 0
 
@@ -101,6 +116,27 @@ class _Part:
 
     def __cost(self):
         return self.__attr['units']*self.__attr['cost']
+
+    def export(self, level):
+        _cost, _part = self.cost(), OrderedDict()
+        for i, item in enumerate(_Schema):
+            if item == _Schema.level and item._type == int:
+                _part[item]=level
+            elif item == _Schema.part_number and item._type == str:
+                _part[item]=self.__attr['number']
+            elif item == _Schema.source_code and item._type == str:
+                _part[item]=self.__attr['site']
+            elif item == _Schema.unit_cost and item._type == int:
+                _part[item]=self.__attr['cost']
+            elif item == _Schema.quantity and item._type == int:
+                _part[item]=self.__attr['units']
+            elif item == _Schema.costed and item._type == str:
+                _part[item]='Y' if _cost == self.__cost() else 'N'
+            elif item == _Schema.cost and item._type == int:
+                _part[item]=_cost
+            if i == len(_Schema) - 1 and _part.keys() != list(_Schema):
+                raise RuntimeError("schema violation in part export")
+        return _part
 
     def __str__(self):
         return ", ".join([str((x, y)) for (x, y) in self.__attr.items()])
