@@ -1,8 +1,8 @@
 import unittest
 
 from ..configuration import _BomBuilder
-from ..report.schema import _Schema
-from ..report.report import (TextReport, XmlReport,)
+from ..schema import _Schema
+from ..report import (TextReport, XmlReport,)
 from . import report
 
 # test module -- contains all unit tests for atlas application.

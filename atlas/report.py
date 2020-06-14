@@ -10,7 +10,7 @@ class Report:
         self.__body=[]
 
     def render(self, bom):
-        for part in bom.export():
+        for part in bom.schema_map():
             self.__add(part)
         return self.__render()
 

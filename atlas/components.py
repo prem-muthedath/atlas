@@ -2,7 +2,7 @@
 
 from collections import OrderedDict
 
-from .report.schema import _Schema
+from .schema import _Schema, Costed
 
 ################################################################################
 
@@ -41,10 +41,10 @@ class Bom:
     def _positions(self):
         return range(0, self.__leaf() + 1)
 
-    def export(self, level=-1):
+    def schema_map(self, level=-1):
         parts=[]
         for each in self.__components:
-            part=each.export(level+1)
+            part=each.schema_map(level+1)
             if isinstance(part, list):
                 parts=parts+part
             else:
@@ -121,7 +121,7 @@ class _Part:
     def __cost(self):
         return self.__attr['units']*self.__attr['cost']
 
-    def export(self, level):
+    def schema_map(self, level):
         _cost, _part = self.cost(), OrderedDict()
         for i, item in enumerate(_Schema):
             if item == _Schema.level and item._type == int:
@@ -135,7 +135,7 @@ class _Part:
             elif item == _Schema.quantity and item._type == int:
                 _part[item]=self.__attr['units']
             elif item == _Schema.costed and item._type == str:
-                _part[item]='Y' if _cost == self.__cost() else 'N'
+                _part[item]=Costed.Y.name if _cost == self.__cost() else Costed.N.name
             elif item == _Schema.cost and item._type == int:
                 _part[item]=_cost
             if i == len(_Schema) - 1 and _part.keys() != list(_Schema):
