@@ -98,8 +98,9 @@ class TestDefaultTextReport(Test):
 
 class TestCustomTextReport(Test):
     def _assert(self):
-        _report=TextReport([_Schema.level, _Schema.part_number, _Schema.cost])
-        self.assertEqual(_report.render(self.bom), report.custom_text())
+        schema=[_Schema.level, _Schema.part_number, _Schema.cost]
+        _report=TextReport()
+        self.assertEqual(_report.render(self.bom, schema), report.custom_text())
         print "custom TEXT report =>", "\n", report.custom_text()
 
 ################################################################################
@@ -112,8 +113,9 @@ class TestDefaultXmlReport(Test):
 
 class TestCustomXmlReport(Test):
     def _assert(self):
-        _report=XmlReport([_Schema.level, _Schema.part_number, _Schema.cost])
-        self.assertEqual(_report.render(self.bom), report.custom_xml())
+        schema=[_Schema.level, _Schema.part_number, _Schema.cost]
+        _report=XmlReport()
+        self.assertEqual(_report.render(self.bom, schema), report.custom_xml())
         print "custom XML report =>", "\n", report.custom_xml()
 
 ################################################################################

@@ -4,20 +4,19 @@ from .schema import _Schema
 
 ################################################################################
 
-class Report:
-    def __init__(self, headers=list(_Schema)):
-        self.__headers=headers
+class Report(object):
+    def __init__(self):
         self.__body=[]
 
-    def render(self, bom):
+    def render(self, bom, schema=_Schema):
         for part in bom.schema_map():
-            self.__add(part)
+            _part=[(item, part[item]) for item in schema]
+            self.__add(_part)
         return self.__render()
 
     def __add(self, part):
         line=[]
-        for item in self.__headers:
-            val = part[item]
+        for (item, val) in part:
             line.append(self._element(item.name, val))
         self.__body.append(self._line(line))
 
@@ -36,13 +35,16 @@ class Report:
     def _footer(self):
         return ""
 
-    def _headers(self):
-        return [header.name for header in self.__headers]
-
 ################################################################################
 
 class TextReport(Report):
+    def __init__(self):
+        super(TextReport, self).__init__()
+        self.__headers=[]
+
     def _element(self, name, value):
+        if name not in self.__headers:
+            self.__headers.append(name)
         if name == 'level':
             indent=(value-1)*"  "
             return self.__centered(indent+str(value))
@@ -59,7 +61,7 @@ class TextReport(Report):
 
     def _title(self):
         __title=[]
-        for name in self._headers():
+        for name in self.__headers:
             header=self.__centered(self.__capitalize(name))
             __title.append(header)
         return " ".join(__title)

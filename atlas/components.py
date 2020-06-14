@@ -134,8 +134,8 @@ class _Part:
                 _part[item]=self.__attr['cost']
             elif item == _Schema.quantity and item._type == int:
                 _part[item]=self.__attr['units']
-            elif item == _Schema.costed and item._type == str:
-                _part[item]=Costed.Y.name if _cost == self.__cost() else Costed.N.name
+            elif item == _Schema.costed and item._type == Costed:
+                _part[item]=Costed.YES if _cost == self.__cost() else Costed.NO
             elif item == _Schema.cost and item._type == int:
                 _part[item]=_cost
             if i == len(_Schema) - 1 and _part.keys() != list(_Schema):

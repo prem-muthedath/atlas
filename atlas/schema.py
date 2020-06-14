@@ -5,9 +5,18 @@ from aenum import Enum, NoAlias
 # this module defines the schema for the entire atlas app.
 ################################################################################
 
+# part costed status in BOM
+class Costed(Enum):
+    YES='Y'
+    NO='N'
+
+    def __str__(self):
+        return self.value
+
+
 class _Schema(Enum):
     # defines atlas part schema.
-    # the schema provides a central data map to exchange data within atlas.
+    # the schema provides a central map for data exchange in atlas.
     # classes use either this schema or a subset of it, but in both cases, 
     # classes may order the schema members per their needs.
     # class design idea from /u/ ethan furman @ https://tinyurl.com/ycacxytx
@@ -22,7 +31,7 @@ class _Schema(Enum):
     source_code=str     # code identifying site where part is sourced from
     unit_cost=int       # cost for 1 part
     quantity=int        # number of parts of a given part number in the BOM
-    costed=str          # flag denotes if part's cost is included in BOM's cost
+    costed=Costed       # flag denotes if part's cost is included in BOM's cost
     cost=int            # total cost of all parts of a given part number in BOM
 
     def __init__(self, _type):
@@ -30,6 +39,4 @@ class _Schema(Enum):
         self._type=_type
 
 
-# part costed status in BOM
-Costed=Enum('Costed', 'Y N')
 
