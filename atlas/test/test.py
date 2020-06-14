@@ -120,6 +120,9 @@ class TestCustomXmlReport(Test):
 
 ################################################################################
 
+# `Test` deleted; else, unittest will run it.
+# `Test` is a base class, & doesn't test anything, so need not run it.
+# for del(Test) trick, see /u/ Wojciech B @ https://tinyurl.com/yb58qtae
 del(Test)
 
 ################################################################################

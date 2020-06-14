@@ -5,14 +5,15 @@ from aenum import Enum, NoAlias
 # this module defines the schema for the entire atlas app.
 ################################################################################
 
-# part costed status in BOM
 class Costed(Enum):
+# part costed status in BOM
     YES='Y'
     NO='N'
 
     def __str__(self):
         return self.value
 
+################################################################################
 
 class _Schema(Enum):
     # defines atlas part schema.
@@ -38,5 +39,6 @@ class _Schema(Enum):
         # `_type`: data type defined for the member in schema.
         self._type=_type
 
+################################################################################
 
 
