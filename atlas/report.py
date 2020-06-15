@@ -4,11 +4,11 @@ from .schema import _Schema
 
 ################################################################################
 
-class Report(object):
+class _Report(object):
     def __init__(self):
         self.__body=[]
 
-    def render(self, bom, schema=_Schema):
+    def _render(self, bom, schema=_Schema):
         for part in bom._schema_map():
             line=[self._element(i.name, part[i]) for i in schema]
             self.__body.append(self._line(line))
@@ -31,9 +31,9 @@ class Report(object):
 
 ################################################################################
 
-class TextReport(Report):
+class _TextReport(_Report):
     def __init__(self):
-        super(TextReport, self).__init__()
+        super(_TextReport, self).__init__()
         self.__headers=[]
 
     def _element(self, name, value):
@@ -66,7 +66,7 @@ class TextReport(Report):
 
 ################################################################################
 
-class XmlReport(Report):
+class _XmlReport(_Report):
     def _element(self, name, val):
         return '<' + name + '>' + str(val) + '</' + name + '>'
 
