@@ -10,15 +10,9 @@ class Report(object):
 
     def render(self, bom, schema=_Schema):
         for part in bom.schema_map():
-            _part=[(item, part[item]) for item in schema]
-            self.__add(_part)
+            line=[self._element(i.name, part[i]) for i in schema]
+            self.__body.append(self._line(line))
         return self.__render()
-
-    def __add(self, part):
-        line=[]
-        for (item, val) in part:
-            line.append(self._element(item.name, val))
-        self.__body.append(self._line(line))
 
     def _element(self, name, val):
         pass

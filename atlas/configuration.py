@@ -7,7 +7,7 @@ class _BomBuilder():
         self.__parents=[Bom()]
         self.__parent_level=0
 
-    def add_item(self, level, number, code, cost, quantity):
+    def _add_item(self, level, number, code, cost, quantity):
         self.__new_level(level)
         self.__add(number, code, cost, quantity, self.__parent())
         self.__new_parents()

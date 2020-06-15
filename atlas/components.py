@@ -51,9 +51,6 @@ class Bom:
                 parts.append(part)
         return parts
 
-    def __str__(self):
-        return "BOM: "
-
 ################################################################################
 
 class _BomCostPositions:
@@ -141,9 +138,6 @@ class _Part:
             if i == len(_Schema) - 1 and _part.keys() != list(_Schema):
                 raise RuntimeError("schema violation in part export")
         return _part
-
-    def __str__(self):
-        return ", ".join([str((x, y)) for (x, y) in self.__attr.items()])
 
 ################################################################################
 
