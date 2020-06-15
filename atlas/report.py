@@ -39,7 +39,7 @@ class TextReport(Report):
     def _element(self, name, value):
         if name not in self.__headers:
             self.__headers.append(name)
-        if name == 'level':
+        if name == _Schema.level.name:
             indent=(value-1)*"  "
             return self.__centered(indent+str(value))
         return self.__centered(str(value))
