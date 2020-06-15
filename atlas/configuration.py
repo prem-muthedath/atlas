@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from .database import _AtlasDB
+from .schema import _Schema
 from .components import (Bom, _Part,)
 
 class _BomBuilder():
@@ -7,7 +9,19 @@ class _BomBuilder():
         self.__parents=[Bom()]
         self.__parent_level=0
 
-    def _add_item(self, level, number, code, cost, quantity):
+    def _build(self):
+        parts=_AtlasDB()._dump()
+        for part in parts:
+            self.__add_item(
+                    part[_Schema.level],
+                    part[_Schema.part_number],
+                    part[_Schema.source_code],
+                    part[_Schema.unit_cost],
+                    part[_Schema.quantity]
+                )
+        return self.__parents[0]
+
+    def __add_item(self, level, number, code, cost, quantity):
         self.__new_level(level)
         self.__add(number, code, cost, quantity, self.__parent())
         self.__new_parents()
@@ -37,7 +51,5 @@ class _BomBuilder():
     def __new_parents(self):
         self.__parents=self.__parents[0:self.__parent_level+1]
 
-    def build(self):
-        return self.__parents[0]
 
 
