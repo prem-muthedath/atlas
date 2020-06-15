@@ -3,6 +3,8 @@
 from .configuration import _BomBuilder
 from .report import (_TextReport, _XmlReport,)
 
+################################################################################
+
 class Atlas:
     def cost(self):
         return self.__bom()._cost()
@@ -21,4 +23,5 @@ class Atlas:
     def __bom(self):
         return _BomBuilder()._build()
 
+################################################################################
 

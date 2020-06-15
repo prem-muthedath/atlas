@@ -4,6 +4,8 @@ from .database import _AtlasDB
 from .schema import _Schema
 from .components import (_Bom, _Part,)
 
+################################################################################
+
 class _BomBuilder():
     def __init__(self):
         self.__parents=[_Bom()]
@@ -51,5 +53,5 @@ class _BomBuilder():
     def __new_parents(self):
         self.__parents=self.__parents[0:self.__parent_level+1]
 
-
+################################################################################
 

@@ -2,6 +2,8 @@
 
 from .schema import _Schema
 
+################################################################################
+
 class _AtlasDB:
     __parts = [ # represents the database
         [("name", "P-0001"), ("level", 1), ("site", '1'), ("cost", 1000), ("units", 2)],    # 1000*2
@@ -57,4 +59,6 @@ class _AtlasDB:
             if i == len(_part) - 1 and len(part) != len(_part):
                 raise RuntimeError("DB schema map error")
         return part
+
+################################################################################
 
