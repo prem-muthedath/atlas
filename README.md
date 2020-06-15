@@ -18,9 +18,6 @@ The display is complex because it allows users to dynamically select and order t
 Finally, how to build the BOM tree? By that I mean the sequential addition of parts and sub-BOMs.  The algorithm is a bit tricky, and designing a clean object to do this was a challenge.
 
 
-I designed small objects to model all this complexity, and it came out pretty neat, after many iterations.
-
-
 HOW TO RUN THE TESTS FROM A TERMINAL:
 
 1. `aenum` package for `python 2.7.16` required; install using `pip` if needed.
