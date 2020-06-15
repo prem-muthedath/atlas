@@ -29,7 +29,7 @@ HOW TO RUN THE TESTS FROM A TERMINAL:
 
                 python -m atlas
 
-4. Press enter.
+4. Press `ENTER`.
 5. You should see THREE things in the output:
         (a) Total cost of the BOM (for 1 run as well as for 2 consecutive runs);
 	(b) An indented Textual representation of parts in the BOM tree and their computed costs;
