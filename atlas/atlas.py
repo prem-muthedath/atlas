@@ -5,7 +5,7 @@ from .report import (TextReport, XmlReport,)
 
 class Atlas:
     def cost(self):
-        return self.__bom().cost()
+        return self.__bom()._cost()
 
     def text_report(self, schema=None):
         report=TextReport()

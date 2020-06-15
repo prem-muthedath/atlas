@@ -2,11 +2,11 @@
 
 from .database import _AtlasDB
 from .schema import _Schema
-from .components import (Bom, _Part,)
+from .components import (_Bom, _Part,)
 
 class _BomBuilder():
     def __init__(self):
-        self.__parents=[Bom()]
+        self.__parents=[_Bom()]
         self.__parent_level=0
 
     def _build(self):
@@ -31,7 +31,7 @@ class _BomBuilder():
 
     def __add(self, number, code, cost, quantity, bom):
         part=_Part(bom, number, code, cost, quantity)
-        bom.add(part)
+        bom._add(part)
 
     def __parent(self):
         if self.__new_bom():
@@ -45,8 +45,8 @@ class _BomBuilder():
         return len(self.__parents)-1
 
     def __create(self):
-        self.__parents.append(Bom())
-        self.__parents[self.__parent_level-1].add(self.__parents[self.__parent_level])
+        self.__parents.append(_Bom())
+        self.__parents[self.__parent_level-1]._add(self.__parents[self.__parent_level])
 
     def __new_parents(self):
         self.__parents=self.__parents[0:self.__parent_level+1]

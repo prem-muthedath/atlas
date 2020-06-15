@@ -6,12 +6,12 @@ from .schema import _Schema, Costed
 
 ################################################################################
 
-class Bom:
+class _Bom:
     def __init__(self):
         self.__components=[]
         self.__cpos=_BomCostPositions(self)
 
-    def add(self, component):
+    def _add(self, component):
         if component in self.__components:
             raise RuntimeError("duplicate part")
         self.__components.append(component)
@@ -26,10 +26,10 @@ class Bom:
     def _is_costed(self):
         return False
 
-    def cost(self):
+    def _cost(self):
         cost=0
         for each in self.__components:
-            cost+=each.cost()
+            cost+=each._cost()
         return cost
 
     def _costable(self, part):
@@ -41,10 +41,10 @@ class Bom:
     def _positions(self):
         return range(0, self.__leaf() + 1)
 
-    def schema_map(self, level=-1):
+    def _schema_map(self, level=-1):
         parts=[]
         for each in self.__components:
-            part=each.schema_map(level+1)
+            part=each._schema_map(level+1)
             if isinstance(part, list):
                 parts=parts+part
             else:
@@ -104,7 +104,7 @@ class _Part:
                 units=units
             )
 
-    def cost(self):
+    def _cost(self):
         if self._is_costed() or self.__attr['bom']._costable(self):
             return self.__cost()
         return 0
@@ -118,8 +118,8 @@ class _Part:
     def __cost(self):
         return self.__attr['units']*self.__attr['cost']
 
-    def schema_map(self, level):
-        _cost, _part = self.cost(), OrderedDict()
+    def _schema_map(self, level):
+        _cost, _part = self._cost(), OrderedDict()
         for i, item in enumerate(_Schema):
             if item == _Schema.level and item._type == int:
                 _part[item]=level

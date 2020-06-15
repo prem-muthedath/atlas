@@ -9,7 +9,7 @@ class Report(object):
         self.__body=[]
 
     def render(self, bom, schema=_Schema):
-        for part in bom.schema_map():
+        for part in bom._schema_map():
             line=[self._element(i.name, part[i]) for i in schema]
             self.__body.append(self._line(line))
         return self.__render()
