@@ -91,8 +91,6 @@ class TestDuplicatePart(Test):
         self.assertEquals(bom._positions(), [0])
         print "bom positions =>", bom._positions()
 
-################################################################################
-
 class TestDuplicateBom(Test):
     def _assert(self):
         bom=_Bom()
@@ -121,8 +119,6 @@ class TestNonCostableLeafChange(Test):
         self.assertEquals(bom._cost(), 80)
         print "bom cost & positions AFTER leaf change =>", \
                 bom._cost(), "|", bom._positions()
-
-################################################################################
 
 class TestCostableLeafChange(Test):
     def _assert(self):
