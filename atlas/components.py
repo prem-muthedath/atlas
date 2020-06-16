@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-from collections import OrderedDict
-
 from .schema import _Schema, Costed
 
 ################################################################################
@@ -41,15 +39,14 @@ class _Bom:
     def _positions(self):
         return range(0, self.__leaf() + 1)
 
-    def _schema_map(self, level=-1):
+    def _schema_map(self):
         parts=[]
-        for each in self.__components:
-            part=each._schema_map(level+1)
-            if isinstance(part, list):
-                parts=parts+part
-            else:
-                parts.append(part)
+        self._map_(-1, parts)
         return parts
+
+    def _map_(self, level, parts):
+        for each in self.__components:
+            each._map_(level+1, parts)
 
 ################################################################################
 
@@ -96,17 +93,16 @@ class _BomCostPositions:
 
 class _Part:
     def __init__(self, bom, number, site, cost, units):
-        self.__attr=dict(
-                bom=bom,
-                number=number,
-                site=site,
-                cost=cost,
-                units=units
-            )
+        self.__attr={
+                'bom' : bom,
+                'number' : number,
+                'site' : site,
+                'costunits' : _CostUnits(cost, units)
+            }
 
     def _cost(self):
         if self._is_costed() or self.__attr['bom']._costable(self):
-            return self.__cost()
+            return self.__attr['costunits']._cost()
         return 0
 
     def _is_costed(self):
@@ -115,29 +111,52 @@ class _Part:
     def _costable(self):
         return self.__attr['site'] == '1'
 
-    def __cost(self):
-        return self.__attr['units']*self.__attr['cost']
+    def _map_(self, level, parts):
+        _map={_Schema.level : level} if type(level)==_Schema.level._type else {}
+        for i, (name, val) in enumerate(self.__attr.items()):
+            if name == 'bom':
+                pass
+            elif name == 'number' and type(val) == _Schema.part_number._type:
+                _map[_Schema.part_number]=val
+            elif name == 'site' and type(val) == _Schema.source_code._type:
+                _map[_Schema.source_code]=val
+            elif name == 'costunits':
+                _map.update(val._map_(self))
+            if i == len(self.__attr) - 1 and len(_map) != len(_Schema):
+                raise RuntimeError("part schema map error")
+        parts.append(_map)
 
-    def _schema_map(self, level):
-        _cost, _part = self._cost(), OrderedDict()
-        for i, item in enumerate(_Schema):
-            if item == _Schema.level and item._type == int:
-                _part[item]=level
-            elif item == _Schema.part_number and item._type == str:
-                _part[item]=self.__attr['number']
-            elif item == _Schema.source_code and item._type == str:
-                _part[item]=self.__attr['site']
-            elif item == _Schema.unit_cost and item._type == int:
-                _part[item]=self.__attr['cost']
-            elif item == _Schema.quantity and item._type == int:
-                _part[item]=self.__attr['units']
-            elif item == _Schema.costed and item._type == Costed:
-                _part[item]=Costed.YES if _cost == self.__cost() else Costed.NO
-            elif item == _Schema.cost and item._type == int:
-                _part[item]=_cost
-            if i == len(_Schema) - 1 and _part.keys() != list(_Schema):
-                raise RuntimeError("schema violation in part export")
-        return _part
+    def __eq__(self, other):
+        if not isinstance(other, _Part):
+            return False
+        return self.__attr['number'] == other.__attr['number']
+
+    def __ne__(self, other):
+        return not self == other
+
+################################################################################
+
+class _CostUnits:
+    def __init__(self, unit_cost, units):
+        self.__unit_cost=unit_cost
+        self.__units=units
+
+    def _cost(self):
+        return self.__units*self.__unit_cost
+
+    def _map_(self, part):
+        return self.__map(part._cost(), {})
+
+    def __map(self, cst, _map):
+        if type(cst) == _Schema.cost._type:
+            _map[_Schema.cost]=cst
+        if _Schema.costed._type == Costed:
+            _map[_Schema.costed]=Costed.YES if cst==self._cost() else Costed.NO
+        if type(self.__unit_cost) == _Schema.unit_cost._type:
+            _map[_Schema.unit_cost]=self.__unit_cost
+        if type(self.__units) == _Schema.quantity._type:
+            _map[_Schema.quantity]=self.__units
+        return _map
 
 ################################################################################
 
