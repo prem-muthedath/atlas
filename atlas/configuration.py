@@ -2,7 +2,7 @@
 
 from .database import _AtlasDB
 from .schema import _Schema
-from .components import (_Bom, _Part,)
+from .components import (_Bom, _Part, _CostUnits,)
 
 ################################################################################
 
@@ -32,7 +32,7 @@ class _BomBuilder():
         self.__parent_level=level
 
     def __add(self, number, code, cost, quantity, bom):
-        part=_Part(bom, number, code, cost, quantity)
+        part=_Part(bom, number, code, _CostUnits(cost, quantity))
         bom._add(part)
 
     def __parent(self):

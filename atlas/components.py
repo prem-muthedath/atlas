@@ -41,7 +41,7 @@ class _Bom:
 
     def _schema_map(self):
         parts=[]
-        self._map_(-1, parts)
+        self._map_(-1, parts)   # collector pattern
         return parts
 
     def _map_(self, level, parts):
@@ -92,16 +92,12 @@ class _BomCostPositions:
 ################################################################################
 
 class _Part:
-    def __init__(self, bom, number, site, cost, units):
-        self.__attr={
-                'bom' : bom,
-                'number' : number,
-                'site' : site,
-                'costunits' : _CostUnits(cost, units)
-            }
+    def __init__(self, bom, number, site, cost_units):
+        self.__bom=bom
+        self.__attr={'number' : number, 'site' : site, 'costunits' : cost_units}
 
     def _cost(self):
-        if self._is_costed() or self.__attr['bom']._costable(self):
+        if self._is_costed() or self.__bom._costable(self):
             return self.__attr['costunits']._cost()
         return 0
 
@@ -114,9 +110,7 @@ class _Part:
     def _map_(self, level, parts):
         _map={_Schema.level : level} if type(level)==_Schema.level._type else {}
         for i, (name, val) in enumerate(self.__attr.items()):
-            if name == 'bom':
-                pass
-            elif name == 'number' and type(val) == _Schema.part_number._type:
+            if name == 'number' and type(val) == _Schema.part_number._type:
                 _map[_Schema.part_number]=val
             elif name == 'site' and type(val) == _Schema.source_code._type:
                 _map[_Schema.source_code]=val
