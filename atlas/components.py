@@ -115,7 +115,7 @@ class _Part:
             elif name == 'site' and type(val) == _Schema.source_code._type:
                 _map[_Schema.source_code]=val
             elif name == 'costunits':
-                _map.update(val._map_(self))
+                _map.update(val._map_costs(self))
             if i == len(self.__attr) - 1 and len(_map) != len(_Schema):
                 raise RuntimeError("part schema map error")
         parts.append(_map)
@@ -138,7 +138,7 @@ class _CostUnits:
     def _cost(self):
         return self.__units*self.__unit_cost
 
-    def _map_(self, part):
+    def _map_costs(self, part):
         return self.__map(part._cost(), {})
 
     def __map(self, cst, _map):
