@@ -2,7 +2,7 @@ import unittest
 
 from ..atlas import Atlas
 from ..schema import _Schema
-from . import report
+from . import reports
 
 # test module -- contains all unit tests for atlas application.
 ################################################################################
@@ -53,31 +53,31 @@ class TestRerunTotalCost(Test):
 
 class TestDefaultTextReport(Test):
     def _assert(self):
-        _report=self._app.text_report()
-        self.assertEqual(_report, report.default_text())
-        print "default TEXT report =>", "\n", report.default_text()
+        report=self._app.text_report()
+        self.assertEqual(report, reports.default_text())
+        print "default TEXT report =>", "\n", reports.default_text()
 
 class TestCustomTextReport(Test):
     def _assert(self):
         schema=[_Schema.level, _Schema.part_number, _Schema.cost]
-        _report=self._app.text_report(schema)
-        self.assertEqual(_report, report.custom_text())
-        print "custom TEXT report =>", "\n", report.custom_text()
+        report=self._app.text_report(schema)
+        self.assertEqual(report, reports.custom_text())
+        print "custom TEXT report =>", "\n", reports.custom_text()
 
 ################################################################################
 
 class TestDefaultXmlReport(Test):
     def _assert(self):
-        _report=self._app.xml_report()
-        self.assertEqual(_report, report.default_xml())
-        print "default XML report =>", "\n", report.default_xml()
+        report=self._app.xml_report()
+        self.assertEqual(report, reports.default_xml())
+        print "default XML report =>", "\n", reports.default_xml()
 
 class TestCustomXmlReport(Test):
     def _assert(self):
         schema=[_Schema.level, _Schema.part_number, _Schema.cost]
-        _report=self._app.xml_report(schema)
-        self.assertEqual(_report, report.custom_xml())
-        print "custom XML report =>", "\n", report.custom_xml()
+        report=self._app.xml_report(schema)
+        self.assertEqual(report, reports.custom_xml())
+        print "custom XML report =>", "\n", reports.custom_xml()
 
 ################################################################################
 
