@@ -36,8 +36,8 @@ class _Bom:
     def __init__(self, parts):
         self.__components=[]
         for i, val in enumerate(parts):
-            if isinstance(val, _Bom):
-                self.__components.append(val)
+            if isinstance(val, list):
+                self.__components.append(_Bom(val))
             elif i < len(parts) - 1:
                 self.__components.append(_Part(self, val))
             else:

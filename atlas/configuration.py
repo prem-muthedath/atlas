@@ -18,16 +18,7 @@ class _BomBuilder():
                     part[_Schema.level],
                     part[_Schema.part_number]
                 )
-        return self.__build(self.__parents[0])
-
-    def __build(self, items):
-        bom=[]
-        for i in items:
-            if isinstance(i, list):
-                bom.append(self.__build(i))
-            else:
-                bom.append(i)
-        return _Bom(bom)
+        return _Bom(self.__parents[0])
 
     def __add_item(self, level, number):
         self.__new_level(level)
