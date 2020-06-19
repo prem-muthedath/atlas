@@ -83,9 +83,11 @@ class _Part(object):
 
     def __cost(self, part):
         return _PartCost(
-                part[_Schema.source_code], \
-                part[_Schema.quantity], \
-                part[_Schema.unit_cost]
+                part[_Schema.source_code],
+                _CostUnits(
+                    part[_Schema.quantity],
+                    part[_Schema.unit_cost]
+                )
             )._compute(self)
 
     def _costed(self):
@@ -113,10 +115,9 @@ class _LeafPart(_Part):
 ################################################################################
 
 class _PartCost:
-    def __init__(self, code, units, unit_cost):
+    def __init__(self, code, cost_units):
         self.__code=code
-        self.__units=units
-        self.__unit_cost=unit_cost
+        self.__cost_units=cost_units
 
     def _compute(self, part):
         if self.__costed():
@@ -137,10 +138,20 @@ class _PartCost:
         return {_Schema.costed : Costed.NO, _Schema.cost : 0}
 
     def __cost(self):
-        return self.__units*self.__unit_cost
+        return self.__cost_units._cost()
 
     def __costable(self):
         return self.__code == '1'
+
+################################################################################
+
+class _CostUnits:
+    def __init__(self, units, unit_cost):
+        self.__units=units
+        self.__unit_cost=unit_cost
+
+    def _cost(self):
+        return self.__units*self.__unit_cost
 
 ################################################################################
 
