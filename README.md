@@ -6,13 +6,17 @@ BOM (bill of materials) costing app.
 This OO application, written in Python, computes the cost of each part in a typical BOM (Bill of Materials -- a recursive tree structure of parts and BOMs) and returns the following two results:
 
 1. Total cost of the BOM, which is nothing but the sum of the costs of parts in the BOM.
-2. Text and XML representations of parts in the BOM tree and their computed costs.
+2. Text and XML representations of parts in the BOM and their computed costs.
 
-The problem is complicated because the cost of a part depends on its location in the BOM: its predecessors and successors determine if the part can be costed. This is the business logic side.
+The problem is complex because the cost of a part depends not only on itself but 
+also on it's location in the BOM: it's predecessors determine if the part can be 
+costed.  This is the business logic side.
 
-The other problem is to collect and present the results (i.e., computed part costs, levels, and other part details) in multiple formats by traversing the BOM's tree structure.  This is the display side.
+The other problem is to collect and present the results (i.e., computed part 
+costs, levels, and other part details) in multiple formats by traversing the 
+BOM's tree structure.  This is the display side.
 
-The display is complex because it allows users to dynamically select and order the fields.
+The display is complex because users can dynamically select & order the fields.
 
 
 Finally, how to build the BOM tree? By that I mean the sequential addition of parts and sub-BOMs.  The algorithm is a bit tricky, and designing a clean object to do this was a challenge.
