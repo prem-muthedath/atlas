@@ -30,7 +30,7 @@ class _Schema(Enum):
     level=int           # part's level in the BOM tree
     part_number=str     # part's number or name
     source_code=str     # code identifying site where part is sourced from
-    unit_cost=int       # cost for 1 part
+    unit_cost=int       # cost for 1 part of a given a part number
     quantity=int        # number of parts of a given part number in the BOM
     costed=Costed       # flag denotes if part's cost is included in BOM's cost
     cost=int            # total cost of all parts of a given part number in BOM
