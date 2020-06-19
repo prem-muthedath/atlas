@@ -2,13 +2,13 @@
 
 from .database import _AtlasDB
 from .schema import _Schema
-from .components import (_Bom, _Part, _CostUnits,)
+from .components import _Bom
 
 ################################################################################
 
 class _BomBuilder():
     def __init__(self):
-        self.__parents=[_Bom()]
+        self.__parents=[]
         self.__parent_level=0
 
     def _build(self):
@@ -16,42 +16,45 @@ class _BomBuilder():
         for part in parts:
             self.__add_item(
                     part[_Schema.level],
-                    part[_Schema.part_number],
-                    part[_Schema.source_code],
-                    part[_Schema.unit_cost],
-                    part[_Schema.quantity]
+                    part[_Schema.part_number]
                 )
-        return self.__parents[0]
+        return self.__build(self.__parents[0])
 
-    def __add_item(self, level, number, code, cost, quantity):
+    def __build(self, items):
+        bom=[]
+        for i in items:
+            if isinstance(i, list):
+                bom.append(self.__build(i))
+            else:
+                bom.append(i)
+        return _Bom(bom)
+
+    def __add_item(self, level, number):
         self.__new_level(level)
-        self.__add(number, code, cost, quantity, self.__parent())
+        self.__parent().append((level, number))
         self.__new_parents()
 
     def __new_level(self, level):
         self.__parent_level=level
 
-    def __add(self, number, code, cost, quantity, bom):
-        part=_Part(bom, number, code, _CostUnits(cost, quantity))
-        bom._add(part)
-
     def __parent(self):
         if self.__new_bom():
             self.__create()
-        return self.__parents[self.__parent_level]
+        return self.__parents[self.__parent_level-1]
 
     def __new_bom(self):
         return self.__parent_level==self.__previous_parent_level()+1
 
     def __previous_parent_level(self):
-        return len(self.__parents)-1
+        return len(self.__parents)
 
     def __create(self):
-        self.__parents.append(_Bom())
-        self.__parents[self.__parent_level-1]._add(self.__parents[self.__parent_level])
+        self.__parents.append([])
+        if len(self.__parents) <= 1: return
+        self.__parents[-2].append(self.__parents[-1])
 
     def __new_parents(self):
-        self.__parents=self.__parents[0:self.__parent_level+1]
+        self.__parents=self.__parents[0:self.__parent_level]
 
 ################################################################################
 

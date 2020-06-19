@@ -1,22 +1,17 @@
 #!/usr/bin/python
 
 from .schema import _Schema, Costed
+from database import _AtlasDB
 
 ################################################################################
 
 class _BomCostPositions:
-    def __init__(self, bom):
-        self.__bom=bom
+    def __init__(self):
         self.__pos={'costed' : -1, 'costable' : -1}
 
-    def _new(self, leaf):
-        if self.__update_costed():
-            self.__pos['costed']=leaf
-        if self.__update_costable(leaf-1):
-            self.__pos['costable']=-1
-
-    def __update_costed(self):
-        return self.__not_costed() and self.__bom._leaf_costed()
+    def _costed(self, pos):
+        if self.__not_costed():
+            self.__pos['costed'] = pos
 
     def __not_costed(self):
         return not self.__has_costed()
@@ -24,46 +19,30 @@ class _BomCostPositions:
     def __has_costed(self):
         return self.__pos['costed'] >= 0
 
-    def __update_costable(self, old_leaf):
-        return self.__has_costable() and \
-                self.__pos['costable'] == old_leaf
+    def _costable(self, pos):
+        if self.__has_costable():
+            return pos in [self.__pos['costable']]
+        if self.__has_costed():
+            return pos in range(0, self.__pos['costed'])
+        self.__pos['costable']=pos
+        return self.__pos['costable'] == pos
 
     def __has_costable(self):
         return self.__pos['costable'] >= 0
 
-    def _costable(self, pos):
-        if pos in self.__costables():
-            self.__pos['costable']=pos
-        return self.__pos['costable'] == pos
-
-    def __costables(self):
-        if self.__has_costable():
-            return [self.__pos['costable']]
-        if self.__has_costed():
-            return range(0, self.__pos['costed'])
-        return self.__bom._positions()
-
 ################################################################################
 
 class _Bom:
-    def __init__(self):
+    def __init__(self, parts):
         self.__components=[]
-        self.__cpos=_BomCostPositions(self)
-
-    def _add(self, component):
-        if component in self.__components:
-            raise RuntimeError("duplicate part")
-        self.__components.append(component)
-        self.__cpos._new(self.__leaf())
-
-    def __leaf(self):
-        return len(self.__components) - 1
-
-    def _leaf_costed(self):
-        return self.__components[-1]._is_costed()
-
-    def _is_costed(self):
-        return False
+        for i, val in enumerate(parts):
+            if isinstance(val, _Bom):
+                self.__components.append(val)
+            elif i < len(parts) - 1:
+                self.__components.append(_Part(self, val))
+            else:
+                self.__components.append(_LeafPart(self, val))
+        self.__cpos=_BomCostPositions()
 
     def _cost(self):
         cost=0
@@ -71,87 +50,97 @@ class _Bom:
             cost+=each._cost()
         return cost
 
+    def _costed(self, part):
+        pos=self.__components.index(part)
+        self.__cpos._costed(pos)
+
     def _costable(self, part):
         pos=self.__components.index(part)
-        if pos == self.__leaf() or part._costable():
-            return self.__cpos._costable(pos)
-        return False
-
-    def _positions(self):
-        return range(0, self.__leaf() + 1)
+        return self.__cpos._costable(pos)
 
     def _schema_map(self):
         parts=[]
-        self._map_(-1, parts)   # collector pattern
+        self._map_(parts)   # collector pattern
         return parts
 
-    def _map_(self, level, parts):
+    def _map_(self, parts):
         for each in self.__components:
-            each._map_(level+1, parts)
+            each._map_(parts)
 
 ################################################################################
 
-class _Part:
-    def __init__(self, bom, number, site, cost_units):
+class _Part(object):
+    def __init__(self, bom, (level, number)):
         self.__bom=bom
-        self.__attr={'number' : number, 'site' : site, 'costunits' : cost_units}
+        self.__level, self.__number=(level, number)
 
     def _cost(self):
-        if self._is_costed() or self.__bom._costable(self):
-            return self.__attr['costunits']._cost()
-        return 0
+        part=self.__query()
+        return self.__cost(part)[_Schema.cost]
 
-    def _is_costed(self):
-        return self.__attr['site'] == '12'
+    def __query(self):
+        return _AtlasDB()._part(self.__number, self.__level)
 
-    def _costable(self):
-        return self.__attr['site'] == '1'
+    def __cost(self, part):
+        return _PartCost(
+                part[_Schema.source_code], \
+                part[_Schema.quantity], \
+                part[_Schema.unit_cost]
+            )._compute(self)
 
-    def _map_(self, level, parts):
-        _map={_Schema.level : level} if type(level)==_Schema.level._type else {}
-        for i, (name, val) in enumerate(self.__attr.items()):
-            if name == 'number' and type(val) == _Schema.part_number._type:
-                _map[_Schema.part_number]=val
-            elif name == 'site' and type(val) == _Schema.source_code._type:
-                _map[_Schema.source_code]=val
-            elif name == 'costunits':
-                _map.update(val._map_costs(self))
-            if i == len(self.__attr) - 1 and len(_map) != len(_Schema):
-                raise RuntimeError("part schema map error")
-        parts.append(_map)
+    def _costed(self):
+        self.__bom._costed(self)
 
-    def __eq__(self, other):
-        if not isinstance(other, _Part):
-            return False
-        return self.__attr['number'] == other.__attr['number']
+    def _costable(self, costable):
+        if costable:
+            return self._bom_costable()
+        return False
 
-    def __ne__(self, other):
-        return not self == other
+    def _bom_costable(self):
+        return self.__bom._costable(self)
+
+    def _map_(self, parts):
+        part=self.__query()
+        part.update(self.__cost(part))
+        parts.append(part)
 
 ################################################################################
 
-class _CostUnits:
-    def __init__(self, unit_cost, units):
-        self.__unit_cost=unit_cost
-        self.__units=units
-
-    def _cost(self):
-        return self.__units*self.__unit_cost
-
-    def _map_costs(self, part):
-        return self.__map(part._cost(), {})
-
-    def __map(self, cst, _map):
-        if type(cst) == _Schema.cost._type:
-            _map[_Schema.cost]=cst
-        if _Schema.costed._type == Costed:
-            _map[_Schema.costed]=Costed.YES if cst==self._cost() else Costed.NO
-        if type(self.__unit_cost) == _Schema.unit_cost._type:
-            _map[_Schema.unit_cost]=self.__unit_cost
-        if type(self.__units) == _Schema.quantity._type:
-            _map[_Schema.quantity]=self.__units
-        return _map
+class _LeafPart(_Part):
+    def _costable(self, costable):
+        return self._bom_costable()
 
 ################################################################################
 
+class _PartCost:
+    def __init__(self, code, qty, ucost):
+        self.__code=code
+        self.__qty=qty
+        self.__ucost=ucost
+
+    def _compute(self, part):
+        if self.__costed():
+            part._costed()
+            return self.__result()
+        if part._costable(self.__costable()):
+            return self.__result()
+        return self.__result(False)
+
+    def __costed(self):
+        return self.__code == '12'
+
+    def __result(self, flag=True):
+        if _Schema.costed._type != Costed or int != _Schema.cost._type:
+            raise RuntimeError("schema type mismatch in cost")
+        if flag:
+            return {_Schema.costed : Costed.YES, _Schema.cost : self.__cost()}
+        return {_Schema.costed : Costed.NO, _Schema.cost : 0}
+
+    def __cost(self):
+        return self.__qty*self.__ucost
+
+    def __costable(self):
+        return self.__code == '1'
+
+################################################################################
 
