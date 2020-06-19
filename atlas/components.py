@@ -113,10 +113,10 @@ class _LeafPart(_Part):
 ################################################################################
 
 class _PartCost:
-    def __init__(self, code, qty, ucost):
+    def __init__(self, code, units, unit_cost):
         self.__code=code
-        self.__qty=qty
-        self.__ucost=ucost
+        self.__units=units
+        self.__unit_cost=unit_cost
 
     def _compute(self, part):
         if self.__costed():
@@ -137,7 +137,7 @@ class _PartCost:
         return {_Schema.costed : Costed.NO, _Schema.cost : 0}
 
     def __cost(self):
-        return self.__qty*self.__ucost
+        return self.__units*self.__unit_cost
 
     def __costable(self):
         return self.__code == '1'
