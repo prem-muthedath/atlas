@@ -28,9 +28,9 @@ HOW TO RUN THE TESTS FROM A TERMINAL:
 
 4. Press `ENTER`.
 5. You should see THREE things in the output:
-   - (a) total cost of the BOM (for 1 run as well as for 2 consecutive runs);
+   - (a) total cost of BOM (for 1 run as well as for 2 consecutive runs);
    - (b) indented text representation of parts in BOM & their computed costs;
-   - (c) an XML representation of parts in the BOM tree & their computed costs.
+   - (c) an XML representation of parts in BOM & their computed costs.
 
   For (b) & (c), you'll get `default` representation as well as a `custom` one.
 
