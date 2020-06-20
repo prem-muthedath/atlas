@@ -21,7 +21,8 @@ class _Report(object):
         pass
 
     def __render(self):
-        return self._title() + "\n" + "\n".join(self.__body) + self._footer()
+        result = [self._title(), "\n".join(self.__body), self._footer()]
+        return "\n".join([i for i in result if len(i) > 0])
 
     def _title(self):
         pass
@@ -78,7 +79,7 @@ class _XmlReport(_Report):
         return '<xml>'
 
     def _footer(self):
-        return "\n" + "</xml>"
+        return "</xml>"
 
 ################################################################################
 

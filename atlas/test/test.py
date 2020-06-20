@@ -2,6 +2,8 @@ import unittest
 
 from ..atlas import Atlas
 from ..schema import _Schema
+from ..components import _Bom
+from ..report import _TextReport, _XmlReport
 from . import reports
 
 # test module -- contains all unit tests for atlas application.
@@ -35,6 +37,12 @@ class Test(unittest.TestCase):
 
 ################################################################################
 
+class TestEmptyBomCost(Test):
+    def _assert(self):
+        cost=_Bom([])._cost()
+        self.assertEqual(cost, 0)
+        print "total bom cost =>", cost
+
 class TestTotalCost(Test):
     def _assert(self):
         cost=self._app.cost()
@@ -51,6 +59,14 @@ class TestRerunTotalCost(Test):
 
 ################################################################################
 
+class TestEmptyBomTextReport(Test):
+    def _assert(self):
+        report=_TextReport()._render(_Bom([]))
+        self.assertEqual(report, '')
+        print "empty BOM TEXT report =>", report
+
+################################################################################
+
 class TestDefaultTextReport(Test):
     def _assert(self):
         report=self._app.text_report()
@@ -63,6 +79,14 @@ class TestCustomTextReport(Test):
         report=self._app.text_report(schema)
         self.assertEqual(report, reports.custom_text())
         print "custom TEXT report =>", "\n", reports.custom_text()
+
+################################################################################
+
+class TestEmptyBomXmlReport(Test):
+    def _assert(self):
+        report=_XmlReport()._render(_Bom([]))
+        self.assertEqual(report, '<xml>\n</xml>')
+        print "empty BOM XML report =>", '\n', report
 
 ################################################################################
 
