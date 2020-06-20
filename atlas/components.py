@@ -75,20 +75,20 @@ class _Part(object):
         self.__level, self.__number=(level, number)
 
     def _cost(self):
-        part=self.__query()
-        return self.__cost(part)[_Schema.cost]
+        part_map=self.__query()
+        return self.__cost_map(part_map)[_Schema.cost]
 
     def __query(self):
-        return _AtlasDB()._part(self.__number, self.__level)
+        return _AtlasDB()._part_map(self.__number, self.__level)
 
-    def __cost(self, part):
-        return _PartCost(
-                part[_Schema.source_code],
+    def __cost_map(self, part_map):
+        return _Source(
+                part_map[_Schema.source_code],
                 _CostUnits(
-                    part[_Schema.quantity],
-                    part[_Schema.unit_cost]
+                    part_map[_Schema.quantity],
+                    part_map[_Schema.unit_cost]
                 )
-            )._compute(self)
+            )._cost_map(self)
 
     def _costed(self):
         self.__bom._costed(self)
@@ -102,9 +102,9 @@ class _Part(object):
         return self.__bom._costable(self)
 
     def _map_(self, parts):
-        part=self.__query()
-        part.update(self.__cost(part))
-        parts.append(part)
+        part_map=self.__query()
+        part_map.update(self.__cost_map(part_map))
+        parts.append(part_map)
 
 ################################################################################
 
@@ -114,12 +114,12 @@ class _LeafPart(_Part):
 
 ################################################################################
 
-class _PartCost:
+class _Source:
     def __init__(self, code, cost_units):
         self.__code=code
         self.__cost_units=cost_units
 
-    def _compute(self, part):
+    def _cost_map(self, part):
         if self.__costed():
             part._costed()
             return self.__result()

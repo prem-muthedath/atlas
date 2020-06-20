@@ -38,7 +38,7 @@ class _AtlasDB:
     ])
 
     @classmethod
-    def _dump(cls):
+    def _parts_map(cls):
         parts=[]
         for part in cls.__parts.values():
             parts.append(cls.__map(part[:]))
@@ -63,7 +63,7 @@ class _AtlasDB:
         return part
 
     @classmethod
-    def _part(cls, name, level):
+    def _part_map(cls, name, level):
         part=cls.__parts[name + "-" + str(level)]
         return cls.__map(part[:])
 
