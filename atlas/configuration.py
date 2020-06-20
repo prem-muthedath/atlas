@@ -15,14 +15,14 @@ class _BomBuilder():
         parts=_AtlasDB()._parts_map()
         for part in parts:
             self.__add_item(
-                    part[_Schema.level],
-                    part[_Schema.part_number]
+                    part[_Schema.part_number],
+                    part[_Schema.level]
                 )
         return _Bom(self.__parents[0])
 
-    def __add_item(self, level, number):
+    def __add_item(self, number, level):
         self.__new_level(level)
-        self.__parent().append((level, number))
+        self.__parent().append((number, level))
         self.__new_parents()
 
     def __new_level(self, level):

@@ -70,9 +70,9 @@ class _Bom:
 ################################################################################
 
 class _Part(object):
-    def __init__(self, bom, (level, number)):
+    def __init__(self, bom, (number, level)):
         self.__bom=bom
-        self.__level, self.__number=(level, number)
+        self.__number, self.__level=(number, level)
 
     def _cost(self):
         part_map=self.__query()
