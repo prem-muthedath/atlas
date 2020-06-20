@@ -12,8 +12,8 @@ class _BomBuilder():
         self.__parent_level=0
 
     def _build(self):
-        parts=_AtlasDB()._parts_map()
-        for part in parts:
+        part_maps=_AtlasDB()._part_maps()
+        for part in part_maps:
             self.__add_item(
                     part[_Schema.part_number],
                     part[_Schema.level]

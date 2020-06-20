@@ -38,7 +38,7 @@ class _AtlasDB:
     ])
 
     @classmethod
-    def _parts_map(cls):
+    def _part_maps(cls):
         parts=[]
         for part in cls.__parts.values():
             parts.append(cls.__map(part[:]))
