@@ -16,13 +16,14 @@ class _BomBuilder():
         for part in part_maps:
             self.__add_item(
                     part[_Schema.part_number],
-                    part[_Schema.level]
+                    part[_Schema.level],
+                    part[_Schema.source_code]
                 )
         return _Bom(self.__parents[0])
 
-    def __add_item(self, number, level):
+    def __add_item(self, number, level, source_code):
         self.__new_level(level)
-        self.__parent().append((number, level))
+        self.__parent().append((number, level, source_code))
         self.__new_parents()
 
     def __new_level(self, level):

@@ -70,9 +70,9 @@ class _Bom:
 ################################################################################
 
 class _Part(object):
-    def __init__(self, bom, (number, level)):
+    def __init__(self, bom, (number, level, source_code)):
         self.__bom=bom
-        self.__number, self.__level=(number, level)
+        self.__number, self.__level, self.__source_code=(number, level, source_code)
 
     def _cost(self):
         part_map=self.__query()
@@ -82,19 +82,22 @@ class _Part(object):
         return _AtlasDB()._part_map(self.__number, self.__level)
 
     def __cost_map(self, part_map):
-        return _Source(
-                part_map[_Schema.source_code],
-                _CostUnits(
-                    part_map[_Schema.quantity],
-                    part_map[_Schema.unit_cost]
-                )
+        return _CostUnits(
+                part_map[_Schema.quantity],
+                part_map[_Schema.unit_cost]
             )._cost_map(self)
 
-    def _costed(self):
-        self.__bom._costed(self)
+    def _can_cost(self):
+        return self._costed() or self._costable()
 
-    def _costable(self, costable):
-        if costable:
+    def _costed(self):
+        if self.__source_code=='12':
+            self.__bom._costed(self)
+            return True
+        return False
+
+    def _costable(self):
+        if self.__source_code=='1':
             return self._bom_costable()
         return False
 
@@ -109,39 +112,8 @@ class _Part(object):
 ################################################################################
 
 class _LeafPart(_Part):
-    def _costable(self, costable):
+    def _costable(self):
         return self._bom_costable()
-
-################################################################################
-
-class _Source:
-    def __init__(self, code, cost_units):
-        self.__code=code
-        self.__cost_units=cost_units
-
-    def _cost_map(self, part):
-        if self.__costed():
-            part._costed()
-            return self.__result()
-        if part._costable(self.__costable()):
-            return self.__result()
-        return self.__result(False)
-
-    def __costed(self):
-        return self.__code == '12'
-
-    def __result(self, flag=True):
-        if _Schema.costed._type != Costed or int != _Schema.cost._type:
-            raise RuntimeError("schema type mismatch in cost")
-        if flag:
-            return {_Schema.costed : Costed.YES, _Schema.cost : self.__cost()}
-        return {_Schema.costed : Costed.NO, _Schema.cost : 0}
-
-    def __cost(self):
-        return self.__cost_units._cost()
-
-    def __costable(self):
-        return self.__code == '1'
 
 ################################################################################
 
@@ -150,7 +122,17 @@ class _CostUnits:
         self.__units=units
         self.__unit_cost=unit_cost
 
-    def _cost(self):
+    def _cost_map(self, part):
+        self.__validate()
+        if part._can_cost():
+            return {_Schema.costed : Costed.YES, _Schema.cost : self.__cost()}
+        return {_Schema.costed : Costed.NO, _Schema.cost : 0}
+
+    def __validate(self):
+        if _Schema.costed._type != Costed or int != _Schema.cost._type:
+            raise RuntimeError("schema type mismatch in cost")
+
+    def __cost(self):
         return self.__units*self.__unit_cost
 
 ################################################################################
