@@ -7,7 +7,7 @@ from .schema import _Schema
 ################################################################################
 
 class _AtlasDB:
-    __parts = OrderedDict([ # represents the database
+    __parts = OrderedDict([ # database representation of `bill of materials` (i.e., BOM)
         ('P-0001-1', [("name", "P-0001"), ("level", 1), ("site", '1'), ("cost", 1000), ("units", 2)]),    # 1000*2
         ('P-0002-1', [("name", "P-0002"), ("level", 1), ("site", '1'), ("cost", 1000), ("units", 2)]),    # dup: uncosted
         ('P-0003-2', [("name", "P-0003"), ("level", 2), ("site", '120'), ("cost", 2000), ("units", 2)]),
@@ -61,10 +61,5 @@ class _AtlasDB:
             if i == len(_part) - 1 and len(part) != len(_part):
                 raise RuntimeError("DB schema map error")
         return part
-
-    @classmethod
-    def _part_map(cls, name, level):
-        part=cls.__parts[name + "-" + str(level)]
-        return cls.__map(part[:])
 
 ################################################################################
