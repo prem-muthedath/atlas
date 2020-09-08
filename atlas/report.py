@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from .schema import _Schema
+from database import _AtlasDB
 
 ################################################################################
 
@@ -9,8 +10,11 @@ class _Report(object):
         self.__body=[]
 
     def _render(self, bom, schema=_Schema):
-        for part in bom._schema_map():
-            line=[self._element(i.name, part[i]) for i in schema]
+        part_maps=_AtlasDB()._part_maps()
+        for index, cost_map in enumerate(bom._cost_maps()):
+            part_map=part_maps[index]
+            part_map.update(cost_map)
+            line=[self._element(i.name, part_map[i]) for i in schema]
             self.__body.append(self._line(line))
         return self.__render()
 

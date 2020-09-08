@@ -58,34 +58,27 @@ class _Bom:
         pos=self.__components.index(part)
         return self.__cpos._costable(pos)
 
-    def _schema_map(self):
-        parts=[]
-        self._map_(parts)   # collector pattern
-        return parts
+    def _cost_maps(self):
+        cost_maps=[]
+        self._add_to(cost_maps)   # `collecting parameter` pattern
+        return cost_maps
 
-    def _map_(self, parts):
+    def _add_to(self, cost_maps):
         for each in self.__components:
-            each._map_(parts)
+            each._add_to(cost_maps)
 
 ################################################################################
 
 class _Part(object):
-    def __init__(self, bom, (number, level, source_code)):
+    def __init__(self, bom, (source_code, cost_units)):
         self.__bom=bom
-        self.__number, self.__level, self.__source_code=(number, level, source_code)
+        self.__source_code, self.__cost_units=(source_code, cost_units)
 
     def _cost(self):
-        part_map=self.__query()
-        return self.__cost_map(part_map)[_Schema.cost]
+        return self.__cost_map()[_Schema.cost]
 
-    def __query(self):
-        return _AtlasDB()._part_map(self.__number, self.__level)
-
-    def __cost_map(self, part_map):
-        return _CostUnits(
-                part_map[_Schema.quantity],
-                part_map[_Schema.unit_cost]
-            )._cost_map(self)
+    def __cost_map(self):
+        return self.__cost_units._cost_map(self)
 
     def _can_cost(self):
         return self._costed() or self._costable()
@@ -104,10 +97,8 @@ class _Part(object):
     def _bom_costable(self):
         return self.__bom._costable(self)
 
-    def _map_(self, parts):
-        part_map=self.__query()
-        part_map.update(self.__cost_map(part_map))
-        parts.append(part_map)
+    def _add_to(self, cost_maps):
+        cost_maps.append(self.__cost_map())
 
 ################################################################################
 

@@ -2,7 +2,7 @@
 
 from .database import _AtlasDB
 from .schema import _Schema
-from .components import _Bom
+from .components import _Bom, _CostUnits
 
 ################################################################################
 
@@ -15,15 +15,18 @@ class _BomBuilder():
         part_maps=_AtlasDB()._part_maps()
         for part in part_maps:
             self.__add_item(
-                    part[_Schema.part_number],
                     part[_Schema.level],
-                    part[_Schema.source_code]
+                    part[_Schema.source_code],
+                    _CostUnits(
+                        part[_Schema.quantity],
+                        part[_Schema.unit_cost]
+                    )
                 )
         return _Bom(self.__parents[0])
 
-    def __add_item(self, number, level, source_code):
+    def __add_item(self, level, source_code, cost_units):
         self.__new_level(level)
-        self.__parent().append((number, level, source_code))
+        self.__parent().append((source_code, cost_units))
         self.__new_parents()
 
     def __new_level(self, level):
