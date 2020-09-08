@@ -12,14 +12,13 @@ class _BomBuilder():
         self.__parent_level=0
 
     def _build(self):
-        part_maps=_AtlasDB()._part_maps()
-        for part in part_maps:
+        for part_map in _AtlasDB()._part_maps():
             self.__add_item(
-                    part[_Schema.level],
-                    part[_Schema.source_code],
+                    part_map[_Schema.level],
+                    part_map[_Schema.source_code],
                     _CostUnits(
-                        part[_Schema.quantity],
-                        part[_Schema.unit_cost]
+                        part_map[_Schema.quantity],
+                        part_map[_Schema.unit_cost]
                     )
                 )
         return _Bom(self.__parents[0])
