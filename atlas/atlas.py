@@ -7,7 +7,7 @@ from .report import (_TextReport, _XmlReport,)
 
 class Atlas:
     def cost(self):
-        return self.__bom()._cost()
+        return self._bom()._cost()
 
     def text_report(self, schema=None):
         return self.__report(_TextReport(), schema)
@@ -17,10 +17,10 @@ class Atlas:
 
     def __report(self, _type, schema):
         if schema:
-            return _type._render(self.__bom(), schema)
-        return _type._render(self.__bom())
+            return _type._render(self._bom(), schema)
+        return _type._render(self._bom())
 
-    def __bom(self):
+    def _bom(self):
         return _BomBuilder()._build()
 
 ################################################################################

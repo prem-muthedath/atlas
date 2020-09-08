@@ -51,8 +51,9 @@ class TestTotalCost(Test):
 
 class TestRerunTotalCost(Test):
     def _assert(self):
-        cost1=self._app.cost()
-        cost2=self._app.cost()
+        bom=self._app._bom()
+        cost1=bom._cost()
+        cost2=bom._cost()
         self.assertEqual(cost1, 8210)
         self.assertEqual(cost2, 8210)
         print "total bom cost after run 1 & run 2, resp =>", cost1, "|", cost2
