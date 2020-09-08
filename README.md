@@ -3,14 +3,16 @@ atlas
 
 BOM (bill of materials) costing app.
 
-This OO application, written in Python, computes the cost of each part in a typical BOM (Bill of Materials -- a recursive tree structure of parts and BOMs) and returns the following two results:
+This OO application, written in Python, computes cost of each part in a typical 
+BOM (Bill of Materials -- a recursive tree structure of parts and BOMs) and 
+returns the following two results:
 
-1. Total cost of the BOM, which is nothing but the sum of the costs of parts in the BOM.
+1. Total cost of BOM, which is nothing but sum of costs of parts in the BOM.
 2. Text and XML representations of parts in the BOM and their computed costs.
 
-The problem is complex because the cost of a part depends not only on itself but 
-also on it's location in the BOM: it's predecessors determine if the part can be 
-costed.  This is the business logic side.
+The problem is complex because the cost of a part depends not only on itself. 
+but also on it's location in the BOM: it's predecessors' costing statuses 
+determine if a part can be costed.  This is the business logic side.
 
 The other problem is to collect and present the results (i.e., computed part 
 costs, levels, and other part details) in multiple formats by traversing the 
