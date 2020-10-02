@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from .configuration import _BomBuilder
+from .schema import _Schema
 from .report import (_TextReport, _XmlReport,)
 
 ################################################################################
@@ -9,16 +10,11 @@ class Atlas:
     def cost(self):
         return self._bom()._cost()
 
-    def text_report(self, schema=None):
-        return self.__report(_TextReport(), schema)
+    def text_report(self, schema=_Schema):
+        return _TextReport()._render(self._bom(), schema)
 
-    def xml_report(self, schema=None):
-        return self.__report(_XmlReport(), schema)
-
-    def __report(self, _type, schema):
-        if schema:
-            return _type._render(self._bom(), schema)
-        return _type._render(self._bom())
+    def xml_report(self, schema=_Schema):
+        return _XmlReport()._render(self._bom(), schema)
 
     def _bom(self):
         return _BomBuilder()._build()

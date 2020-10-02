@@ -39,6 +39,15 @@ class _Schema(Enum):
         # `_type`: data type defined for the member in schema.
         self._type=_type
 
+    @classmethod
+    def _totals_schema(cls):
+        return [_Schema.quantity, _Schema.costed, _Schema.cost]
+
+    def _total(self, vals):
+        if self == _Schema.costed:
+            return sum([1 if str(val) == 'Y' else 0 for val in vals])
+        return sum(vals)
+
 ################################################################################
 
 

@@ -62,9 +62,15 @@ class TestRerunTotalCost(Test):
 
 class TestEmptyBomTextReport(Test):
     def _assert(self):
-        report=_TextReport()._render(_Bom([]))
+        report=_TextReport()._render(_Bom([]), _Schema)
         self.assertEqual(report, '')
         print "empty BOM TEXT report =>", report
+
+class TestEmptySchemaTextReport(Test):
+    def _assert(self):
+        report=self._app.text_report([])
+        self.assertEqual(report, '')
+        print "empty SCHEMA TEXT report =>", report
 
 ################################################################################
 
@@ -72,22 +78,35 @@ class TestDefaultTextReport(Test):
     def _assert(self):
         report=self._app.text_report()
         self.assertEqual(report, reports.default_text())
-        print "default TEXT report =>", "\n", reports.default_text()
+        print "default TEXT report =>", "\n", report
 
 class TestCustomTextReport(Test):
     def _assert(self):
-        schema=[_Schema.level, _Schema.part_number, _Schema.cost]
+        schema=[_Schema.part_number, _Schema.cost]
         report=self._app.text_report(schema)
         self.assertEqual(report, reports.custom_text())
-        print "custom TEXT report =>", "\n", reports.custom_text()
+        print "custom TEXT report =>", "\n", report
+
+class TestCustomNoTotalsTextReport(Test):
+    def _assert(self):
+        schema=[_Schema.part_number]
+        report=self._app.text_report(schema)
+        self.assertEqual(report, reports.custom_no_totals_text())
+        print "custom NO-TOTALS TEXT report =>", "\n", report
 
 ################################################################################
 
 class TestEmptyBomXmlReport(Test):
     def _assert(self):
-        report=_XmlReport()._render(_Bom([]))
-        self.assertEqual(report, '<xml>\n</xml>')
+        report=_XmlReport()._render(_Bom([]), _Schema)
+        self.assertEqual(report, '<xml></xml>')
         print "empty BOM XML report =>", '\n', report
+
+class TestEmptySchemaXmlReport(Test):
+    def _assert(self):
+        report=self._app.xml_report([])
+        self.assertEqual(report, '<xml></xml>')
+        print "empty SCHEMA XML report =>", '\n', report
 
 ################################################################################
 
@@ -95,14 +114,21 @@ class TestDefaultXmlReport(Test):
     def _assert(self):
         report=self._app.xml_report()
         self.assertEqual(report, reports.default_xml())
-        print "default XML report =>", "\n", reports.default_xml()
+        print "default XML report =>", "\n", report
 
 class TestCustomXmlReport(Test):
     def _assert(self):
         schema=[_Schema.level, _Schema.part_number, _Schema.cost]
         report=self._app.xml_report(schema)
         self.assertEqual(report, reports.custom_xml())
-        print "custom XML report =>", "\n", reports.custom_xml()
+        print "custom XML report =>", "\n", report
+
+class TestCustomNoTotalsXmlReport(Test):
+    def _assert(self):
+        schema=[_Schema.level, _Schema.part_number]
+        report=self._app.xml_report(schema)
+        self.assertEqual(report, reports.custom_no_totals_xml())
+        print "custom NO-TOTALS XML report =>", "\n", report
 
 ################################################################################
 
