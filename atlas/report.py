@@ -47,30 +47,6 @@ class _Report(object):
 
 ################################################################################
 
-class _TextView():
-    def __init__(self, title, content, footer):
-        self.__title=title
-        self.__content=content
-        self.__footer=footer
-
-    def _render(self):
-        contents=[]
-        contents.extend(self.__bordered(self.__title._render()))
-        contents.extend([row._render() for row in self.__content])
-        contents.extend(self.__bordered(self.__footer._render()))
-        return "\n".join(contents)
-
-    def __bordered(self, data):
-        border=self.__border()._render()
-        if len(data) > 0:
-            return [border, data, border]
-        return [border]
-
-    def __border(self):
-        return _Border(self.__title._size())
-
-################################################################################
-
 class _TextRow(object):
     def __init__(self, cells):
         self.__cells=cells
@@ -103,23 +79,22 @@ class _TextReport(_Report):
         self.__captions={'ITEM' : "item", 'TOTALS' : "totals"}
 
     def _render_(self):
-        return _TextView(
-                self.__title(),
-                self.__body(),
-                self.__footer()
-            )._render()
+        contents=self.__bordered(self.__title())
+        contents.extend(self.__body())
+        contents.extend(self.__bordered(self.__footer()))
+        return "\n".join(contents)
 
     def __title(self):
         headers=[self.__capitalize(i.name) for i in self._names()]
         headers=[self.__capitalize(self.__captions['ITEM'])] + headers
-        return _TextRow(headers)
+        return _TextRow(headers)._render()
 
     def __capitalize(self, header):
         return ' '.join(each[:1].upper()+each[1:].lower() \
                 for each in header.split('_'))
 
     def __body(self):
-        return [_TextRow(i) for i in self._body()]
+        return [_TextRow(i)._render() for i in self._body()]
 
     def _line(self, index, line):
         results=[str(index)]
@@ -133,13 +108,23 @@ class _TextReport(_Report):
         return results
 
     def __footer(self):
-        return _TextRow(self._footer())
+        return _TextRow(self._footer())._render()
 
     def _footer(self):
         totals=self._totals()
         if len(totals) == 0: return []
         __totals=[str(totals[name]) if totals.has_key(name) else " " for name in self._names()]
         return [self.__capitalize(self.__captions['TOTALS'])] + __totals
+
+    def __bordered(self, data):
+        border=self.__border()._render()
+        if len(data) > 0:
+            return [border, data, border]
+        return [border]
+
+    def __border(self):
+        cols=len(self._names()) + 1
+        return _Border(cols)
 
 ################################################################################
 
