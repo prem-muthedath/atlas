@@ -112,7 +112,7 @@ class _Header(object):
     def _bordered(self, row):
         tag_col= 1 if self.__tag != None else 0
         cells=[""]*(len(self.__cols) + tag_col)
-        return _BordereredRow(cells, row)
+        return _BorderedRow(cells, row)
 
     def _matches(self, cols):
         return [col if col in cols else None for col in self.__cols]
@@ -149,9 +149,9 @@ class _TextRow(object):
         return len(self.__cells)*self.__field_width
 
 
-class _BordereredRow(_TextRow):
+class _BorderedRow(_TextRow):
     def __init__(self, cells, row):
-        super(_BordereredRow, self).__init__(cells)
+        super(_BorderedRow, self).__init__(cells)
         self.__row=row
         self.__symbol='-'
 
