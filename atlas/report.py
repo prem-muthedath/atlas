@@ -52,34 +52,48 @@ class _TextView():
         self.__title=title
         self.__content=content
         self.__footer=footer
-        self.__field_width=15
 
     def _render(self):
-        heading=self.__format(self.__title)
-        body=self.__body()
-        footer=self.__format(self.__footer)
-        return "\n".join([i for i in [heading, body, footer] if len(i) > 0])
+        contents=[]
+        contents.extend(self.__bordered(self.__title._render()))
+        contents.extend([row._render() for row in self.__content])
+        contents.extend(self.__bordered(self.__footer._render()))
+        return "\n".join(contents)
 
-    def __body(self):
-        lines=[]
-        for row in self.__content:
-            line=" ".join([self.__centered(j) for j in row])
-            lines.append(line)
-        return "\n".join(lines)
-
-    def __centered(self, value):
-        return value.center(self.__field_width)
-
-    def __format(self, vals):
-        if len(vals) > 0:
-            data=" ".join([self.__centered(i) for i in vals])
-            return "\n".join([self.__border(), data, self.__border()])
-        return self.__border()
+    def __bordered(self, data):
+        border=self.__border()._render()
+        if len(data) > 0:
+            return [border, data, border]
+        return [border]
 
     def __border(self):
-        cols=len(self.__title)
-        width=cols*self.__field_width + 5
-        return "-" * width
+        return _Border(self.__title._size())
+
+################################################################################
+
+class _TextRow(object):
+    def __init__(self, cells):
+        self.__cells=cells
+        self._field_width=15
+
+    def _render(self):
+        return " ".join([self.__centered(i) for i in self.__cells])
+
+    def __centered(self, value):
+        return value.center(self._field_width)
+
+    def _size(self):
+        return len(self.__cells)
+
+class _Border(_TextRow):
+    def __init__(self, cols):
+        super(_Border, self).__init__([])
+        self.__cols=cols
+        self.__symbol='-'
+
+    def _render(self):
+        width=self.__cols*self._field_width + 5
+        return self.__symbol * width
 
 ################################################################################
 
@@ -89,7 +103,23 @@ class _TextReport(_Report):
         self.__captions={'ITEM' : "item", 'TOTALS' : "totals"}
 
     def _render_(self):
-        return _TextView(self.__title(), self._body(), self._footer())._render()
+        return _TextView(
+                self.__title(),
+                self.__body(),
+                self.__footer()
+            )._render()
+
+    def __title(self):
+        headers=[self.__capitalize(i.name) for i in self._names()]
+        headers=[self.__capitalize(self.__captions['ITEM'])] + headers
+        return _TextRow(headers)
+
+    def __capitalize(self, header):
+        return ' '.join(each[:1].upper()+each[1:].lower() \
+                for each in header.split('_'))
+
+    def __body(self):
+        return [_TextRow(i) for i in self._body()]
 
     def _line(self, index, line):
         results=[str(index)]
@@ -102,13 +132,8 @@ class _TextReport(_Report):
             results.append(result)
         return results
 
-    def __title(self):
-        headers=[self.__capitalize(i.name) for i in self._names()]
-        return [self.__capitalize(self.__captions['ITEM'])] + headers
-
-    def __capitalize(self, header):
-        return ' '.join(each[:1].upper()+each[1:].lower() \
-                for each in header.split('_'))
+    def __footer(self):
+        return _TextRow(self._footer())
 
     def _footer(self):
         totals=self._totals()
@@ -153,3 +178,4 @@ class _XmlReport(_Report):
         return self.__element(self.__tags["TOTALS"], val)
 
 ################################################################################
+
