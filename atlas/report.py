@@ -47,35 +47,45 @@ class _Report(object):
 
 ################################################################################
 
-class _TextRow(object):
-    def __init__(self, cells):
-        self.__cells=cells
-        self.__field_width=15
+class _TextReport(_Report):
+    def _empty(self):
+        return ""
+
+    def _render_(self):
+        captions={'ITEM' : "item", 'TOTALS' : "totals"}
+        return _TextView(
+            _Header(captions['ITEM'], self._names()),
+            self.__body(),
+            _Footer(captions['TOTALS'], self._names(), self._totals())
+        )._render()
+
+    def __body(self):
+        return [_TextRow(i) for i in self._body()]
+
+    def _line(self, index, line):
+        results=[str(index)]
+        for (name, value) in line.items():
+            if name == _Schema.level:
+                indent=(value-1)*"  "
+                result=indent+str(value)
+            else:
+                result=str(value)
+            results.append(result)
+        return results
+
+################################################################################
+
+class _TextView:
+    def __init__(self, header, body, footer):
+        self.__header=header
+        self.__body=body
+        self.__footer=footer
 
     def _render(self):
-        return " ".join([self.__centered(i) for i in self.__cells])
-
-    def __centered(self, value):
-        return value.center(self.__field_width)
-
-    def _width(self):
-        return len(self.__cells)*self.__field_width
-
-class _BordereredRow(_TextRow):
-    def __init__(self, cells, row):
-        super(_BordereredRow, self).__init__(cells)
-        self.__row=row
-        self.__symbol='-'
-
-    def _render(self):
-        data=self.__row._render()
-        if len(data) > 0:
-            return [self.__border(), data, self.__border()]
-        return [self.__border()]
-
-    def __border(self):
-        width=self._width() + 5
-        return self.__symbol * width
+        data=self.__header._render()
+        data.extend([i._render() for i in self.__body])
+        data.extend(self.__footer._render())
+        return "\n".join(data)
 
 ################################################################################
 
@@ -107,6 +117,7 @@ class _Header(object):
     def _matches(self, cols):
         return [col if col in cols else None for col in self.__cols]
 
+
 class _Footer(_Header):
     def __init__(self, tag, cols, totals):
         super(_Footer, self).__init__(tag, cols)
@@ -123,45 +134,36 @@ class _Footer(_Header):
 
 ################################################################################
 
-class _TextView:
-    def __init__(self, header, body, footer):
-        self.__header=header
-        self.__body=body
-        self.__footer=footer
+class _TextRow(object):
+    def __init__(self, cells):
+        self.__cells=cells
+        self.__field_width=15
 
     def _render(self):
-        data=self.__header._render()
-        data.extend([i._render() for i in self.__body])
-        data.extend(self.__footer._render())
-        return "\n".join(data)
+        return " ".join([self.__centered(i) for i in self.__cells])
 
-################################################################################
+    def __centered(self, value):
+        return value.center(self.__field_width)
 
-class _TextReport(_Report):
-    def _empty(self):
-        return ""
+    def _width(self):
+        return len(self.__cells)*self.__field_width
 
-    def _render_(self):
-        captions={'ITEM' : "item", 'TOTALS' : "totals"}
-        return _TextView(
-            _Header(captions['ITEM'], self._names()),
-            self.__body(),
-            _Footer(captions['TOTALS'], self._names(), self._totals())
-        )._render()
 
-    def __body(self):
-        return [_TextRow(i) for i in self._body()]
+class _BordereredRow(_TextRow):
+    def __init__(self, cells, row):
+        super(_BordereredRow, self).__init__(cells)
+        self.__row=row
+        self.__symbol='-'
 
-    def _line(self, index, line):
-        results=[str(index)]
-        for (name, value) in line.items():
-            if name == _Schema.level:
-                indent=(value-1)*"  "
-                result=indent+str(value)
-            else:
-                result=str(value)
-            results.append(result)
-        return results
+    def _render(self):
+        data=self.__row._render()
+        if len(data) > 0:
+            return [self.__border(), data, self.__border()]
+        return [self.__border()]
+
+    def __border(self):
+        width=self._width() + 5
+        return self.__symbol * width
 
 ################################################################################
 
