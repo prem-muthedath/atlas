@@ -181,11 +181,14 @@ class _XmlReport(_Report):
         return _XmlElement(self.__tags["XML"], "").__str__()
 
     def _render_(self):
-        elems=_XmlElements([i for i in self.__contents() if i != None])
+        elems=_XmlElements([i for i in self.__contents()])
         return _XmlElement(self.__tags["XML"], elems).__str__()
 
     def __contents(self):
-        return [self.__body(), self._footer()]
+        totals=self._totals()
+        if len(totals) > 0:
+            return [self.__body(), self.__footer(totals)]
+        return [self.__body()]
 
     def __body(self):
         return _XmlElement(self.__tags["PARTS"], _XmlElements(self._body()))
@@ -194,9 +197,7 @@ class _XmlReport(_Report):
         elems=_XmlElements([_XmlElement(i.name, j) for (i, j) in line.items()])
         return _XmlElement(self.__tags['PART'], elems)
 
-    def _footer(self):
-        totals=self._totals()
-        if len(totals) == 0: return None
+    def __footer(self, totals):
         elems=_XmlElements([_XmlElement(i.name, j) for (i,j) in totals.items()])
         return _XmlElement(self.__tags["TOTALS"], elems)
 
