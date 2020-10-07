@@ -181,11 +181,11 @@ class _XmlReport(_Report):
         return _XmlElement(self.__tags["XML"], "").__str__()
 
     def _render_(self):
-        section=_XmlSection([i for i in [self.__body(), self._footer()] if i != None])
-        return _XmlElement(self.__tags["XML"], section, "\n").__str__()
+        col=_XmlCol([i for i in [self.__body(), self._footer()] if i != None])
+        return _XmlElement(self.__tags["XML"], col).__str__()
 
     def __body(self):
-        return _XmlElement(self.__tags["PARTS"], _XmlSection(self._body()), "\n")
+        return _XmlElement(self.__tags["PARTS"], _XmlCol(self._body()))
 
     def _line(self, index, line):
         row=_XmlRow([_XmlElement(i.name, j) for (i, j) in line.items()])
@@ -199,12 +199,15 @@ class _XmlReport(_Report):
 
 ################################################################################
 
-class _XmlSection:
+class _XmlCol:
     def __init__(self, rows):
         self.__rows=rows
         self.__sep='\n'
 
     def __str__(self):
+        return self.__sep.join(["", self.__data(), ""])
+
+    def __data(self):
         return self.__sep.join([row.__str__() for row in self.__rows])
 
 class _XmlRow:
@@ -215,13 +218,12 @@ class _XmlRow:
         return "".join([elem.__str__() for elem in self.__elems])
 
 class _XmlElement:
-    def __init__(self, name, value, sep=''):
+    def __init__(self, name, value):
         self.__name=name
         self.__value=value
-        self.__sep=sep
 
     def __str__(self):
-        return '<' + self.__name + '>' +  self.__sep + self.__value.__str__() + self.__sep + '</' + self.__name + '>'
+        return '<' + self.__name + '>' + self.__value.__str__() + '</' + self.__name + '>'
 
 ################################################################################
 
