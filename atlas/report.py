@@ -203,6 +203,16 @@ class _XmlReport(_Report):
 
 ################################################################################
 
+class _XmlElement:
+    def __init__(self, name, value):
+        self.__name=name
+        self.__value=value
+
+    def __str__(self):
+        return '<' + self.__name + '>' + self.__value.__str__() + \
+                '</' + self.__name + '>'
+
+
 class _XmlElements:
     def __init__(self, elems):
         self.__elems=elems
@@ -213,15 +223,6 @@ class _XmlElements:
 
     def __data(self):
         return self.__sep.join([elem.__str__() for elem in self.__elems])
-
-class _XmlElement:
-    def __init__(self, name, value):
-        self.__name=name
-        self.__value=value
-
-    def __str__(self):
-        return '<' + self.__name + '>' + self.__value.__str__() + \
-                '</' + self.__name + '>'
 
 ################################################################################
 
