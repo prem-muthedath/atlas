@@ -181,21 +181,24 @@ class _XmlReport(_Report):
         return _XmlElement(self.__tags["XML"], "").__str__()
 
     def _render_(self):
-        rows=_XmlElements([i for i in [self.__body(), self._footer()] if i != None])
-        return _XmlElement(self.__tags["XML"], rows).__str__()
+        elems=_XmlElements([i for i in self.__contents() if i != None])
+        return _XmlElement(self.__tags["XML"], elems).__str__()
+
+    def __contents(self):
+        return [self.__body(), self._footer()]
 
     def __body(self):
         return _XmlElement(self.__tags["PARTS"], _XmlElements(self._body()))
 
     def _line(self, index, line):
-        rows=_XmlElements([_XmlElement(i.name, j) for (i, j) in line.items()])
-        return _XmlElement(self.__tags['PART'], rows)
+        elems=_XmlElements([_XmlElement(i.name, j) for (i, j) in line.items()])
+        return _XmlElement(self.__tags['PART'], elems)
 
     def _footer(self):
         totals=self._totals()
         if len(totals) == 0: return None
-        rows=_XmlElements([_XmlElement(key.name, totals[key]) for key in totals])
-        return _XmlElement(self.__tags["TOTALS"], rows)
+        elems=_XmlElements([_XmlElement(i.name, j) for (i,j) in totals.items()])
+        return _XmlElement(self.__tags["TOTALS"], elems)
 
 ################################################################################
 
@@ -216,7 +219,8 @@ class _XmlElement:
         self.__value=value
 
     def __str__(self):
-        return '<' + self.__name + '>' + self.__value.__str__() + '</' + self.__name + '>'
+        return '<' + self.__name + '>' + self.__value.__str__() + \
+                '</' + self.__name + '>'
 
 ################################################################################
 
