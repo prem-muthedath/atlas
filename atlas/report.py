@@ -178,28 +178,50 @@ class _XmlReport(_Report):
             }
 
     def _empty(self):
-        return self.__element(self.__tags["XML"], "", "")
-
-    def __element(self, name, val, sep=""):
-        return '<' + name + '>' +  sep + str(val) + sep + '</' + name + '>'
+        return _XmlElement(self.__tags["XML"], "").__str__()
 
     def _render_(self):
-        xml="\n".join([i for i in [self.__body(), self._footer()] if len(i) > 0])
-        return self.__element(self.__tags["XML"], xml, "\n")
+        section=_XmlSection([i for i in [self.__body(), self._footer()] if i != None])
+        return _XmlElement(self.__tags["XML"], section, "\n").__str__()
 
     def __body(self):
-        body="\n".join([i for i in self._body()])
-        return self.__element(self.__tags["PARTS"], body, "\n")
+        return _XmlElement(self.__tags["PARTS"], _XmlSection(self._body()), "\n")
 
     def _line(self, index, line):
-        fline="".join([self.__element(i.name, j) for (i, j) in line.items()])
-        return self.__element(self.__tags["PART"], fline)
+        row=_XmlRow([_XmlElement(i.name, j) for (i, j) in line.items()])
+        return _XmlElement(self.__tags['PART'], row)
 
     def _footer(self):
         totals=self._totals()
-        if len(totals) == 0: return ""
-        val="".join([self.__element(key.name, totals[key]) for key in totals])
-        return self.__element(self.__tags["TOTALS"], val)
+        if len(totals) == 0: return None
+        row=_XmlRow([_XmlElement(key.name, totals[key]) for key in totals])
+        return _XmlElement(self.__tags["TOTALS"], row)
+
+################################################################################
+
+class _XmlSection:
+    def __init__(self, rows):
+        self.__rows=rows
+        self.__sep='\n'
+
+    def __str__(self):
+        return self.__sep.join([row.__str__() for row in self.__rows])
+
+class _XmlRow:
+    def __init__(self, elems):
+        self.__elems=elems
+
+    def __str__(self):
+        return "".join([elem.__str__() for elem in self.__elems])
+
+class _XmlElement:
+    def __init__(self, name, value, sep=''):
+        self.__name=name
+        self.__value=value
+        self.__sep=sep
+
+    def __str__(self):
+        return '<' + self.__name + '>' +  self.__sep + self.__value.__str__() + self.__sep + '</' + self.__name + '>'
 
 ################################################################################
 
