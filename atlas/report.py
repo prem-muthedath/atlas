@@ -30,10 +30,7 @@ class _Report(object):
         pass
 
     def _body(self):
-        return [self._line(i+1, line) for i, line in enumerate(self.__contents)]
-
-    def _line(self, indx, line):
-        pass
+        return [(i+1, line) for i, line in enumerate(self.__contents)]
 
     def _names(self):
         return self.__contents[0].keys() if len(self.__contents) > 0 else []
@@ -60,9 +57,10 @@ class _TextReport(_Report):
         )._render()
 
     def __body(self):
-        return [_TextRow(i) for i in self._body()]
+        results=[self.__line(i, line) for (i, line) in self._body()]
+        return [_TextRow(i) for i in results]
 
-    def _line(self, index, line):
+    def __line(self, index, line):
         results=[str(index)]
         for (name, value) in line.items():
             if name == _Schema.level:
@@ -194,16 +192,21 @@ class _XmlReport(_Report):
         return [self.__body()]
 
     def __body(self):
-        lines=[_XmlElements(line) for line in self._body()]
-        parts=[self.__element(self.__tags['PART'], i) for i in lines]
-        return self.__element(self.__tags["PARTS"], _XmlElements(parts))
+        return self.__element(self.__tags["PARTS"], _XmlElements(self.__parts()))
 
-    def _line(self, index, line):
-        return [self.__element(i.name, j) for (i, j) in line.items()]
+    def __parts(self):
+        parts=[]
+        for (_, line) in self._body():
+            part=self.__xml(self.__tags['PART'], line.items())
+            parts.append(part)
+        return parts
+
+    def __xml(self, tag, items):
+        elems=_XmlElements([self.__element(i.name, j) for (i, j) in items])
+        return self.__element(tag, elems)
 
     def __footer(self, totals):
-        elems=_XmlElements([self.__element(i.name, j) for (i,j) in totals.items()])
-        return self.__element(self.__tags["TOTALS"], elems)
+        return self.__xml(self.__tags['TOTALS'], totals.items())
 
 ################################################################################
 
