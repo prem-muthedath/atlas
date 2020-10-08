@@ -32,7 +32,7 @@ class _Report(object):
     def _body(self):
         return [self._line(i+1, line) for i, line in enumerate(self.__contents)]
 
-    def _line(self):
+    def _line(self, indx, line):
         pass
 
     def _names(self):
@@ -178,11 +178,14 @@ class _XmlReport(_Report):
             }
 
     def _empty(self):
-        return _XmlElement(self.__tags["XML"], "").__str__()
+        return self.__element(self.__tags["XML"], "")
+
+    def __element(self, name, value):
+        return '<' + name + '>' + value.__str__() + '</' + name + '>'
 
     def _render_(self):
         elems=_XmlElements([i for i in self.__contents()])
-        return _XmlElement(self.__tags["XML"], elems).__str__()
+        return self.__element(self.__tags["XML"], elems)
 
     def __contents(self):
         totals=self._totals()
@@ -191,27 +194,18 @@ class _XmlReport(_Report):
         return [self.__body()]
 
     def __body(self):
-        return _XmlElement(self.__tags["PARTS"], _XmlElements(self._body()))
+        lines=[_XmlElements(line) for line in self._body()]
+        parts=[self.__element(self.__tags['PART'], i) for i in lines]
+        return self.__element(self.__tags["PARTS"], _XmlElements(parts))
 
     def _line(self, index, line):
-        elems=_XmlElements([_XmlElement(i.name, j) for (i, j) in line.items()])
-        return _XmlElement(self.__tags['PART'], elems)
+        return [self.__element(i.name, j) for (i, j) in line.items()]
 
     def __footer(self, totals):
-        elems=_XmlElements([_XmlElement(i.name, j) for (i,j) in totals.items()])
-        return _XmlElement(self.__tags["TOTALS"], elems)
+        elems=_XmlElements([self.__element(i.name, j) for (i,j) in totals.items()])
+        return self.__element(self.__tags["TOTALS"], elems)
 
 ################################################################################
-
-class _XmlElement:
-    def __init__(self, name, value):
-        self.__name=name
-        self.__value=value
-
-    def __str__(self):
-        return '<' + self.__name + '>' + self.__value.__str__() + \
-                '</' + self.__name + '>'
-
 
 class _XmlElements:
     def __init__(self, elems):
@@ -222,7 +216,7 @@ class _XmlElements:
         return self.__sep.join(["", self.__data(), ""])
 
     def __data(self):
-        return self.__sep.join([elem.__str__() for elem in self.__elems])
+        return self.__sep.join(self.__elems)
 
 ################################################################################
 
