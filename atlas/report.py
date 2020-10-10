@@ -30,7 +30,16 @@ class _Report(object):
         pass
 
     def _body(self):
-        return [(i+1, line) for i, line in enumerate(self.__contents)]
+        return [(i+1, self.__format(j)) for i, j in enumerate(self.__contents)]
+
+    def __format(self, line):
+        items=OrderedDict()
+        for (col, val) in line.items():
+            val=str(val)
+            if col in [_Schema.unit_cost, _Schema.cost]:
+                val='$' + val
+            items[col]=val
+        return items
 
     def _names(self):
         return self.__contents[0].keys() if len(self.__contents) > 0 else []
@@ -40,7 +49,7 @@ class _Report(object):
         columns=[i for i in _Schema._totals_schema() if i in self._names()]
         for col in columns:
             totals[col]=col._total([line[col] for line in self.__contents])
-        return totals
+        return self.__format(totals)
 
 ################################################################################
 
@@ -49,119 +58,91 @@ class _TextReport(_Report):
         return ""
 
     def _render_(self):
-        captions={'ITEM' : "item", 'TOTALS' : "totals"}
-        return _TextView(
-            _Header(captions['ITEM'], self._names()),
-            self.__body(),
-            _Footer(captions['TOTALS'], self._names(), self._totals())
-        )._render()
+        contents=[self.__header()] + self.__body() + [self.__footer()]
+        return _TextView(contents)._render()
 
-    def __body(self):
-        results=[self.__line(i, line) for (i, line) in self._body()]
-        return [_TextRow(i) for i in results]
+    def __header(self):
+        cells=['items'] + [i.name for i in self._names()]
+        return _BorderedRow([self.__capitalize(i) for i in cells])
 
-    def __line(self, index, line):
-        results=[str(index)]
-        for (name, value) in line.items():
-            if name == _Schema.level:
-                indent=(value-1)*"  "
-                result=indent+str(value)
-            else:
-                result=str(value)
-            results.append(result)
-        return results
-
-################################################################################
-
-class _TextView:
-    def __init__(self, header, body, footer):
-        self.__header=header
-        self.__body=body
-        self.__footer=footer
-
-    def _render(self):
-        data=self.__header._render()
-        data.extend([i._render() for i in self.__body])
-        data.extend(self.__footer._render())
-        return "\n".join(data)
-
-################################################################################
-
-class _Header(object):
-    def __init__(self, tag, cols):
-        self.__tag=tag
-        self.__cols=cols
-
-    def _render(self):
-        return self._render_(self.__headers())
-
-    def _render_(self, items):
-        data=[self._capitalize()] + items
-        return self._bordered(_TextRow(data))._render()
-
-    def __headers(self):
-        return [self._capitalize(i.name) for i in self.__cols]
-
-    def _capitalize(self, word=None):
-        word=self.__tag if word==None else word
+    def __capitalize(self, word):
         return ' '.join(each[:1].upper()+each[1:].lower() \
                 for each in word.split('_'))
 
-    def _bordered(self, row):
-        tag_col= 1 if self.__tag != None else 0
-        cells=[""]*(len(self.__cols) + tag_col)
-        return _BorderedRow(cells, row)
+    def __body(self):
+        results=[self.__row(i, row) for (i, row) in self._body()]
+        return [_TextRow(i) for i in results]
 
-    def _matches(self, cols):
-        return [col if col in cols else None for col in self.__cols]
+    def __row(self, index, row):
+        return [str(index)] + \
+            [self.__level(j) if i==_Schema.level else j for (i, j) in row.items()]
 
+    def __level(self, level):
+        indent=(int(level))*"  "
+        return indent+level
 
-class _Footer(_Header):
-    def __init__(self, tag, cols, totals):
-        super(_Footer, self).__init__(tag, cols)
-        self.__totals=totals
+    def __footer(self):
+        totals=self._totals()
+        cells=(['totals'] if len(totals) > 0 else ['']) + self.__totals(totals)
+        return _BorderedRow([self.__capitalize(i) for i in cells])
 
-    def _render(self):
-        if len(self.__totals) == 0:
-            return self._bordered(_TextRow([]))._render()
-        return self._render_(self.__footers())
-
-    def __footers(self):
-        matches=self._matches(self.__totals.keys())
-        return [" " if i==None else str(self.__totals[i]) for i in matches]
+    def __totals(self, totals):
+        return [totals[i] if totals.has_key(i) else '' for i in self._names()]
 
 ################################################################################
 
 class _TextRow(object):
     def __init__(self, cells):
         self.__cells=cells
-        self.__field_width=15
+        self.__field_width=20
+        self.__sep='|'
 
     def _render(self):
-        return " ".join([self.__centered(i) for i in self.__cells])
+        data=self.__sep.join([self.__centered(i) for i in self.__cells])
+        return self.__sep.join(['', data, ''])
 
     def __centered(self, value):
         return value.center(self.__field_width)
 
+    def _is_empty(self):
+        return self.__cells==[] or all([i=='' for i in self.__cells])
+
     def _width(self):
-        return len(self.__cells)*self.__field_width
+        return len(self.__cells)*self.__field_width + self.__sep_width()
+
+    def __sep_width(self):
+        sep_count=len(self.__cells) + 1
+        return sep_count*len(self.__sep)
 
 
 class _BorderedRow(_TextRow):
-    def __init__(self, cells, row):
+    def __init__(self, cells):
         super(_BorderedRow, self).__init__(cells)
-        self.__row=row
         self.__symbol='-'
 
     def _render(self):
-        data=self.__row._render()
-        if len(data) > 0:
-            return [self.__border(), data, self.__border()]
-        return [self.__border()]
+        if self._is_empty():
+            return [self.__border()]
+        return [self.__border(), super(_BorderedRow, self)._render(), self.__border()]
 
     def __border(self):
-        width=self._width() + 5
-        return self.__symbol * width
+        return self.__symbol * self._width()
+
+################################################################################
+
+class _TextView:
+    def __init__(self, contents):
+        self.__contents=contents
+        self.__sep='\n'
+
+    def _render(self):
+        data=[]
+        for i in self.__contents:
+            if isinstance(i, _BorderedRow):
+                data.extend(i._render())
+            else:
+                data.append(i._render())
+        return self.__sep.join(data)
 
 ################################################################################
 
