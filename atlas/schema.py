@@ -40,6 +40,10 @@ class _Schema(Enum):
         self._type=_type
 
     @classmethod
+    def _costs_schema(cls):
+        return [_Schema.unit_cost, _Schema.cost]
+
+    @classmethod
     def _totals_schema(cls):
         return [_Schema.quantity, _Schema.costed, _Schema.cost]
 

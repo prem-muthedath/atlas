@@ -36,9 +36,7 @@ class _Report(object):
         items=OrderedDict()
         for (col, val) in line.items():
             val=str(val)
-            if col in [_Schema.unit_cost, _Schema.cost]:
-                val='$' + val
-            items[col]=val
+            items[col]=('$' + val) if col in _Schema._costs_schema() else val
         return items
 
     def _names(self):
