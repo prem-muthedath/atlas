@@ -68,12 +68,14 @@ class _TextReport(_Report):
                 for each in word.split('_'))
 
     def __body(self):
-        results=[self.__row(i, row) for (i, row) in self._body()]
-        return [_TextRow(i) for i in results]
+        return [self.__row(i, row) for (i, row) in self._body()]
 
     def __row(self, index, row):
-        return [str(index)] + \
-            [self.__level(j) if i==_Schema.level else j for (i, j) in row.items()]
+        result=OrderedDict(row)
+        if result.has_key(_Schema.level):
+            level=result[_Schema.level]
+            result[_Schema.level]=self.__level(level)
+        return _TextRow([str(index)] + result.values())
 
     def __level(self, level):
         indent=(int(level))*"  "
