@@ -71,15 +71,11 @@ class _TextReport(_Report):
         return [self.__row(i, row) for (i, row) in self._body()]
 
     def __row(self, index, row):
-        result=OrderedDict(row)
-        if result.has_key(_Schema.level):
-            level=result[_Schema.level]
-            result[_Schema.level]=self.__level(level)
-        return _TextRow([str(index)] + result.values())
-
-    def __level(self, level):
-        indent=(int(level))*"  "
-        return indent+level
+        if row.has_key(_Schema.level):
+            level=row[_Schema.level]
+            indent=(int(level))*"  "
+            row[_Schema.level]=indent+level
+        return _TextRow([str(index)] + row.values())
 
     def __footer(self):
         totals=self._totals()
@@ -88,6 +84,7 @@ class _TextReport(_Report):
 
     def __totals(self, totals):
         return [totals[i] if totals.has_key(i) else '' for i in self._names()]
+
 
 ################################################################################
 
