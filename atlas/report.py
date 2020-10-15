@@ -85,7 +85,6 @@ class _TextReport(_Report):
     def __totals(self, totals):
         return [totals[i] if totals.has_key(i) else '' for i in self._names()]
 
-
 ################################################################################
 
 class _TextRow(object):
@@ -154,37 +153,64 @@ class _XmlReport(_Report):
             }
 
     def _empty(self):
-        return self.__element(self.__tags["XML"], "")
-
-    def __element(self, name, value):
-        return '<' + name + '>' + value.__str__() + '</' + name + '>'
+        return _XmlTree(self.__tags["XML"], [])._render()
 
     def _render_(self):
-        elems=_XmlElements([i for i in self.__contents()])
-        return self.__element(self.__tags["XML"], elems)
+        return _XmlTree(self.__tags['XML'], self.__contents())._render()
 
     def __contents(self):
         totals=self._totals()
         if len(totals) > 0:
-            return [self.__body(), self.__footer(totals)]
+            return [self.__body(), self.__footer(self.__nodes(totals))]
         return [self.__body()]
 
     def __body(self):
-        return self.__element(self.__tags["PARTS"], _XmlElements(self.__parts()))
+        return _XmlTree(self.__tags["PARTS"], self.__parts())
 
     def __parts(self):
         parts=[]
         for (_, line) in self._body():
-            part=self.__xml(self.__tags['PART'], line.items())
+            part=_XmlTree(self.__tags['PART'], self.__nodes(line))
             parts.append(part)
         return parts
 
-    def __xml(self, tag, items):
-        elems=_XmlElements([self.__element(i.name, j) for (i, j) in items])
-        return self.__element(tag, elems)
+    def __nodes(self, row):
+        return [_XmlNode(i.name, j) for (i, j) in row.items()]
 
-    def __footer(self, totals):
-        return self.__xml(self.__tags['TOTALS'], totals.items())
+    def __footer(self, nodes):
+        return _XmlTree(self.__tags['TOTALS'], nodes)
+
+################################################################################
+
+class _Xml(object):
+    def __init__(self, tag):
+        self.__tag=tag
+
+    def _render(self):
+        pass
+
+    def _element(self, value):
+        return '<' + self.__tag + '>' + value + '</' + self.__tag + '>'
+
+
+class _XmlTree(_Xml):
+    def __init__(self, tag, children):
+        super(_XmlTree, self).__init__(tag)
+        self.__children=children
+
+    def _render(self):
+        sep='\n' if len(self.__children) > 0 else ''
+        value=sep + sep.join([i._render() for i in self.__children]) + sep
+        return self._element(value)
+
+
+class _XmlNode(_Xml):
+    def __init__(self, tag, value):
+        super(_XmlNode, self).__init__(tag)
+        self.__value=value
+
+    def _render(self):
+        return self._element(str(self.__value))
 
 ################################################################################
 
