@@ -53,7 +53,7 @@ class _Report(object):
 
 class _TextReport(_Report):
     def _empty(self):
-        return ""
+        return _TextView([])._render()
 
     def _render_(self):
         contents=[self.__header()] + self.__body() + [self.__footer()]
@@ -129,7 +129,6 @@ class _BorderedRow(_TextRow):
 class _TextView:
     def __init__(self, contents):
         self.__contents=contents
-        self.__sep='\n'
 
     def _render(self):
         data=[]
@@ -138,7 +137,10 @@ class _TextView:
                 data.extend(i._render())
             else:
                 data.append(i._render())
-        return self.__sep.join(data)
+        return self.__sep().join(data)
+
+    def __sep(self):
+        return '\n' if len(self.__contents) > 0 else ''
 
 ################################################################################
 
