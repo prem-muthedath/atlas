@@ -214,16 +214,3 @@ class _XmlNode(_Xml):
 
 ################################################################################
 
-class _XmlElements:
-    def __init__(self, elems):
-        self.__elems=elems
-        self.__sep='\n'
-
-    def __str__(self):
-        return self.__sep.join(["", self.__data(), ""])
-
-    def __data(self):
-        return self.__sep.join(self.__elems)
-
-################################################################################
-
