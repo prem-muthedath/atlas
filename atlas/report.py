@@ -60,7 +60,7 @@ class _TextReport(_Report):
         return _TextView(contents)._render()
 
     def __header(self):
-        cells=['items'] + [i.name for i in self._names()]
+        cells=['item'] + [i.name for i in self._names()]
         return _BorderedRow([self.__capitalize(i) for i in cells])
 
     def __capitalize(self, word):
@@ -101,7 +101,7 @@ class _TextRow(object):
         return value.center(self.__field_width)
 
     def _is_empty(self):
-        return self.__cells==[] or all([i=='' for i in self.__cells])
+        return all([i=='' for i in self.__cells])
 
     def _width(self):
         return len(self.__cells)*self.__field_width + self.__sep_width()
@@ -145,20 +145,11 @@ class _TextView:
 ################################################################################
 
 class _XmlReport(_Report):
-    def __init__(self):
-        super(_XmlReport, self).__init__()
-        self.__tags={
-                "XML" : "xml",
-                "PARTS" : "parts",
-                "PART" : "part",
-                "TOTALS" : "totals"
-            }
-
     def _empty(self):
-        return _XmlTree(self.__tags["XML"], [])._render()
+        return _XmlTree('xml', [])._render()
 
     def _render_(self):
-        return _XmlTree(self.__tags['XML'], self.__contents())._render()
+        return _XmlTree('xml', self.__contents())._render()
 
     def __contents(self):
         totals=self._totals()
@@ -167,12 +158,12 @@ class _XmlReport(_Report):
         return [self.__body()]
 
     def __body(self):
-        return _XmlTree(self.__tags["PARTS"], self.__parts())
+        return _XmlTree('parts', self.__parts())
 
     def __parts(self):
         parts=[]
         for (_, line) in self._body():
-            part=_XmlTree(self.__tags['PART'], self.__nodes(line))
+            part=_XmlTree('part', self.__nodes(line))
             parts.append(part)
         return parts
 
@@ -180,7 +171,7 @@ class _XmlReport(_Report):
         return [_XmlNode(i.name, j) for (i, j) in row.items()]
 
     def __footer(self, nodes):
-        return _XmlTree(self.__tags['TOTALS'], nodes)
+        return _XmlTree('totals', nodes)
 
 ################################################################################
 
