@@ -4,6 +4,7 @@ from .schema import _Schema
 from database import _AtlasDB
 
 from collections import OrderedDict
+from aenum import Enum, NoAlias
 
 ################################################################################
 
@@ -146,32 +147,48 @@ class _TextView:
 
 class _XmlReport(_Report):
     def _empty(self):
-        return _XmlTree('xml', [])._render()
+        return _XmlTree(_Xsd.tag.value, [])._render()
 
     def _render_(self):
-        return _XmlTree('xml', self.__contents())._render()
+        return self.__process(_Xsd)._render()
 
-    def __contents(self):
-        totals=self._totals()
-        if len(totals) > 0:
-            return [self.__body(), self.__footer(self.__nodes(totals))]
-        return [self.__body()]
-
-    def __body(self):
-        return _XmlTree('parts', self.__parts())
-
-    def __parts(self):
-        parts=[]
-        for (_, line) in self._body():
-            part=_XmlTree('part', self.__nodes(line))
-            parts.append(part)
-        return parts
+    def __process(self, item, data=None):
+        vals=item.nodes.value
+        if item == _Xsd:
+            result=[self.__process(i) for i in vals]
+            return _XmlTree(item.tag.value, [i for i in result if i !=None])
+        if item == _Parts:
+            result=[self.__process(vals[0], i) for (_, i) in self._body()]
+            return _XmlTree(item.tag.value, result)
+        if item == _Part:
+            return _XmlTree(item.tag.value, self.__nodes(data))
+        if item == _Totals:
+            totals=self._totals()
+            if len(totals) > 0:
+                return _XmlTree(item.tag.value, self.__nodes(totals))
+            return None
+        raise RuntimeError('element ' + str(item) + ' missing handler.')
 
     def __nodes(self, row):
         return [_XmlNode(i.name, j) for (i, j) in row.items()]
 
-    def __footer(self, nodes):
-        return _XmlTree('totals', nodes)
+################################################################################
+
+class _Part(Enum):
+    tag='part'
+    nodes=[_Schema]
+
+class _Totals(Enum):
+    tag='totals'
+    nodes=_Schema._totals_schema()
+
+class _Parts(Enum):
+    tag='parts'
+    nodes=[_Part]
+
+class _Xsd(Enum):
+    tag='xml'
+    nodes=[_Parts, _Totals]
 
 ################################################################################
 
