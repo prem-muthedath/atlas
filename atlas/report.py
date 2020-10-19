@@ -158,27 +158,27 @@ class _XmlReport(_Report):
 
     def _xml_(self, nodes):
         result=[node._handle(self) for node in nodes]
-        return _XmlTree('xml', [i for i in result if i !=None])
+        return _XmlNode('xml', [i for i in result if i !=None])
 
     def _parts_(self, node):
         result=[]
         for (_, line) in self._body():
             self.__row=line
             result.append(node._handle(self))
-        return _XmlTree('parts', result)
+        return _XmlNode('parts', result)
 
     def _part_(self):
-        return _XmlTree('part', self.__nodes())
+        return _XmlNode('part', self.__elements())
 
     def _totals_(self):
         totals=self._totals()
         if len(totals) > 0:
             self.__row=totals
-            return _XmlTree('totals', self.__nodes())
+            return _XmlNode('totals', self.__elements())
         return None
 
-    def __nodes(self):
-        return [_XmlNode(i.name, j) for (i, j) in self.__row.items()]
+    def __elements(self):
+        return [_XmlElement(i.name, j) for (i, j) in self.__row.items()]
 
 ################################################################################
 
@@ -226,9 +226,9 @@ class _Xml(object):
         return '<' + self.__tag + '>' + value + '</' + self.__tag + '>'
 
 
-class _XmlTree(_Xml):
+class _XmlNode(_Xml):
     def __init__(self, tag, children):
-        super(_XmlTree, self).__init__(tag)
+        super(_XmlNode, self).__init__(tag)
         self.__children=children
 
     def _render(self):
@@ -237,9 +237,9 @@ class _XmlTree(_Xml):
         return self._element(value)
 
 
-class _XmlNode(_Xml):
+class _XmlElement(_Xml):
     def __init__(self, tag, value):
-        super(_XmlNode, self).__init__(tag)
+        super(_XmlElement, self).__init__(tag)
         self.__value=value
 
     def _render(self):
