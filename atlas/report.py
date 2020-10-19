@@ -146,49 +146,72 @@ class _TextView:
 ################################################################################
 
 class _XmlReport(_Report):
+    def __init__(self):
+        super(_XmlReport, self).__init__()
+        self.__row=None
+
     def _empty(self):
-        return _XmlTree(_Xsd.tag.value, [])._render()
+        return _Xsd(self)._handle_empty()._render()
 
     def _render_(self):
-        return self.__process(_Xsd)._render()
+        return _Xsd(self)._handle()._render()
 
-    def __process(self, item, data=None):
-        vals=item.nodes.value
-        if item == _Xsd:
-            result=[self.__process(i) for i in vals]
-            return _XmlTree(item.tag.value, [i for i in result if i !=None])
-        if item == _Parts:
-            result=[self.__process(vals[0], i) for (_, i) in self._body()]
-            return _XmlTree(item.tag.value, result)
-        if item == _Part:
-            return _XmlTree(item.tag.value, self.__nodes(data))
-        if item == _Totals:
-            totals=self._totals()
-            if len(totals) > 0:
-                return _XmlTree(item.tag.value, self.__nodes(totals))
-            return None
-        raise RuntimeError('element ' + str(item) + ' missing handler.')
+    def _xml_(self, nodes):
+        result=[node._handle(self) for node in nodes]
+        return _XmlTree('xml', [i for i in result if i !=None])
 
-    def __nodes(self, row):
-        return [_XmlNode(i.name, j) for (i, j) in row.items()]
+    def _parts_(self, node):
+        result=[]
+        for (_, line) in self._body():
+            self.__row=line
+            result.append(node._handle(self))
+        return _XmlTree('parts', result)
+
+    def _part_(self):
+        return _XmlTree('part', self.__nodes())
+
+    def _totals_(self):
+        totals=self._totals()
+        if len(totals) > 0:
+            self.__row=totals
+            return _XmlTree('totals', self.__nodes())
+        return None
+
+    def __nodes(self):
+        return [_XmlNode(i.name, j) for (i, j) in self.__row.items()]
 
 ################################################################################
 
-class _Part(Enum):
-    tag='part'
-    nodes=[_Schema]
+class _Xsd:
+    def __init__(self, report):
+        self.__report=report
 
-class _Totals(Enum):
-    tag='totals'
-    nodes=_Schema._totals_schema()
+    def _handle(self):
+        return self.__handle([_XmlParts, _XmlTotals])
 
-class _Parts(Enum):
-    tag='parts'
-    nodes=[_Part]
+    def _handle_empty(self):
+        return self.__handle([])
 
-class _Xsd(Enum):
-    tag='xml'
-    nodes=[_Parts, _Totals]
+    def __handle(self, nodes):
+        return self.__report._xml_(nodes)
+
+
+class _XmlParts:
+    @classmethod
+    def _handle(cls, report):
+        return report._parts_(_XmlPart)
+
+
+class _XmlPart:
+    @classmethod
+    def _handle(cls, report):
+        return report._part_()
+
+
+class _XmlTotals:
+    @classmethod
+    def _handle(cls, report):
+        return report._totals_()
 
 ################################################################################
 
