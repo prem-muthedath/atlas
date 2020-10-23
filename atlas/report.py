@@ -209,8 +209,8 @@ class _XmlReport(_Report):
         result=[node._handle(self) for node in nodes]
         return _XmlNode('xml', [i for i in result if i !=None])
 
-    def _heading(self):
-        return _XmlElement('heading', self._title())
+    def _title_(self):
+        return _XmlElement('title', self._title())
 
     def _parts_(self, node):
         result=[]
@@ -231,8 +231,8 @@ class _XmlReport(_Report):
     def __elements(self):
         return [_XmlElement(i.name, j) for (i, j) in self.__row.items()]
 
-    def _footnote(self):
-        return _XmlElement('footnote', self._note()) if self._note() != '' else None
+    def _note_(self):
+        return _XmlElement('note', self._note()) if self._note() != '' else None
 
 ################################################################################
 
@@ -241,7 +241,7 @@ class _Xsd:
         self.__report=report
 
     def _handle(self):
-        return self.__handle([_XmlHeading, _XmlParts, _XmlTotals, _XmlFootnote])
+        return self.__handle([_XmlTitle, _XmlParts, _XmlTotals, _XmlNote])
 
     def _handle_empty(self):
         return self.__handle([])
@@ -250,10 +250,10 @@ class _Xsd:
         return self.__report._xml_(nodes)
 
 
-class _XmlHeading:
+class _XmlTitle:
     @classmethod
     def _handle(cls, report):
-        return report._heading()
+        return report._title_()
 
 class _XmlParts:
     @classmethod
@@ -273,10 +273,10 @@ class _XmlTotals:
         return report._totals_()
 
 
-class _XmlFootnote:
+class _XmlNote:
     @classmethod
     def _handle(cls, report):
-        return report._footnote()
+        return report._note_()
 
 ################################################################################
 
