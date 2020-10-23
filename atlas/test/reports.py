@@ -38,7 +38,7 @@ def default_text():
         '-------------------------------------------------------------------------------------------------------------------------------------------------------------------------',
         '|       Totals       |                    |                    |                    |                    |         43         |         7          |       $8210        |',
         '-------------------------------------------------------------------------------------------------------------------------------------------------------------------------',
-        "Note: Totals computed only for 'Quantity', 'Costed', 'Cost'.                                                                                                             "
+        "Note: Totals computed only for 'quantity', 'costed', 'cost'.                                                                                                             "
     ])
 
 ################################################################################
@@ -79,7 +79,7 @@ def custom_text():
         '----------------------------------------------------------------',
         '|       Totals       |                    |       $8210        |',
         '----------------------------------------------------------------',
-        "Note: Totals computed only for 'Quantity', 'Costed', 'Cost'.    "
+        "Note: Totals computed only for 'cost'.                          "
     ])
 
 ################################################################################
@@ -125,6 +125,7 @@ def custom_no_totals_text():
 def default_xml():
     return '\n'.join([
         '<xml>',
+        '<heading>Atlas Bill of Materials Report</heading>',
         '<parts>',
         '<part>',
         '<level>1</level>',
@@ -375,6 +376,7 @@ def default_xml():
         '<costed>7</costed>',
         '<cost>$8210</cost>',
         '</totals>',
+        "<footnote>Note: Totals computed only for 'quantity', 'costed', 'cost'.</footnote>",
         '</xml>'
     ])
 
@@ -383,6 +385,7 @@ def default_xml():
 def custom_xml():
     return '\n'.join([
         '<xml>',
+        '<heading>Atlas Bill of Materials Report</heading>',
         '<parts>',
         '<part>',
         '<level>1</level>',
@@ -523,6 +526,7 @@ def custom_xml():
         '<totals>',
         '<cost>$8210</cost>',
         '</totals>',
+        "<footnote>Note: Totals computed only for 'cost'.</footnote>",
         '</xml>'
     ])
 
@@ -531,6 +535,7 @@ def custom_xml():
 def custom_no_totals_xml():
     return '\n'.join([
         '<xml>',
+        '<heading>Atlas Bill of Materials Report</heading>',
         '<parts>',
         '<part>',
         '<level>1</level>',

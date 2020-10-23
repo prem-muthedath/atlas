@@ -29,6 +29,9 @@ class _Report(object):
     def _render_(self):
         pass
 
+    def _title(self):
+        return 'Atlas Bill of Materials Report'
+
     def _body(self):
         return [(i+1, self.__format(j)) for i, j in enumerate(self.__contents)]
 
@@ -44,10 +47,17 @@ class _Report(object):
 
     def _totals(self):
         totals=OrderedDict()
-        columns=[i for i in _Schema._totals_schema() if i in self._names()]
-        for col in columns:
+        for col in self.__tot_cols():
             totals[col]=col._total([line[col] for line in self.__contents])
         return self.__format(totals)
+
+    def __tot_cols(self):
+        return [i for i in _Schema._totals_schema() if i in self._names()]
+
+    def _note(self):
+        cols=', '.join(["'" + i.name + "'" for i in self.__tot_cols()])
+        if len(cols) == 0: return cols
+        return "Note: Totals computed only for " + cols + "."
 
 ################################################################################
 
@@ -60,9 +70,8 @@ class _TextReport(_Report):
         return _TextView(sections)._render()
 
     def __header(self):
-        title='Atlas Bill of Materials Report'
         cols=['Item'] + [self.__capitalize(i.name) for i in self._names()]
-        return self.__sections([(_Title, title), (_Data, [cols])])
+        return self.__sections([(_Title, self._title()), (_Data, [cols])])
 
     def __capitalize(self, word):
         return ' '.join(each[:1].upper()+each[1:].lower() \
@@ -88,14 +97,12 @@ class _TextReport(_Report):
         if len(totals) == 0: return []
         return self.__sections([self.__totals(totals), self.__note()])
 
-    def __totals(self, totals):
-        caption=['Totals']
+    def __totals(self, totals, caption=['Totals']):
         data=[totals[i] if totals.has_key(i) else '' for i in self._names()]
         return (_Data, [caption + data])
 
     def __note(self):
-        note="Note: Totals computed only for 'Quantity', 'Costed', 'Cost'."
-        return (_Note, note)
+        return (_Note, self._note())
 
 ################################################################################
 
@@ -202,6 +209,9 @@ class _XmlReport(_Report):
         result=[node._handle(self) for node in nodes]
         return _XmlNode('xml', [i for i in result if i !=None])
 
+    def _heading(self):
+        return _XmlElement('heading', self._title())
+
     def _parts_(self, node):
         result=[]
         for (_, line) in self._body():
@@ -221,6 +231,9 @@ class _XmlReport(_Report):
     def __elements(self):
         return [_XmlElement(i.name, j) for (i, j) in self.__row.items()]
 
+    def _footnote(self):
+        return _XmlElement('footnote', self._note()) if self._note() != '' else None
+
 ################################################################################
 
 class _Xsd:
@@ -228,7 +241,7 @@ class _Xsd:
         self.__report=report
 
     def _handle(self):
-        return self.__handle([_XmlParts, _XmlTotals])
+        return self.__handle([_XmlHeading, _XmlParts, _XmlTotals, _XmlFootnote])
 
     def _handle_empty(self):
         return self.__handle([])
@@ -236,6 +249,11 @@ class _Xsd:
     def __handle(self, nodes):
         return self.__report._xml_(nodes)
 
+
+class _XmlHeading:
+    @classmethod
+    def _handle(cls, report):
+        return report._heading()
 
 class _XmlParts:
     @classmethod
@@ -253,6 +271,12 @@ class _XmlTotals:
     @classmethod
     def _handle(cls, report):
         return report._totals_()
+
+
+class _XmlFootnote:
+    @classmethod
+    def _handle(cls, report):
+        return report._footnote()
 
 ################################################################################
 
