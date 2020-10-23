@@ -4,7 +4,6 @@ from .schema import _Schema
 from database import _AtlasDB
 
 from collections import OrderedDict
-from aenum import Enum, NoAlias
 
 ################################################################################
 
@@ -57,91 +56,149 @@ class _TextReport(_Report):
         return _TextView([])._render()
 
     def _render_(self):
-        contents=[self.__header()] + self.__body() + [self.__footer()]
-        return _TextView(contents)._render()
+        sections=self.__header() + self.__body() + self.__footer()
+        return _TextView(sections)._render()
 
     def __header(self):
-        cells=['item'] + [i.name for i in self._names()]
-        return _BorderedRow([self.__capitalize(i) for i in cells])
+        title='Atlas Bill of Materials Report'
+        cols=['Item'] + [self.__capitalize(i.name) for i in self._names()]
+        return self.__sections([(_Title, title), (_Data, [cols])])
 
     def __capitalize(self, word):
         return ' '.join(each[:1].upper()+each[1:].lower() \
                 for each in word.split('_'))
 
+    def __sections(self, sections):
+        size=len(self._names()) + 1
+        return [i._new(size, j) for (i, j) in sections]
+
     def __body(self):
-        return [self.__row(i, row) for (i, row) in self._body()]
+        data=[self.__row(i, row) for (i, row) in self._body()]
+        return self.__sections([(_Data, data)])
 
     def __row(self, index, row):
         if row.has_key(_Schema.level):
             level=row[_Schema.level]
             indent=(int(level))*"  "
             row[_Schema.level]=indent+level
-        return _TextRow([str(index)] + row.values())
+        return [str(index)] + row.values()
 
     def __footer(self):
         totals=self._totals()
-        cells=(['totals'] if len(totals) > 0 else ['']) + self.__totals(totals)
-        return _BorderedRow([self.__capitalize(i) for i in cells])
+        if len(totals) == 0: return []
+        return self.__sections([self.__totals(totals), self.__note()])
 
     def __totals(self, totals):
-        return [totals[i] if totals.has_key(i) else '' for i in self._names()]
+        caption=['Totals']
+        data=[totals[i] if totals.has_key(i) else '' for i in self._names()]
+        return (_Data, [caption + data])
+
+    def __note(self):
+        note="Note: Totals computed only for 'Quantity', 'Costed', 'Cost'."
+        return (_Note, note)
 
 ################################################################################
 
-class _TextRow(object):
-    def __init__(self, cells):
-        self.__cells=cells
+class _TextView(object):
+    def __init__(self, sections):
+        self.__sections=sections
+
+    def _render(self):
+        if len(self.__sections)==0: return ''
+        result=[]
+        for section in self.__sections:
+            section._render(result)
+        return '\n'.join(result)
+
+################################################################################
+
+class _TextGrid(object):
+    def __init__(self, size):
+        self.__size=size
         self.__field_width=20
         self.__sep='|'
 
     def _render(self):
-        data=self.__sep.join([self.__centered(i) for i in self.__cells])
+        pass
+
+    def _row(self, cells):
+        data=self.__sep.join([self.__centered(i) for i in cells])
         return self.__sep.join(['', data, ''])
 
     def __centered(self, value):
         return value.center(self.__field_width)
 
-    def _is_empty(self):
-        return all([i=='' for i in self.__cells])
+    def _border(self):
+        return '-' * self.__width()
 
-    def _width(self):
-        return len(self.__cells)*self.__field_width + self.__sep_width()
+    def __width(self):
+        return self.__size*self.__field_width + self.__sep_width()
 
     def __sep_width(self):
-        sep_count=len(self.__cells) + 1
+        sep_count=self.__size + 1
         return sep_count*len(self.__sep)
 
 
-class _BorderedRow(_TextRow):
+class _TextRow(_TextGrid):
     def __init__(self, cells):
-        super(_BorderedRow, self).__init__(cells)
-        self.__symbol='-'
+        super(_TextRow, self).__init__(len(cells))
+        self.__cells=cells
 
     def _render(self):
-        if self._is_empty():
-            return [self.__border()]
-        return [self.__border(), super(_BorderedRow, self)._render(), self.__border()]
-
-    def __border(self):
-        return self.__symbol * self._width()
+        return self._row(self.__cells)
 
 ################################################################################
 
-class _TextView:
-    def __init__(self, contents):
-        self.__contents=contents
+class _TextSection(object):
+    def __init__(self, grid):
+        self.__grid=grid
 
-    def _render(self):
-        data=[]
-        for i in self.__contents:
-            if isinstance(i, _BorderedRow):
-                data.extend(i._render())
-            else:
-                data.append(i._render())
-        return self.__sep().join(data)
+    def _render(self, result):
+        pass
 
-    def __sep(self):
-        return '\n' if len(self.__contents) > 0 else ''
+    def _border(self):
+        return self.__grid._border()
+
+
+class _Data(_TextSection):
+    def __init__(self, grid, rows):
+        super(_Data, self).__init__(grid)
+        self.__rows=rows
+
+    @classmethod
+    def _new(cls, size, rows):
+        return _Data(_TextGrid(size), [_TextRow(i) for i in rows])
+
+    def _render(self, result):
+        for row in self.__rows:
+            result.append(row._render())
+        result.append(self._border())
+
+
+class _Title(_TextSection):
+    def __init__(self, grid, caption):
+        super(_Title, self).__init__(grid)
+        self._caption=caption
+
+    @classmethod
+    def _new(cls, size, caption):
+        return _Title(_TextGrid(size), caption)
+
+    def _render(self, result):
+        result.append(self._caption.center(self._width()))
+        result.append(self._border())
+
+    def _width(self):
+        return len(self._border())
+
+
+class _Note(_Title):
+    @classmethod
+    def _new(cls, size, caption):
+        return _Note(_TextGrid(size), caption)
+
+    def _render(self, result):
+        result.append(self._caption.ljust(self._width()))
 
 ################################################################################
 
@@ -172,10 +229,9 @@ class _XmlReport(_Report):
 
     def _totals_(self):
         totals=self._totals()
-        if len(totals) > 0:
-            self.__row=totals
-            return _XmlNode('totals', self.__elements())
-        return None
+        if len(totals) == 0: return None
+        self.__row=totals
+        return _XmlNode('totals', self.__elements())
 
     def __elements(self):
         return [_XmlElement(i.name, j) for (i, j) in self.__row.items()]
