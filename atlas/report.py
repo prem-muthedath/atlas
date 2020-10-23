@@ -105,10 +105,10 @@ class _TextView(object):
 
     def _render(self):
         if len(self.__sections)==0: return ''
-        result=[]
+        results=[]
         for section in self.__sections:
-            section._render(result)
-        return '\n'.join(result)
+            results+=section._render()
+        return '\n'.join(results)
 
 ################################################################################
 
@@ -122,6 +122,7 @@ class _TextGrid(object):
         pass
 
     def _row(self, cells):
+        assert len(cells) == self.__size
         data=self.__sep.join([self.__centered(i) for i in cells])
         return self.__sep.join(['', data, ''])
 
@@ -129,14 +130,29 @@ class _TextGrid(object):
         return value.center(self.__field_width)
 
     def _border(self):
-        return '-' * self.__width()
+        return '-' * self._width()
 
-    def __width(self):
+    def _width(self):
         return self.__size*self.__field_width + self.__sep_width()
 
     def __sep_width(self):
-        sep_count=self.__size + 1
-        return sep_count*len(self.__sep)
+        return self.__sep_count()*len(self.__sep)
+
+    def __sep_count(self):
+        return self.__size + 1
+
+
+class _Data(_TextGrid):
+    def __init__(self, size, rows):
+        super(_Data, self).__init__(size)
+        self.__rows=rows
+
+    @classmethod
+    def _new(cls, size, rows):
+        return _Data(size, [_TextRow(i) for i in rows])
+
+    def _render(self):
+        return [row._render() for row in self.__rows] + [self._border()]
 
 
 class _TextRow(_TextGrid):
@@ -147,58 +163,27 @@ class _TextRow(_TextGrid):
     def _render(self):
         return self._row(self.__cells)
 
-################################################################################
 
-class _TextSection(object):
-    def __init__(self, grid):
-        self.__grid=grid
-
-    def _render(self, result):
-        pass
-
-    def _border(self):
-        return self.__grid._border()
-
-
-class _Data(_TextSection):
-    def __init__(self, grid, rows):
-        super(_Data, self).__init__(grid)
-        self.__rows=rows
-
-    @classmethod
-    def _new(cls, size, rows):
-        return _Data(_TextGrid(size), [_TextRow(i) for i in rows])
-
-    def _render(self, result):
-        for row in self.__rows:
-            result.append(row._render())
-        result.append(self._border())
-
-
-class _Title(_TextSection):
-    def __init__(self, grid, caption):
-        super(_Title, self).__init__(grid)
+class _Title(_TextGrid):
+    def __init__(self, size, caption):
+        super(_Title, self).__init__(size)
         self._caption=caption
 
     @classmethod
     def _new(cls, size, caption):
-        return _Title(_TextGrid(size), caption)
+        return _Title(size, caption)
 
-    def _render(self, result):
-        result.append(self._caption.center(self._width()))
-        result.append(self._border())
-
-    def _width(self):
-        return len(self._border())
+    def _render(self):
+        return [self._caption.center(self._width()), self._border()]
 
 
 class _Note(_Title):
     @classmethod
     def _new(cls, size, caption):
-        return _Note(_TextGrid(size), caption)
+        return _Note(size, caption)
 
-    def _render(self, result):
-        result.append(self._caption.ljust(self._width()))
+    def _render(self):
+        return [self._caption.ljust(self._width())]
 
 ################################################################################
 
