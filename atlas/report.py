@@ -39,23 +39,21 @@ class _Report(object):
         items=OrderedDict()
         for (col, val) in line.items():
             val=str(val)
-            items[col]=('$' + val) if col in _Schema._costs_schema() else val
+            items[col]=col._to_currency(val)
         return items
 
     def _names(self):
         return self.__contents[0].keys() if len(self.__contents) > 0 else []
 
     def _totals(self):
-        totals=OrderedDict()
-        for col in self.__tot_cols():
-            totals[col]=col._total([line[col] for line in self.__contents])
-        return self.__format(totals)
+        cols=[self.__col(col) for col in self._names()]
+        return self.__format(_Schema._totals(cols))
 
-    def __tot_cols(self):
-        return [i for i in _Schema._totals_schema() if i in self._names()]
+    def __col(self, col):
+        return (col, [line[col] for line in self.__contents])
 
     def _note(self):
-        cols=', '.join(["'" + i.name + "'" for i in self.__tot_cols()])
+        cols=_Schema._summables(self._names())
         if len(cols) == 0: return cols
         return "Note: Totals computed only for " + cols + "."
 
@@ -242,7 +240,8 @@ class _XmlReport(_Report):
         return [_XmlElement(i.name, j) for (i, j) in self.__row.items()]
 
     def _note_(self):
-        return _XmlElement('note', self._note()) if self._note() != '' else None
+        if len(self._note()) == 0: return None
+        return _XmlElement('note', self._note())
 
 ################################################################################
 
