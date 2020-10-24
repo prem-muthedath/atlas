@@ -72,6 +72,10 @@ class _Schema(Enum):
         if self.__summable():
             summables.append("'" + self.name + "'")
 
+    def _capitalize(self):
+        return ' '.join(each[:1].upper()+each[1:].lower() \
+                for each in self.name.split('_'))
+
 ################################################################################
 
 

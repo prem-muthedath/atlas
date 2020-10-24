@@ -68,12 +68,8 @@ class _TextReport(_Report):
         return _TextView(sections)._render()
 
     def __header(self):
-        cols=['Item'] + [self.__capitalize(i.name) for i in self._names()]
+        cols=['Item'] + [i._capitalize() for i in self._names()]
         return self.__sections([(_Title, self._title()), (_Data, [cols])])
-
-    def __capitalize(self, word):
-        return ' '.join(each[:1].upper()+each[1:].lower() \
-                for each in word.split('_'))
 
     def __sections(self, sections):
         size=len(self._names()) + 1
