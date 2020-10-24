@@ -227,9 +227,8 @@ class _XmlReport(_Report):
         return _XmlNode('part', self.__elements())
 
     def _totals_(self):
-        totals=self._totals()
-        if len(totals) == 0: return None
-        self.__row=totals
+        self.__row=self._totals()
+        if len(self.__row) == 0: return None
         return _XmlNode('totals', self.__elements())
 
     def __elements(self):
