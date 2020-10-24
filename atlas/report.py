@@ -136,9 +136,6 @@ class _TextGrid(object):
     def __centered(self, value):
         return value.center(self.__field_width)
 
-    def _border(self):
-        return '-' * self._width()
-
     def _width(self):
         return self.__size*self.__field_width + self.__sep_width()
 
@@ -149,7 +146,29 @@ class _TextGrid(object):
         return self.__size + 1
 
 
-class _Data(_TextGrid):
+class _TextRow(_TextGrid):
+    def __init__(self, cells):
+        super(_TextRow, self).__init__(len(cells))
+        self.__cells=cells
+
+    def _render(self):
+        return self._row(self.__cells)
+
+################################################################################
+
+class _TextSection(_TextGrid):
+    def __init__(self, size):
+        super(_TextSection, self).__init__(size)
+        self.__border='-'
+
+    def _render(self):
+        pass
+
+    def _border(self):
+        return self.__border * self._width()
+
+
+class _Data(_TextSection):
     def __init__(self, size, rows):
         super(_Data, self).__init__(size)
         self.__rows=rows
@@ -162,16 +181,7 @@ class _Data(_TextGrid):
         return [row._render() for row in self.__rows] + [self._border()]
 
 
-class _TextRow(_TextGrid):
-    def __init__(self, cells):
-        super(_TextRow, self).__init__(len(cells))
-        self.__cells=cells
-
-    def _render(self):
-        return self._row(self.__cells)
-
-
-class _Title(_TextGrid):
+class _Title(_TextSection):
     def __init__(self, size, caption):
         super(_Title, self).__init__(size)
         self._caption=caption
