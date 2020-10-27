@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from aenum import Enum, NoAlias
-from collections import OrderedDict
 
 # this module defines the schema for the entire atlas app.
 ################################################################################
@@ -41,38 +40,34 @@ class _Schema(Enum):
         self._type=_type
 
     @classmethod
-    def _totals(cls, data):
-        totals=[]
-        for (col, vals) in data:
-            totals.append((col, col.__total(vals)))
-        return OrderedDict([(i,j) for (i,j) in totals if j != None])
+    def _has(cls, items):
+        try:
+            return all([i in _Schema for i in items])
+        except TypeError:
+            return False
 
-    def __total(self, vals):
-        if not self.__summable(): return None
-        if self == _Schema.costed:
-            return sum([1 if str(val) == 'Y' else 0 for val in vals])
-        return sum(vals)
-
-    def __summable(self):
-        return self in [_Schema.quantity, _Schema.costed, _Schema.cost]
-
-    def _to_currency(self, val):
-        if self in [_Schema.unit_cost, _Schema.cost]:
-            return '$' + val
-        return val
+    def _is_money(self):
+        return self in [_Schema.unit_cost, _Schema.cost]
 
     @classmethod
     def _summables(cls, cols):
         result=[]
         for col in cols:
             col.__add_to_summables(result)
-        return ", ".join(result)
+        return result
 
     def __add_to_summables(self, summables):
         if self.__summable():
-            summables.append("'" + self.name + "'")
+            summables.append(self)
 
-    def _capitalize(self):
+    def __summable(self):
+        return self in [_Schema.quantity, _Schema.costed, _Schema.cost]
+
+    @classmethod
+    def _capitalize(cls, cols):
+        return [i.__capitalize() for i in cols]
+
+    def __capitalize(self):
         return ' '.join(each[:1].upper()+each[1:].lower() \
                 for each in self.name.split('_'))
 

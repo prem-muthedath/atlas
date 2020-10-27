@@ -37,6 +37,17 @@ class Test(unittest.TestCase):
 
 ################################################################################
 
+class TestInvalidSchema(Test):
+    def _assert(self):
+        with self.assertRaises(AssertionError) as cn:
+            schema=[_Schema.level, 'prem', _Schema.cost, 'lisa']
+            self._app.text_report(schema)
+        print "exception: ", cn.exception.__class__.__name__, \
+                "| msg => ", cn.exception
+        self.assertEqual(cn.exception.__str__(), 'report schema not in _Schema.')
+
+################################################################################
+
 class TestEmptyBomCost(Test):
     def _assert(self):
         cost=_Bom([])._cost()
@@ -62,7 +73,7 @@ class TestRerunTotalCost(Test):
 
 class TestEmptyBomTextReport(Test):
     def _assert(self):
-        report=_TextReport()._render(_Bom([]), _Schema)
+        report=_TextReport(_Schema, [])._render()
         self.assertEqual(report, '')
         print "empty BOM TEXT report =>", report
 
@@ -98,7 +109,7 @@ class TestCustomNoTotalsTextReport(Test):
 
 class TestEmptyBomXmlReport(Test):
     def _assert(self):
-        report=_XmlReport()._render(_Bom([]), _Schema)
+        report=_XmlReport(_Schema, [])._render()
         self.assertEqual(report, '<xml></xml>')
         print "empty BOM XML report =>", '\n', report
 

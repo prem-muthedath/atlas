@@ -1,27 +1,24 @@
 #!/usr/bin/python
 
-from .schema import _Schema
-from database import _AtlasDB
+from .schema import _Schema, Costed
 
 from collections import OrderedDict
 
 ################################################################################
 
 class _Report(object):
-    def __init__(self):
-        self.__contents=[]
+    def __init__(self, schema, contents):
+        assert _Schema._has(list(schema)), 'report schema not in _Schema.'
+        self.__schema=schema
+        self.__contents=[] if schema==[] else [self.__line(i) for i in contents]
 
-    def _render(self, bom, schema):
-        part_maps=_AtlasDB()._part_maps()
-        for index, cost_map in enumerate(bom._cost_maps()):
-            part_map=part_maps[index]
-            part_map.update(cost_map)
-            line=OrderedDict([(i, part_map[i]) for i in schema])
-            self.__contents=[line] if index==0 else self.__contents + [line]
-        return self._empty() if self.__is_empty() else self._render_()
+    def __line(self, item):
+        line=[(i, item[i]) for i in self.__schema if item.has_key(i)]
+        assert len(line) > 0, 'line has no content matching report schema.'
+        return OrderedDict(line)
 
-    def __is_empty(self):
-        return any([i==[] for i in [self.__contents, self._names()]])
+    def _render(self):
+        return self._empty() if self.__contents==[] else self._render_()
 
     def _empty(self):
         pass
@@ -38,22 +35,32 @@ class _Report(object):
     def __format(self, line):
         items=OrderedDict()
         for (col, val) in line.items():
-            val=str(val)
-            items[col]=col._to_currency(val)
+            items[col]='$'+ str(val) if col._is_money() else str(val)
         return items
 
     def _names(self):
-        return self.__contents[0].keys() if len(self.__contents) > 0 else []
+        return [i for i in self.__schema]
 
     def _totals(self):
-        cols=[self.__col(col) for col in self._names()]
-        return self.__format(_Schema._totals(cols))
+        totals=OrderedDict()
+        cols=[self.__col(col) for col in self.__summables()]
+        for (col, vals) in cols:
+            totals[col]=self.__sum(col, vals)
+        return self.__format(totals)
+
+    def __summables(self):
+        return _Schema._summables(self._names())
 
     def __col(self, col):
         return (col, [line[col] for line in self.__contents])
 
+    def __sum(self, col, vals):
+        if col == _Schema.costed:
+            return sum([1 if val == Costed.YES else 0 for val in vals])
+        return sum(vals)
+
     def _note(self):
-        cols=_Schema._summables(self._names())
+        cols=", ".join(["'" + i.name + "'" for i in self.__summables()])
         if len(cols) == 0: return cols
         return "Note: Totals computed only for " + cols + "."
 
@@ -68,7 +75,7 @@ class _TextReport(_Report):
         return _TextView(sections)._render()
 
     def __header(self):
-        cols=['Item'] + [i._capitalize() for i in self._names()]
+        cols=['Item'] + _Schema._capitalize(self._names())
         return self.__sections([(_Title, self._title()), (_Data, [cols])])
 
     def __sections(self, sections):
@@ -199,8 +206,8 @@ class _Note(_Title):
 ################################################################################
 
 class _XmlReport(_Report):
-    def __init__(self):
-        super(_XmlReport, self).__init__()
+    def __init__(self, schema, contents):
+        super(_XmlReport, self).__init__(schema, contents)
         self.__row=None
 
     def _empty(self):
