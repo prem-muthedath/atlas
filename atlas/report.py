@@ -14,7 +14,7 @@ class _Report(object):
 
     def __line(self, item):
         line=[(i, item[i]) for i in self.__schema if item.has_key(i)]
-        assert len(line) > 0, 'line has no content matching report schema.'
+        assert len(line) == len(self.__schema), 'line does not contain schema.'
         return OrderedDict(line)
 
     def _render(self):
