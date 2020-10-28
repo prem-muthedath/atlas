@@ -50,9 +50,9 @@ class _Schema(Enum):
         return self in [_Schema.unit_cost, _Schema.cost]
 
     @classmethod
-    def _summables(cls, items):
+    def _summables(cls):
         result=[]
-        for item in items:
+        for item in _Schema:
             item.__add_to_summables(result)
         return result
 
@@ -63,11 +63,7 @@ class _Schema(Enum):
     def __summable(self):
         return self in [_Schema.quantity, _Schema.costed, _Schema.cost]
 
-    @classmethod
-    def _capitalize(cls, items):
-        return [i.__capitalize() for i in items]
-
-    def __capitalize(self):
+    def _capitalize(self):
         return ' '.join(each[:1].upper()+each[1:].lower() \
                 for each in self.name.split('_'))
 

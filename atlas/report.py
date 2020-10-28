@@ -26,6 +26,9 @@ class _Report(object):
     def _render_(self):
         pass
 
+    def _capitalize(self):
+        return [i._capitalize() for i in self.__schema]
+
     def _title(self):
         return 'Atlas Bill of Materials Report'
 
@@ -49,7 +52,7 @@ class _Report(object):
         return self.__format(totals)
 
     def __summables(self):
-        return _Schema._summables(self._names())
+        return [i for i in self.__schema if i in _Schema._summables()]
 
     def __col(self, col):
         return (col, [line[col] for line in self.__contents])
@@ -84,7 +87,7 @@ class _TextReport(_Report):
         return _TextView(sections)._render()
 
     def __header(self):
-        cols=['Item'] + _Schema._capitalize(self._names())
+        cols=['Item'] + self._capitalize()
         return self.__sections([(_TextTitle, self._title()), (_TextData, [cols])])
 
     def __sections(self, sections):
