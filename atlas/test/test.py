@@ -44,7 +44,16 @@ class TestInvalidSchema(Test):
             self._app.text_report(schema)
         print "exception: ", cn.exception.__class__.__name__, \
                 "| msg => ", cn.exception
-        self.assertEqual(cn.exception.__str__(), 'report schema not in _Schema.')
+        self.assertEqual(cn.exception.__str__(), 'bad schema.')
+
+class TestNullSchema(Test):
+    def _assert(self):
+        with self.assertRaises(AssertionError) as cn:
+            schema=None
+            self._app.text_report(schema)
+        print "exception: ", cn.exception.__class__.__name__, \
+                "| msg => ", cn.exception
+        self.assertEqual(cn.exception.__str__(), 'bad schema.')
 
 ################################################################################
 

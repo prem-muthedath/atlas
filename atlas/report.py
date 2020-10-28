@@ -8,7 +8,7 @@ from collections import OrderedDict
 
 class _Report(object):
     def __init__(self, schema, contents):
-        assert _Schema._has(list(schema)), 'report schema not in _Schema.'
+        assert schema != None and _Schema._has(list(schema)), 'bad schema.'
         self.__schema=schema
         self.__contents=[] if schema==[] else [self.__line(i) for i in contents]
 
