@@ -60,9 +60,18 @@ class _Report(object):
         return sum(vals)
 
     def _note(self):
-        cols=", ".join(["'" + i.name + "'" for i in self.__summables()])
-        if len(cols) == 0: return cols
-        return "Note: Totals computed only for " + cols + "."
+        summables=self.__summables()
+        return _Note(summables) if summables != [] else None
+
+################################################################################
+
+class _Note:
+    def __init__(self, summables):
+        self.__summables=["'" + i.name + "'" for i in summables]
+        self.__note="Note: Totals computed only for"
+
+    def __str__(self):
+        return self.__note + " " + ", ".join(self.__summables) + "."
 
 ################################################################################
 
@@ -76,7 +85,7 @@ class _TextReport(_Report):
 
     def __header(self):
         cols=['Item'] + _Schema._capitalize(self._names())
-        return self.__sections([(_Title, self._title()), (_Data, [cols])])
+        return self.__sections([(_TextTitle, self._title()), (_TextData, [cols])])
 
     def __sections(self, sections):
         size=len(self._names()) + 1
@@ -84,7 +93,7 @@ class _TextReport(_Report):
 
     def __body(self):
         data=[self.__row(i, row) for (i, row) in self._body()]
-        return self.__sections([(_Data, data)])
+        return self.__sections([(_TextData, data)])
 
     def __row(self, index, row):
         if row.has_key(_Schema.level):
@@ -100,10 +109,10 @@ class _TextReport(_Report):
 
     def __totals(self, totals, caption=['Totals']):
         data=[totals[i] if totals.has_key(i) else '' for i in self._names()]
-        return (_Data, [caption + data])
+        return (_TextData, [caption + data])
 
     def __note(self):
-        return (_Note, self._note())
+        return (_TextNote, self._note())
 
 ################################################################################
 
@@ -169,39 +178,43 @@ class _TextSection(_TextGrid):
         return self.__border * self._width()
 
 
-class _Data(_TextSection):
+class _TextData(_TextSection):
     def __init__(self, size, rows):
-        super(_Data, self).__init__(size)
+        super(_TextData, self).__init__(size)
         self.__rows=rows
 
     @classmethod
     def _new(cls, size, rows):
-        return _Data(size, [_TextRow(i) for i in rows])
+        return _TextData(size, [_TextRow(i) for i in rows])
 
     def _render(self):
         return [row._render() for row in self.__rows] + [self._border()]
 
 
-class _Title(_TextSection):
+class _TextTitle(_TextSection):
     def __init__(self, size, caption):
-        super(_Title, self).__init__(size)
-        self._caption=caption
+        super(_TextTitle, self).__init__(size)
+        self.__caption=caption
 
     @classmethod
     def _new(cls, size, caption):
-        return _Title(size, caption)
+        return _TextTitle(size, caption)
 
     def _render(self):
-        return [self._caption.center(self._width()), self._border()]
+        return [self.__caption.center(self._width()), self._border()]
 
 
-class _Note(_Title):
+class _TextNote(_TextSection):
+    def __init__(self, size, note):
+        super(_TextNote, self).__init__(size)
+        self.__note=note
+
     @classmethod
     def _new(cls, size, caption):
-        return _Note(size, caption)
+        return _TextNote(size, caption)
 
     def _render(self):
-        return [self._caption.ljust(self._width())]
+        return [self.__note.__str__().ljust(self._width())]
 
 ################################################################################
 
@@ -242,8 +255,8 @@ class _XmlReport(_Report):
         return [_XmlElement(i.name, j) for (i, j) in self.__row.items()]
 
     def _note_(self):
-        if len(self._note()) == 0: return None
-        return _XmlElement('note', self._note())
+        note=self._note()
+        return _XmlElement('note', note) if note != None else None
 
 ################################################################################
 
