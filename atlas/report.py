@@ -210,8 +210,8 @@ class _TextNote(_TextSection):
         self.__note=note
 
     @classmethod
-    def _new(cls, size, caption):
-        return _TextNote(size, caption)
+    def _new(cls, size, note):
+        return _TextNote(size, note)
 
     def _render(self):
         return [self.__note.__str__().ljust(self._width())]
