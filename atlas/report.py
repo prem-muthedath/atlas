@@ -120,15 +120,8 @@ class _TextReport(_Report):
         return self.__section(_TextDataSection, [cols])
 
     def _body_(self):
-        data=[self.__row(i, row) for (i, row) in self._body()]
+        data=[_TextRow(i, row)._format() for (i, row) in self._body()]
         return self.__section(_TextDataSection, data)
-
-    def __row(self, index, row):
-        if row.has_key(_Schema.level.name):
-            level=row[_Schema.level.name]
-            indent=(int(level))*"  "
-            row[_Schema.level.name]=indent+level
-        return [str(index)] + row.values()
 
     def _totals_(self):
         totals=self._totals()
@@ -179,6 +172,22 @@ class _Tsd:
     class Note:
         def _handle(self, report):
             return report._note_()
+
+################################################################################
+
+class _TextRow:
+    def __init__(self, index, row):
+        self.__index=index
+        self.__row=row
+        self.__field=_Schema.level.name
+
+    def _format(self):
+        row=OrderedDict([(i, j) for (i, j) in self.__row.items()])
+        if row.has_key(self.__field):
+            level=row[self.__field]
+            indent=(int(level))*"  "
+            row[self.__field]=indent+level
+        return [str(self.__index)] + row.values()
 
 ################################################################################
 
