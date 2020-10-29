@@ -44,7 +44,7 @@ class TestInvalidSchema(Test):
             self._app.text_report(schema)
         print "exception: ", cn.exception.__class__.__name__, \
                 "| msg => ", cn.exception
-        self.assertEqual(cn.exception.__str__(), 'bad schema.')
+        self.assertEqual(cn.exception.__str__(), 'bad report schema.')
 
 class TestNullSchema(Test):
     def _assert(self):
@@ -53,7 +53,16 @@ class TestNullSchema(Test):
             self._app.text_report(schema)
         print "exception: ", cn.exception.__class__.__name__, \
                 "| msg => ", cn.exception
-        self.assertEqual(cn.exception.__str__(), 'bad schema.')
+        self.assertEqual(cn.exception.__str__(), 'report schema not iterable.')
+
+class TestNonIterableSchema(Test):
+    def _assert(self):
+        with self.assertRaises(AssertionError) as cn:
+            schema=_Schema.cost
+            self._app.text_report(schema)
+        print "exception: ", cn.exception.__class__.__name__, \
+                "| msg => ", cn.exception
+        self.assertEqual(cn.exception.__str__(), 'report schema not iterable.')
 
 ################################################################################
 
