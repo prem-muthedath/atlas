@@ -9,7 +9,7 @@ from collections import Iterable, OrderedDict
 class _Report(object):
     def __init__(self, schema, contents):
         assert isinstance(schema, Iterable), 'report schema not iterable.'
-        assert _Schema._has(list(schema)), 'bad report schema.'
+        assert all([_Schema._has(i) for i in schema]), 'bad report schema.'
         self.__schema=schema
         self.__contents=_Contents([self.__line(i) for i in contents])
 

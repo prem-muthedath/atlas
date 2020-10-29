@@ -40,9 +40,9 @@ class _Schema(Enum):
         self._type=_type
 
     @classmethod
-    def _has(cls, items):
+    def _has(cls, item):
         try:
-            return all([i in _Schema for i in items])
+            return item in _Schema
         except TypeError:
             return False
 
