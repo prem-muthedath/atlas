@@ -182,12 +182,15 @@ class _TextRow:
         self.__field=_Schema.level.name
 
     def _format(self):
-        row=OrderedDict([(i, j) for (i, j) in self.__row.items()])
-        if row.has_key(self.__field):
-            level=row[self.__field]
+        return self.__format(self.__row.items())
+
+    def __format(self, items):
+        row=[self.__level(j) if i == self.__field else j for (i, j) in items]
+        return [str(self.__index)] + row
+
+    def __level(self, level):
             indent=(int(level))*"  "
-            row[self.__field]=indent+level
-        return [str(self.__index)] + row.values()
+            return indent+level
 
 ################################################################################
 
