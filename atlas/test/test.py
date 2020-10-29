@@ -107,6 +107,13 @@ class TestCustomTextReport(Test):
         self.assertEqual(report, reports.custom_text())
         print "custom TEXT report =>", "\n", report
 
+class TestCustomOrderedTextReport(Test):
+    def _assert(self):
+        schema=[_Schema.part_number, _Schema.costed, _Schema.quantity]
+        report=self._app.text_report(schema)
+        self.assertEqual(report, reports.custom_ordered_text())
+        print "custom ordered TEXT report =>", "\n", report
+
 class TestCustomNoTotalsTextReport(Test):
     def _assert(self):
         schema=[_Schema.part_number]
@@ -142,6 +149,13 @@ class TestCustomXmlReport(Test):
         report=self._app.xml_report(schema)
         self.assertEqual(report, reports.custom_xml())
         print "custom XML report =>", "\n", report
+
+class TestCustomOrderedXmlReport(Test):
+    def _assert(self):
+        schema=[_Schema.part_number, _Schema.costed, _Schema.quantity]
+        report=self._app.xml_report(schema)
+        self.assertEqual(report, reports.custom_ordered_xml())
+        print "custom ordered XML report =>", "\n", report
 
 class TestCustomNoTotalsXmlReport(Test):
     def _assert(self):
