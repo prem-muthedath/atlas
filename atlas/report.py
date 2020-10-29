@@ -130,9 +130,9 @@ class _TextReport(_Report):
         return self.__section(_TextDataSection, self.__totals(totals))
 
     def __totals(self, totals):
-        names=OrderedDict([(i, '') for i in self._names()])
-        names.update(totals)
-        return [['Totals'] + names.values()]
+        sums=OrderedDict([(i, '') for i in self._names()])
+        sums.update(totals)
+        return [['Totals'] + sums.values()]
 
     def _note_(self):
         note=self._note()
