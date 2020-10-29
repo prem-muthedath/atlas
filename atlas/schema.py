@@ -46,8 +46,9 @@ class _Schema(Enum):
         except TypeError:
             return False
 
-    def _is_money(self):
-        return self in [_Schema.unit_cost, _Schema.cost]
+    @classmethod
+    def _moneys(cls):
+        return [_Schema.unit_cost.name, _Schema.cost.name]
 
     @classmethod
     def _summables(cls):

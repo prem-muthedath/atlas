@@ -120,8 +120,8 @@ class _CostUnits:
         return {_Schema.costed : Costed.NO, _Schema.cost : 0}
 
     def __validate(self):
-        if _Schema.costed._type != Costed or int != _Schema.cost._type:
-            raise RuntimeError("schema type mismatch in cost")
+        assert _Schema.costed._type == Costed, 'bad costed type.'
+        assert int == _Schema.cost._type, 'cost type not int.'
 
     def __cost(self):
         return self.__units*self.__unit_cost
