@@ -26,7 +26,7 @@ Finally, how to build the BOM tree? By that I mean the sequential addition of pa
 
 HOW TO RUN THE TESTS FROM A TERMINAL:
 
-1. `aenum` package for `python 2.7.16` required; install using `pip` if needed.
+1. `aenum` package for `python 3.8.6` required; install using `pip` if needed.
 2. `cd` to `atlas` directory -- the top directory containing this `README` file.
 3. Type the following command:
 
