@@ -3,6 +3,7 @@
 from .schema import _Schema, Costed
 
 from collections import Iterable, OrderedDict
+import inspect
 
 ################################################################################
 
@@ -140,19 +141,33 @@ class _TextReport(_Report):
 
 ################################################################################
 
-class _Tsd:
+class _Sd:
     def __init__(self, report):
-        self.__report=report
+        self._report=report
 
     def _render_empty(self):
-        return self.__render([])
+        return self._render_([])
 
     def _render(self):
-        nodes=[self.Title, self.Header, self.Body, self.Totals, self.Note]
-        return self.__render([node() for node in nodes])
+        return self._render_(self.__nodes())
 
-    def __render(self, nodes):
-        return self.__report._text_(nodes)
+    def __nodes(self):
+        return [node() for node in self._type_().__dict__.values()
+                if inspect.isclass(node)]
+
+    def _type_(self):
+        pass
+
+    def _render_(self, nodes):
+        pass
+
+
+class _Tsd(_Sd):
+    def _type_(self):
+        return _Tsd
+
+    def _render_(self, nodes):
+        return self._report._text_(nodes)
 
     class Title:
         def _handle(self, report):
@@ -339,19 +354,12 @@ class _XmlReport(_Report):
 
 ################################################################################
 
-class _Xsd:
-    def __init__(self, report):
-        self.__report=report
+class _Xsd(_Sd):
+    def _type_(self):
+        return _Xsd
 
-    def _render(self):
-        nodes=[self.Title, self.Parts, self.Totals, self.Note]
-        return self.__render([node() for node in nodes])
-
-    def _render_empty(self):
-        return self.__render([])
-
-    def __render(self, nodes):
-        return self.__report._xml_(nodes)
+    def _render_(self, nodes):
+        return self._report._xml_(nodes)
 
     class Title:
         def _handle(self, report):
