@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from .schema import _Schema, Costed
-from database import _AtlasDB
+from .database import _AtlasDB
 
 ################################################################################
 
@@ -59,10 +59,10 @@ class _Bom:
 
 ################################################################################
 
-class _Part(object):
-    def __init__(self, bom, (source_code, cost_units)):
+class _Part:
+    def __init__(self, bom, vals):
         self.__bom=bom
-        self.__source_code, self.__cost_units=(source_code, cost_units)
+        self.__source_code, self.__cost_units=vals
 
     def _cost(self):
         return self.__cost_map()[_Schema.cost]

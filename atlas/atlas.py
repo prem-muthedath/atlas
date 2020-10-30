@@ -2,7 +2,7 @@
 
 from .configuration import _BomBuilder
 from .schema import _Schema
-from database import _AtlasDB
+from .database import _AtlasDB
 from .report import (_TextReport, _XmlReport,)
 
 ################################################################################

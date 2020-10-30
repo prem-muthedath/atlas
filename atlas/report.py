@@ -14,7 +14,7 @@ class _Report(object):
         self.__contents=_Contents([self.__line(i) for i in contents])
 
     def __line(self, item):
-        line=[(i.name, item[i]) for i in self.__schema if item.has_key(i)]
+        line=[(i.name, item[i]) for i in self.__schema if i in item]
         assert len(line) == self._size(), 'line does not contain schema.'
         return OrderedDict(line)
 
@@ -132,7 +132,7 @@ class _TextReport(_Report):
     def __totals(self, totals):
         sums=OrderedDict([(i, '') for i in self._names()])
         sums.update(totals)
-        return [['Totals'] + sums.values()]
+        return [['Totals'] + list(sums.values())]
 
     def _note_(self):
         note=self._note()
