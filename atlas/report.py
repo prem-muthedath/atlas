@@ -7,7 +7,7 @@ import inspect
 
 ################################################################################
 
-class _Report(object):
+class _Report:
     def __init__(self, schema, contents):
         assert isinstance(schema, Iterable), 'report schema not iterable.'
         assert all([_Schema._has(i) for i in schema]), 'bad report schema.'
@@ -210,7 +210,7 @@ class _TextRow:
 
 ################################################################################
 
-class _TextView(object):
+class _TextView:
     def __init__(self, sections):
         self.__sections=[i for i in sections if i != None]
 
@@ -223,7 +223,7 @@ class _TextView(object):
 
 ################################################################################
 
-class _TextGrid(object):
+class _TextGrid:
     def __init__(self, size):
         self.__size=size
         self.__field_width=20
@@ -252,7 +252,7 @@ class _TextGrid(object):
 
 class _TextRowGrid(_TextGrid):
     def __init__(self, cells):
-        super(_TextRowGrid, self).__init__(len(cells))
+        super().__init__(len(cells))
         self.__cells=cells
 
     def _render(self):
@@ -262,7 +262,7 @@ class _TextRowGrid(_TextGrid):
 
 class _TextSection(_TextGrid):
     def __init__(self, size):
-        super(_TextSection, self).__init__(size)
+        super().__init__(size)
         self.__border='-'
 
     def _render(self):
@@ -274,7 +274,7 @@ class _TextSection(_TextGrid):
 
 class _TextDataSection(_TextSection):
     def __init__(self, size, rows):
-        super(_TextDataSection, self).__init__(size)
+        super().__init__(size)
         self.__rows=rows
 
     @classmethod
@@ -287,7 +287,7 @@ class _TextDataSection(_TextSection):
 
 class _TextTitleSection(_TextSection):
     def __init__(self, size, caption):
-        super(_TextTitleSection, self).__init__(size)
+        super().__init__(size)
         self.__caption=caption
 
     @classmethod
@@ -300,7 +300,7 @@ class _TextTitleSection(_TextSection):
 
 class _TextNoteSection(_TextSection):
     def __init__(self, size, note):
-        super(_TextNoteSection, self).__init__(size)
+        super().__init__(size)
         self.__note=note
 
     @classmethod
@@ -314,7 +314,7 @@ class _TextNoteSection(_TextSection):
 
 class _XmlReport(_Report):
     def __init__(self, schema, contents):
-        super(_XmlReport, self).__init__(schema, contents)
+        super().__init__(schema, contents)
         self.__row=None
 
     def _empty(self):
@@ -383,7 +383,7 @@ class _Xsd(_Sd):
 
 ################################################################################
 
-class _Xml(object):
+class _Xml:
     def __init__(self, tag):
         self.__tag=tag
 
@@ -396,7 +396,7 @@ class _Xml(object):
 
 class _XmlNode(_Xml):
     def __init__(self, tag, children):
-        super(_XmlNode, self).__init__(tag)
+        super().__init__(tag)
         self.__children=children
 
     def _render(self):
@@ -407,7 +407,7 @@ class _XmlNode(_Xml):
 
 class _XmlElement(_Xml):
     def __init__(self, tag, value):
-        super(_XmlElement, self).__init__(tag)
+        super().__init__(tag)
         self.__value=value
 
     def _render(self):

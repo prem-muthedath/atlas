@@ -6,7 +6,7 @@ from .components import _Bom, _CostUnits
 
 ################################################################################
 
-class _BomBuilder():
+class _BomBuilder:
     def __init__(self):
         self.__parents=[]
         self.__parent_level=0
