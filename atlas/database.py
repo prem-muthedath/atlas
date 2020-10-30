@@ -18,10 +18,10 @@ class _AtlasDB:
         ('P-0008-1', [("name", "P-0008"), ("level", 1), ("site", '13'), ("cost", 1000), ("units", 1)]),
         ('P-0009-2', [("name", "P-0009"), ("level", 2), ("site", '12'), ("cost", 2000), ("units", 1)]),   # 2000*1
         ('P-0010-2', [("name", "P-0010"), ("level", 2), ("site", '15'), ("cost", 1500), ("units", 3)]),
-        ('P-0011-2', [("name", "P-0011"), ("level", 2), ("site", '48'), ("cost", 1000), ("units", 1)]),
+        ('P-0011-2', [("name", "P-0011"), ("level", 2), ("site", '1'), ("cost", 1000), ("units", 1)]),    # costable code, but not costed
         ('P-0012-2', [("name", "P-0012"), ("level", 2), ("site", '8'), ("cost", 1), ("units", 1)]),
-        ('P-0013-2', [("name", "P-0013"), ("level", 2), ("site", '007'), ("cost", 700), ("units", 1)]),
-        ('P-0014-1', [("name", "P-0014"), ("level", 1), ("site", '13'), ("cost", 1000), ("units", 2)]),
+        ('P-0013-2', [("name", "P-0013"), ("level", 2), ("site", '1'), ("cost", 700), ("units", 1)]),     # leaf with costable code, but not costed
+        ('P-0014-1', [("name", "P-0014"), ("level", 1), ("site", '1'), ("cost", 1000), ("units", 2)]),    # costable code, but not costed
         ('P-0015-2', [("name", "P-0015"), ("level", 2), ("site", '144'), ("cost", 2000), ("units", 1)]),
         ('P-0016-2', [("name", "P-0016"), ("level", 2), ("site", '15'), ("cost", 1500), ("units", 1)]),
         ('P-0017-2', [("name", "P-0017"), ("level", 2), ("site", '48'), ("cost", 1000), ("units", 1)]),
@@ -34,7 +34,7 @@ class _AtlasDB:
         ('P-0024-1', [("name", "P-0024"), ("level", 1), ("site", '12'), ("cost", 1), ("units", 5)]),      # 1*5
         ('P-0025-1', [("name", "P-0025"), ("level", 1), ("site", '12'), ("cost", 1), ("units", 5)]),      # 1*5
         ('P-0026-1', [("name", "P-0026"), ("level", 1), ("site", '145'), ("cost", 90), ("units", 1)]),    # not costed
-        ('P-0027-1', [("name", "P-0027"), ("level", 1), ("site", '165'), ("cost", 900), ("units", 1)])
+        ('P-0027-1', [("name", "P-0027"), ("level", 1), ("site", '12'), ("cost", 900), ("units", 1)])     # 1*900; leaf with costed code
     ])
 
     @classmethod
