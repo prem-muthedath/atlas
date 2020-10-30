@@ -37,32 +37,37 @@ class Test(unittest.TestCase):
 
 ################################################################################
 
-class TestInvalidSchema(Test):
+class TestError(Test):
     def _assert(self):
         with self.assertRaises(AssertionError) as cn:
-            schema=[_Schema.level, 'prem', _Schema.cost, 'lisa']
-            self._app.text_report(schema)
+            self._app.text_report(self._schema())
         print ("exception: ", cn.exception.__class__.__name__, \
                 "| msg => ", cn.exception)
-        self.assertEqual(cn.exception.__str__(), 'bad report schema.')
+        self.assertEqual(cn.exception.__str__(), self._message())
 
-class TestNullSchema(Test):
-    def _assert(self):
-        with self.assertRaises(AssertionError) as cn:
-            schema=None
-            self._app.text_report(schema)
-        print ("exception: ", cn.exception.__class__.__name__, \
-                "| msg => ", cn.exception)
-        self.assertEqual(cn.exception.__str__(), 'report schema not iterable.')
+    def _schema(self):
+        pass
 
-class TestNonIterableSchema(Test):
-    def _assert(self):
-        with self.assertRaises(AssertionError) as cn:
-            schema=_Schema.cost
-            self._app.text_report(schema)
-        print ("exception: ", cn.exception.__class__.__name__, \
-                "| msg => ", cn.exception)
-        self.assertEqual(cn.exception.__str__(), 'report schema not iterable.')
+    def _message(self):
+        return 'report schema not iterable.'
+
+
+class TestInvalidSchema(TestError):
+    def _schema(self):
+        return [_Schema.level, 'prem', _Schema.cost, 'lisa']
+
+    def _message(self):
+        return 'bad report schema.'
+
+
+class TestNullSchema(TestError):
+    def _schema(self):
+        return None
+
+
+class TestNonIterableSchema(TestError):
+    def _schema(self):
+        return _Schema.cost
 
 ################################################################################
 
@@ -175,10 +180,12 @@ class TestCustomNoTotalsXmlReport(Test):
 
 ################################################################################
 
-# `Test` deleted; else, unittest will run it.
+# `Test`, `TestError` deleted; else, unittest will run them.
 # `Test` is a base class, & doesn't test anything, so need not run it.
+# `TestError`, likewise, is a base class, so need not run it.
 # for del(Test) trick, see /u/ Wojciech B @ https://tinyurl.com/yb58qtae
 del(Test)
+del(TestError)
 
 ################################################################################
 
