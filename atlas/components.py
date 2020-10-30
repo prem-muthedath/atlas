@@ -5,30 +5,20 @@ from database import _AtlasDB
 
 ################################################################################
 
-class _BomCostPositions:
+class _BomState:
     def __init__(self):
-        self.__pos={'costed' : -1, 'costable' : -1}
+        self.__pos=-1
 
     def _costed(self, pos):
         if self.__not_costed():
-            self.__pos['costed'] = pos
+            self.__pos=pos
 
     def __not_costed(self):
-        return not self.__has_costed()
-
-    def __has_costed(self):
-        return self.__pos['costed'] >= 0
+        return self.__pos < 0
 
     def _costable(self, pos):
-        if self.__has_costable():
-            return pos in [self.__pos['costable']]
-        if self.__has_costed():
-            return pos in range(0, self.__pos['costed'])
-        self.__pos['costable']=pos
-        return self.__pos['costable'] == pos
-
-    def __has_costable(self):
-        return self.__pos['costable'] >= 0
+        self._costed(pos)
+        return pos == self.__pos
 
 ################################################################################
 
@@ -42,7 +32,7 @@ class _Bom:
                 self.__components.append(_Part(self, val))
             else:
                 self.__components.append(_LeafPart(self, val))
-        self.__cpos=_BomCostPositions()
+        self.__state=_BomState()
 
     def _cost(self):
         cost=0
@@ -52,11 +42,11 @@ class _Bom:
 
     def _costed(self, part):
         pos=self.__components.index(part)
-        self.__cpos._costed(pos)
+        self.__state._costed(pos)
 
     def _costable(self, part):
         pos=self.__components.index(part)
-        return self.__cpos._costable(pos)
+        return self.__state._costable(pos)
 
     def _cost_maps(self):
         cost_maps=[]
