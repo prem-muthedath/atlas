@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from .schema import _Schema, Costed
-from .database import _AtlasDB
 
 ################################################################################
 
