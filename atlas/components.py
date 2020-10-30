@@ -28,9 +28,9 @@ class _Bom:
             if isinstance(val, list):
                 self.__components.append(_Bom(val))
             elif i < len(parts) - 1:
-                self.__components.append(_Part(self, val))
+                self.__components.append(_Part(self, val[0], val[1]))
             else:
-                self.__components.append(_LeafPart(self, val))
+                self.__components.append(_LeafPart(self, val[0], val[1]))
         self.__state=_BomState()
 
     def _cost(self):
@@ -59,9 +59,10 @@ class _Bom:
 ################################################################################
 
 class _Part:
-    def __init__(self, bom, vals):
+    def __init__(self, bom, source_code, cost_units):
         self.__bom=bom
-        self.__source_code, self.__cost_units=vals
+        self.__source_code=source_code
+        self.__cost_units=cost_units
 
     def _cost(self):
         return self.__cost_map()[_Schema.cost]
