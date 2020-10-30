@@ -51,7 +51,6 @@ class TestError(Test):
     def _message(self):
         return 'report schema not iterable.'
 
-
 class TestInvalidSchema(TestError):
     def _schema(self):
         return [_Schema.level, 'prem', _Schema.cost, 'lisa']
@@ -59,11 +58,9 @@ class TestInvalidSchema(TestError):
     def _message(self):
         return 'bad report schema.'
 
-
 class TestNullSchema(TestError):
     def _schema(self):
         return None
-
 
 class TestNonIterableSchema(TestError):
     def _schema(self):
